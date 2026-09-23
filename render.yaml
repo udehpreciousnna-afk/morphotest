@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: morpho-app
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: morpho-db
+          property: connectionString
+      - key: BOT_TOKEN
+        sync: false
+      - key: BOT_USERNAME
+        value: MorphoMiningBot
+      - key: APP_SHORT_NAME
+        value: myapp
+      - key: ALLOW_DEV
+        value: "false"
+
+databases:
+  - name: morpho-db
+    plan: free

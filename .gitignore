@@ -1,0 +1,6 @@
+node_modules/
+.env
+*.log
+/tmp/morpho-pglite
+.DS_Store
+.abacus.donotdelete

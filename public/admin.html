@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MORPHO Admin</title>
+<style>
+  :root{
+    --bg:#000000; --card:#0d1117; --card2:#161b22; --border:rgba(56,189,248,0.14);
+    --white:#ffffff; --muted:#8b949e; --blue:#38bdf8; --gold:#F5B942; --green:#3fb950; --red:#f85149;
+    --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--white);font-family:var(--font);min-height:100vh;padding:18px;}
+  .wrap{max-width:1000px;margin:0 auto;}
+  h1{font-size:24px;font-weight:800;margin-bottom:4px;}
+  h1 .b{color:var(--blue);}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:20px;}
+
+  /* Login gate */
+  #gate{max-width:380px;margin:60px auto;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;}
+  #gate h1{text-align:center;margin-bottom:6px;}
+  #gate .sub{text-align:center;margin-bottom:20px;}
+  label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+  input,textarea,select{width:100%;background:var(--card2);border:1px solid rgba(255,255,255,0.12);border-radius:10px;
+    padding:14px;font-size:15px;color:var(--white);font-family:var(--font);outline:none;transition:border-color .2s;margin-bottom:14px;}
+  input:focus,textarea:focus,select:focus{border-color:var(--blue);}
+  select option{background:var(--card2);color:var(--white);}
+  textarea{resize:vertical;min-height:90px;line-height:1.5;}
+  .btn{width:100%;background:var(--gold);border:none;border-radius:10px;padding:15px;font-size:16px;font-weight:800;
+    color:#000;cursor:pointer;transition:opacity .2s,transform .1s;margin-top:14px;}
+  .btn:active{opacity:.85;transform:scale(.99);}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .btn.blue{background:var(--blue);}
+  .err{color:var(--red);font-size:13px;margin-top:10px;text-align:center;min-height:16px;}
+
+  .hidden{display:none!important;}
+
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+  .stat .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .stat .val{font-size:26px;font-weight:800;margin-top:4px;}
+  .stat .val.blue{color:var(--blue);}
+  .stat .val.gold{color:var(--gold);}
+  .stat .val.green{color:var(--green);}
+
+  /* Broadcast */
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:22px;}
+  .panel h2{font-size:17px;font-weight:800;margin-bottom:14px;}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .result{font-size:14px;margin-top:12px;line-height:1.6;}
+  .result b{color:var(--blue);}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+  .link{color:var(--blue);cursor:pointer;font-size:13px;background:none;border:none;font-family:var(--font);}
+  .link:hover{text-decoration:underline;}
+
+  /* Table */
+  .tablewrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+  .tscroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px;}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.06);white-space:nowrap;}
+  th{color:var(--muted);text-transform:uppercase;font-size:11px;letter-spacing:.5px;background:var(--card2);position:sticky;top:0;}
+  th.sortable{cursor:pointer;user-select:none;}
+  th.sortable:hover{color:var(--white);}
+  th.sortable::after{content:'⇅';margin-left:5px;opacity:.35;font-size:10px;}
+  th.sortable.asc::after{content:'▲';opacity:1;color:var(--blue);}
+  th.sortable.desc::after{content:'▼';opacity:1;color:var(--blue);}
+  tr:last-child td{border-bottom:none;}
+  td.num{color:var(--gold);font-weight:700;}
+  td.wallet{color:var(--green);}
+  .pill{display:inline-block;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:12px;}
+  .empty{text-align:center;color:var(--muted);padding:40px 20px;}
+  .foot{display:flex;justify-content:space-between;align-items:center;padding:14px;gap:10px;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN GATE ══ -->
+<div id="gate" class="wrap">
+  <h1>MORPHO <span class="b">Admin</span></h1>
+  <div class="sub">Enter your admin key to continue</div>
+  <label for="keyIn">Admin Key</label>
+  <input id="keyIn" type="password" placeholder="ADMIN_KEY" autocomplete="off" />
+  <button class="btn" id="loginBtn">Unlock</button>
+  <div class="err" id="loginErr"></div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="dash" class="wrap hidden">
+  <div class="toolbar">
+    <div>
+      <h1>MORPHO <span class="b">Admin</span></h1>
+      <div class="sub" style="margin-bottom:0">User management &amp; broadcasts</div>
+    </div>
+    <div class="row">
+      <button class="link" id="refreshBtn">↻ Refresh</button>
+      <button class="link" id="logoutBtn">Log out</button>
+    </div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <!-- Broadcast -->
+  <div class="panel">
+    <h2>📣 Broadcast</h2>
+    <label for="targetIn">Send to</label>
+    <select id="targetIn">
+      <option value="all">All users (DM each user)</option>
+      <option value="@MorphoMining">Channel: @MorphoMining</option>
+      <option value="@Crypto365team">Channel: @Crypto365team (crypto365)</option>
+    </select>
+    <label for="msgIn">Message (HTML allowed: &lt;b&gt;, &lt;a&gt;, etc.)</label>
+    <textarea id="msgIn" placeholder="🦋 New MORPHO update is live!"></textarea>
+    <label for="mediaIn">Attach photo or video (optional — max 50MB)</label>
+    <input id="mediaIn" type="file" accept="image/*,video/*" />
+    <div id="mediaInfo" class="sub" style="margin:4px 0 0"></div>
+    <label for="btnTextIn">Inline button label (optional)</label>
+    <input id="btnTextIn" type="text" placeholder="Open Mini App" />
+    <label for="btnUrlIn">Inline button URL (optional)</label>
+    <input id="btnUrlIn" type="text" placeholder="https://t.me/YourBot/app" />
+    <button class="btn" id="sendBtn">Send broadcast</button>
+    <div class="result" id="sendResult"></div>
+  </div>
+
+  <!-- Users -->
+  <div class="panel" style="padding-bottom:0">
+    <h2>👥 Users</h2>
+    <div class="row" style="gap:8px;align-items:center">
+      <input id="searchIn" type="text" placeholder="🔍 Search name, @username or Telegram ID…" style="flex:1;min-width:0" />
+      <button class="link" id="clearSearchBtn" title="Clear search">✕</button>
+    </div>
+  </div>
+  <div class="tablewrap">
+    <div class="tscroll">
+      <table id="usersTable">
+        <thead>
+          <tr>
+            <th>User</th><th>Telegram ID</th>
+            <th class="sortable" data-sort="balance">Balance</th>
+            <th class="sortable" data-sort="taps">Taps</th>
+            <th class="sortable" data-sort="referrals">Referrals</th>
+            <th>Wallets</th><th>Energy</th>
+            <th class="sortable" data-sort="joined">Joined</th>
+          </tr>
+        </thead>
+        <tbody id="usersBody"></tbody>
+      </table>
+    </div>
+    <div class="foot">
+      <span class="sub" id="pageInfo" style="margin-bottom:0"></span>
+      <div class="row">
+        <button class="link" id="prevBtn">← Prev</button>
+        <button class="link" id="nextBtn">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const LS_KEY = 'morpho_admin_key';
+  let adminKey = localStorage.getItem(LS_KEY) || '';
+  let offset = 0, limit = 100, total = 0;
+  let sortKey = 'joined', sortDir = 'desc', searchTerm = '';
+
+  const $ = id => document.getElementById(id);
+
+  async function api(path, opts={}){
+    const sep = path.includes('?') ? '&' : '?';
+    const url = path + sep + 'key=' + encodeURIComponent(adminKey);
+    const res = await fetch(url, opts);
+    if(res.status === 401) throw new Error('unauthorized');
+    return res.json();
+  }
+
+  // ── Login ──
+  async function tryLogin(key){
+    adminKey = key;
+    const data = await api('/api/admin/users?limit=1&offset=0');
+    if(data && typeof data.total === 'number'){
+      localStorage.setItem(LS_KEY, key);
+      showDash();
+      loadAll();
+      return true;
+    }
+    throw new Error('bad');
+  }
+
+  $('loginBtn').onclick = async () => {
+    const k = $('keyIn').value.trim();
+    if(!k){ $('loginErr').textContent='Enter a key.'; return; }
+    $('loginErr').textContent='Checking…';
+    try { await tryLogin(k); $('loginErr').textContent=''; }
+    catch(e){ $('loginErr').textContent='Invalid admin key.'; }
+  };
+  $('keyIn').addEventListener('keydown', e => { if(e.key==='Enter') $('loginBtn').click(); });
+
+  $('logoutBtn').onclick = () => { localStorage.removeItem(LS_KEY); location.reload(); };
+  $('refreshBtn').onclick = () => loadAll();
+
+  function showDash(){ $('gate').classList.add('hidden'); $('dash').classList.remove('hidden'); }
+
+  // ── Load data ──
+  async function loadAll(){
+    try{
+      const q = `/api/admin/users?limit=${limit}&offset=${offset}`
+        + `&sort=${encodeURIComponent(sortKey)}&dir=${encodeURIComponent(sortDir)}`
+        + (searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : '');
+      const data = await api(q);
+      total = data.total;
+      renderStats(data);
+      renderUsers(data.users);
+      renderPager(data);
+      updateSortHeaders();
+    }catch(e){
+      if(String(e.message)==='unauthorized'){ localStorage.removeItem(LS_KEY); location.reload(); }
+    }
+  }
+
+  function updateSortHeaders(){
+    document.querySelectorAll('th.sortable').forEach(th=>{
+      th.classList.remove('asc','desc');
+      if(th.dataset.sort===sortKey) th.classList.add(sortDir);
+    });
+  }
+
+  function renderStats(data){
+    const users = data.users || [];
+    // Sums are for the current page; total user count is global.
+    let walletsConnected=0, totalTaps=0, totalBal=0, totalRefs=0;
+    users.forEach(u=>{
+      if(u.wallets && Object.keys(u.wallets).length) walletsConnected++;
+      totalTaps += Number(u.totalTaps||0);
+      totalBal  += Number(u.balance||0);
+      totalRefs += Number(u.referralCount||0);
+    });
+    const fmt = n => Number(n).toLocaleString(undefined,{maximumFractionDigits:0});
+    $('stats').innerHTML = `
+      <div class="stat"><div class="lbl">Total Users</div><div class="val blue">${fmt(total)}</div></div>
+      <div class="stat"><div class="lbl">Wallets (page)</div><div class="val green">${fmt(walletsConnected)}</div></div>
+      <div class="stat"><div class="lbl">Referrals (page)</div><div class="val gold">${fmt(totalRefs)}</div></div>
+      <div class="stat"><div class="lbl">Taps (page)</div><div class="val">${fmt(totalTaps)}</div></div>
+      <div class="stat"><div class="lbl">MORPHO (page)</div><div class="val gold">${fmt(totalBal)}</div></div>`;
+  }
+
+  function renderUsers(users){
+    const body = $('usersBody');
+    if(!users || !users.length){
+      body.innerHTML = `<tr><td colspan="8" class="empty">No users found.</td></tr>`;
+      return;
+    }
+    const fmt = n => Number(n).toLocaleString(undefined,{maximumFractionDigits:3});
+    body.innerHTML = users.map(u=>{
+      const name = u.username ? '@'+u.username : (u.firstName || '—');
+      const wkeys = u.wallets ? Object.keys(u.wallets) : [];
+      const wcell = wkeys.length ? `<span class="wallet">${wkeys.join(', ')}</span>` : '<span style="color:#555">—</span>';
+      return `<tr>
+        <td>${esc(name)}</td>
+        <td><span class="pill">${u.telegramId}</span></td>
+        <td class="num">${fmt(u.balance)}</td>
+        <td>${Number(u.totalTaps||0).toLocaleString()}</td>
+        <td>${u.referralCount||0}</td>
+        <td class="wallet">${wcell}</td>
+        <td>${u.energy}/${u.maxEnergy}</td>
+        <td>${fmtDate(u.createdAt)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderPager(data){
+    const from = total ? offset+1 : 0;
+    const to = offset + (data.count||0);
+    $('pageInfo').textContent = `Showing ${from}–${to} of ${total.toLocaleString()}`;
+    $('prevBtn').disabled = offset<=0;
+    $('nextBtn').disabled = to>=total;
+    $('prevBtn').style.opacity = offset<=0 ? .4 : 1;
+    $('nextBtn').style.opacity = to>=total ? .4 : 1;
+  }
+
+  $('prevBtn').onclick = () => { if(offset>0){ offset=Math.max(0,offset-limit); loadAll(); } };
+  $('nextBtn').onclick = () => { if(offset+limit<total){ offset+=limit; loadAll(); } };
+
+  function fmtDate(v){
+    if(!v) return '<span style="color:#555">—</span>';
+    const d = new Date(v);
+    if(isNaN(d)) return '<span style="color:#555">—</span>';
+    return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+  }
+
+  // ── Sortable headers ──
+  document.querySelectorAll('th.sortable').forEach(th=>{
+    th.onclick = () => {
+      const key = th.dataset.sort;
+      if(sortKey===key){ sortDir = sortDir==='asc' ? 'desc' : 'asc'; }
+      else { sortKey = key; sortDir = 'desc'; } // new column starts high→low
+      offset = 0;
+      loadAll();
+    };
+  });
+
+  // ── Search (debounced) ──
+  let searchTimer = null;
+  $('searchIn').addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      searchTerm = $('searchIn').value.trim();
+      offset = 0;
+      loadAll();
+    }, 300);
+  });
+  $('clearSearchBtn').onclick = () => {
+    if(!$('searchIn').value) return;
+    $('searchIn').value=''; searchTerm=''; offset=0; loadAll();
+  };
+
+  // ── Media picker feedback ──
+  $('mediaIn').onchange = () => {
+    const f = $('mediaIn').files[0];
+    if(!f){ $('mediaInfo').textContent=''; return; }
+    const mb = (f.size/1048576).toFixed(2);
+    const kind = /^video\//.test(f.type) ? '🎬 video' : (/^image\//.test(f.type) ? '🖼️ photo' : '⚠️ unsupported');
+    $('mediaInfo').innerHTML = `${kind} — ${esc(f.name)} (${mb} MB)`;
+    if(f.size > 50*1048576) $('mediaInfo').innerHTML += ' <span style="color:var(--red)">— too large (max 50MB)</span>';
+  };
+
+  // ── Broadcast ──
+  $('sendBtn').onclick = async () => {
+    const message = $('msgIn').value.trim();
+    const target = $('targetIn').value;
+    const buttonText = $('btnTextIn').value.trim();
+    const buttonUrl = $('btnUrlIn').value.trim();
+    const mediaFile = $('mediaIn').files[0] || null;
+    if(!message && !mediaFile){ $('sendResult').textContent='Type a message or attach a photo/video first.'; return; }
+    if(mediaFile && mediaFile.size > 50*1048576){ $('sendResult').textContent='Attachment too large — max 50MB.'; return; }
+    if(buttonText && !buttonUrl){ $('sendResult').textContent='Button URL is required when a button label is set.'; return; }
+    if(buttonUrl && !buttonText){ $('sendResult').textContent='Button label is required when a button URL is set.'; return; }
+    const confMsg = target==='all' ? 'Send this broadcast to ALL users?' : ('Post this broadcast to '+target+'?');
+    if(!confirm(confMsg)) return;
+    $('sendBtn').disabled = true;
+    $('sendResult').innerHTML = (target==='all' ? 'Sending… this may take a while for many users.' : 'Posting to '+esc(target)+'…')
+      + (mediaFile ? ' Uploading media…' : '');
+    try{
+      const fd = new FormData();
+      fd.append('key', adminKey);
+      fd.append('message', message);
+      fd.append('target', target);
+      fd.append('buttonText', buttonText);
+      fd.append('buttonUrl', buttonUrl);
+      if(mediaFile) fd.append('media', mediaFile, mediaFile.name);
+      const res = await fetch('/api/admin/broadcast', { method:'POST', body: fd });
+      const d = await res.json();
+      if(d.error){ $('sendResult').innerHTML = '<span style="color:var(--red)">Error: '+esc(d.error)+'</span>'; }
+      else if(d.channel){
+        $('sendResult').innerHTML = `✅ Posted to <b>${esc(d.channel)}</b>.`;
+        $('msgIn').value=''; $('mediaIn').value=''; $('mediaInfo').textContent='';
+      }
+      else{
+        let html = `✅ Done — <b>${d.sent}</b> sent, ${d.blocked} blocked, ${d.failed} failed (of ${d.total}).`;
+        if(d.sent===0 && d.total>0){
+          html += `<br><span style="color:var(--red)">No messages delivered.</span> This usually means those users have never opened a private chat with the bot (a bot cannot DM a user who hasn't pressed Start), or they blocked it.`;
+        }
+        if(Array.isArray(d.reasons) && d.reasons.length){
+          html += `<br><span class="sub">Reasons: ${esc(d.reasons.join(' · '))}</span>`;
+        }
+        $('sendResult').innerHTML = html;
+        $('msgIn').value=''; $('mediaIn').value=''; $('mediaInfo').textContent='';
+      }
+    }catch(e){ $('sendResult').innerHTML = '<span style="color:var(--red)">Request failed.</span>'; }
+    finally{ $('sendBtn').disabled = false; }
+  };
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  // ── Auto-login if key stored ──
+  if(adminKey){
+    tryLogin(adminKey).catch(()=>{ localStorage.removeItem(LS_KEY); adminKey=''; });
+  }
+</script>
+</body>
+</html>
