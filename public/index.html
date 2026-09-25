@@ -1099,8 +1099,57 @@
     .flow-amount-input { text-align:right; font-weight:700; font-size:18px; }
     #mwd-submit { background:linear-gradient(90deg,#0284c7,#38bdf8); color:#031321; font-weight:800; box-shadow:0 0 28px rgba(56,189,248,0.35); border:none; }
     #mwd-submit[disabled], #wov-wd-submit[disabled] { opacity:.55; cursor:not-allowed; }
-    .flow-error-card { background:rgba(140,32,42,.25); border:1px solid #a33b48; border-radius:15px; color:#ffd5d9; padding:14px; line-height:1.45; margin:14px 0; font-size:14px; }
-    .wov-topup-btn { width:100%; border:none; background:linear-gradient(90deg,#38bdf8,#0284c7); color:#031321; border-radius:15px; font-weight:800; padding:14px; box-shadow: 0 0 24px rgba(56,189,248,0.35); cursor:pointer; }
+    .flow-error-card {
+      background: #1c0e13;
+      border: 1px solid #5a1c25;
+      border-radius: 16px;
+      padding: 16px 18px;
+      margin: 16px 0 12px;
+      text-align: left;
+    }
+    .flow-error-header {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ff6b7e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .flow-error-icon { font-size: 16px; }
+    .flow-error-desc {
+      font-size: 13.5px;
+      color: #e5989b;
+      line-height: 1.45;
+    }
+    .flow-error-desc strong { color: #fff; font-weight: 700; }
+    .flow-topup-action-btn {
+      width: 100%;
+      background: #22c55e;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #04210f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(34, 197, 94, 0.35);
+      transition: transform 0.1s, filter 0.15s;
+    }
+    .flow-topup-action-btn:active { transform: scale(0.98); }
+    .topup-icon-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(4, 33, 15, 0.25);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
     .ms-status-badge { margin:14px auto 0; border-radius:999px; padding:8px 12px; width:max-content; background:rgba(15,80,120,.3); border:1px solid rgba(79,195,247,.45); color:#a9dcf7; font-size:13px; font-weight:700; }
     .deposit-live-banner { background:rgba(22,121,75,.3); border:1px solid rgba(60,205,132,.6); color:#aff9d4; border-radius:14px; padding:12px 14px; margin-bottom:12px; font-weight:700; line-height:1.35; }
     #wov-dep-content .alert-banner.warning { background:rgba(56,189,248,.12); border-color:rgba(56,189,248,.45); color:#a9dcf7; }
@@ -1463,7 +1512,17 @@
 
           <div id="mwd-insufficient" style="display:none">
             <div class="flow-error-card" id="mwd-insufficient-msg"></div>
-            <button class="wov-topup-btn" onclick="topUpFromWithdraw()">Top up ETH to withdraw</button>
+            <button class="flow-topup-action-btn" onclick="topUpFromWithdraw()">
+              <span class="topup-icon-circle">
+                <svg viewBox="0 0 256 417" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+                  <path fill="#04210f" d="M127.961 0l-2.795 9.5v275.668l2.795 2.79 127.962-75.638z"/>
+                  <path fill="#04210f" d="M127.962 0L0 212.32l127.962 75.639V154.158z"/>
+                  <path fill="#04210f" d="M127.961 312.187l-1.575 1.92v98.199l1.575 4.601 128.038-180.32z"/>
+                  <path fill="#04210f" d="M127.962 416.907v-104.72L0 236.586z"/>
+                </svg>
+              </span>
+              Top up ETH to withdraw
+            </button>
           </div>
         </div>
       </div>
@@ -2251,6 +2310,10 @@
     await Promise.allSettled([refreshPromise, new Promise(r => setTimeout(r, Math.max(0, 3000 - (Date.now() - start))))]);
     document.getElementById('mwd-availability').style.display = 'none';
     document.getElementById('mwd-form').style.display = '';
+
+    const firstChip = document.querySelector('#mwd-saved .wallet-chip');
+    if (firstChip) firstChip.click();
+    if (Number(state.balance || 0) > 0) setMorphoMax();
     onMorphoFormChange();
   }
 
@@ -2327,8 +2390,9 @@
       if (e.code === 'insufficient_eth') {
         const have = (e.data && Number.isFinite(Number(e.data.ethBalance))) ? Number(e.data.ethBalance) : Number(state.eth || 0);
         const need = (e.data && Number.isFinite(Number(e.data.needed))) ? Number(e.data.needed) : Number(CONFIG.morphoEthGate || 0.008);
-        const msg = '⚠ Insufficient ETH for network fees<br>You need at least ' + need.toFixed(3) +
-          ' ETH to cover the transaction fee. You have ' + have.toFixed(4) + ' ETH.';
+        const msg = '<div class="flow-error-header"><span class="flow-error-icon">⚠</span> Insufficient ETH for network fees</div>' +
+          '<div class="flow-error-desc">You need at least <strong>' + need.toFixed(3) +
+          ' ETH</strong> to cover the transaction fee. You have <strong>' + have.toFixed(4) + ' ETH</strong>.</div>';
         document.getElementById('mwd-insufficient-msg').innerHTML = msg;
         insBox.style.display = '';
       } else if (e.code === 'insufficient_morpho_balance') {
