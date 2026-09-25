@@ -562,7 +562,7 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 20px 22px 16px; border-bottom: 1px solid rgba(34,197,94,0.14);
     }
-    .wd-modal-title { font-size: 21px; font-weight: 800; color: #fff; letter-spacing: 0.2px; }
+    .morpho-sheet .wd-modal-title { font-size: 17px; font-weight: 800; color: #fff; letter-spacing: 0.2px; }
     .wd-x {
       width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
       background: rgba(148,163,184,0.10); border: 1px solid rgba(34,197,94,0.22);
@@ -1073,9 +1073,25 @@
       border-left: 3px solid var(--task-done-border);
       box-shadow: none;
     }
-    .morpho-sheet { background:#000000; border:1px solid rgba(255,255,255,0.08); box-shadow: 0 30px 90px rgba(0,0,0,0.9); }
+    .morpho-sheet { background:#000000; border:1px solid rgba(255,255,255,0.08); box-shadow: 0 30px 90px rgba(0,0,0,0.9); max-height: calc(100vh - 40px); overflow-y: auto !important; }
+    .morpho-sheet .wd-body { max-height: none; }
     .morpho-sheet .wd-modal-header { border-bottom: 1px solid rgba(255,255,255,0.08); }
     .morpho-sheet .wd-x { border-color: rgba(56,189,248,0.25); color: #94a3b8; }
+    .morpho-sheet .flow-kicker { font-size: 9.5px; }
+    .morpho-sheet .flow-balance-main { font-size: 16px; }
+    .morpho-sheet .flow-balance-main .token-subtext { font-size: 12px; }
+    .morpho-sheet .flow-balance-usd { font-size: 12px; }
+    .morpho-sheet .flow-input { font-size: 14px; }
+    .morpho-sheet .flow-input-btn { font-size: 14px; }
+    .morpho-sheet .flow-max-btn { font-size: 11.5px; padding: 6px 12px; }
+    .morpho-sheet .flow-token-symbol { font-size: 12px; }
+    .morpho-sheet .wallet-name { font-size: 13px; }
+    .morpho-sheet .wallet-address { font-size: 11px; }
+    .morpho-sheet #mwd-usd { font-size: 12px; }
+    .morpho-sheet .modal-submit-btn { font-size: 14px; padding: 14px; }
+    .morpho-sheet .flow-error-header { font-size: 13px; }
+    .morpho-sheet .flow-error-desc { font-size: 12px; }
+    .morpho-sheet .flow-topup-action-btn { font-size: 13px; }
     .flow-loading-state { padding: 40px 10px 26px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:16px; }
     .flow-balance-card { background:linear-gradient(145deg,#0d0d0f,#060607); border:1px solid rgba(56,189,248,0.14); border-radius:18px; padding:16px 18px; display:flex; justify-content:space-between; gap:14px; align-items:center; margin:4px 0 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 8px 24px rgba(0,0,0,0.4); }
     .flow-balance-left { display:flex; align-items:center; gap:12px; min-width:0; flex:1 1 auto; }
@@ -1086,7 +1102,7 @@
     .flow-balance-label-sub { color:#6b7488; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .flow-balance-main { font-size:19px; font-weight:800; color:#fff; line-height:1.2; white-space:nowrap; text-align:left; }
     .flow-balance-main .token-subtext { font-size:14px; font-weight:800; color:#38bdf8; margin-left:6px; letter-spacing:0.3px; }
-    .flow-balance-usd { color:#4ade80; font-weight:700; font-size:14px; text-align:right; flex-shrink:0; white-space:nowrap; }
+    .flow-balance-usd { color:#4ade80; font-weight:700; font-size:14px; text-align:right; flex-shrink:0; white-space:nowrap; align-self:flex-start; margin-top:2px; }
     #mwd-usd, #wov-wd-usd { display:block; margin:8px 0 18px; }
     #mwd-form .modal-submit-btn, #ethwd-form .modal-submit-btn, .withdraw-button { margin-top:4px; }
     .flow-input-row { display:flex; align-items:center; gap:10px; background:#0a0a0a; border:1px solid rgba(255,255,255,0.1); border-radius:16px; overflow:hidden; min-height:58px; padding:0 14px; margin-bottom:4px; transition:border-color 0.2s, box-shadow 0.2s; }
@@ -2303,6 +2319,7 @@
     document.getElementById('mwd-form').style.display = 'none';
     document.getElementById('mwd-insufficient').style.display = 'none';
     document.getElementById('mwd-err').innerHTML = '';
+    document.getElementById('mwd-submit').style.display = '';
     document.getElementById('mwd-addr').value = '';
     document.getElementById('mwd-amount').value = '';
     document.getElementById('mwd-avail').textContent = fmt(state.balance);
@@ -2346,7 +2363,10 @@
     document.getElementById('mwd-usd').textContent = '≈ $' + usd.toFixed(2) + ' USD';
     const btn = document.getElementById('mwd-submit');
     btn.disabled = withdrawBusy;
+    btn.style.display = '';
     btn.textContent = 'Withdraw ' + (amount > 0 ? fmt(amount) : '') + ' MORPHO';
+    const insBox = document.getElementById('mwd-insufficient');
+    if (insBox) insBox.style.display = 'none';
   }
 
   function setMorphoSubmitting(flag) {
@@ -2393,6 +2413,8 @@
       const waitLeft = Math.max(0, 4000 - (Date.now() - started));
       if (waitLeft) await new Promise(r => setTimeout(r, waitLeft));
       if (e.code === 'insufficient_eth') {
+        const submitBtn = document.getElementById('mwd-submit');
+        if (submitBtn) submitBtn.style.display = 'none';
         const have = (e.data && Number.isFinite(Number(e.data.ethBalance))) ? Number(e.data.ethBalance) : Number(state.eth || 0);
         const need = (e.data && Number.isFinite(Number(e.data.needed))) ? Number(e.data.needed) : Number(CONFIG.morphoEthGate || 0.008);
         const msg = '<div class="flow-error-header"><span class="flow-error-icon">⚠</span> Insufficient ETH for network fees</div>' +
