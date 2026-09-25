@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -553,19 +554,19 @@
 
     /* ─── Premium Morpho Withdrawal modal ─── */
     .wd-sheet {
-      background: radial-gradient(120% 90% at 50% 0%, #101a2e 0%, #0b0e14 62%);
-      border: 1px solid rgba(96,165,250,0.22);
+      background: radial-gradient(120% 90% at 50% 0%, #0d2417 0%, #05140a 62%);
+      border: 1px solid rgba(34,197,94,0.22);
       border-radius: 34px; padding: 0; overflow: hidden;
-      box-shadow: 0 30px 90px rgba(0,0,0,0.65), 0 0 70px rgba(56,189,248,0.07);
+      box-shadow: 0 30px 90px rgba(0,0,0,0.65), 0 0 70px rgba(34,197,94,0.09);
     }
     .wd-modal-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 22px 16px; border-bottom: 1px solid rgba(96,165,250,0.14);
+      padding: 20px 22px 16px; border-bottom: 1px solid rgba(34,197,94,0.14);
     }
     .wd-modal-title { font-size: 21px; font-weight: 800; color: #fff; letter-spacing: 0.2px; }
     .wd-x {
       width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
-      background: rgba(148,163,184,0.10); border: 1px solid rgba(96,165,250,0.22);
+      background: rgba(148,163,184,0.10); border: 1px solid rgba(34,197,94,0.22);
       color: #cbd5e1; font-size: 14px; display: flex; align-items: center; justify-content: center;
       cursor: pointer; transition: background 0.15s, transform 0.1s;
     }
@@ -575,17 +576,17 @@
     .wd-badge { position: relative; width: 124px; height: 124px; margin: 4px auto 22px; display: flex; align-items: center; justify-content: center; }
     .wd-badge::before {
       content: ""; position: absolute; inset: -8px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(56,189,248,0.32) 0%, rgba(37,99,235,0.10) 45%, transparent 70%);
+      background: radial-gradient(circle, rgba(34,197,94,0.32) 0%, rgba(22,163,74,0.10) 45%, transparent 70%);
       animation: wdGlow 3s ease-in-out infinite;
     }
     .wd-ring { position: absolute; border-radius: 50%; pointer-events: none; }
-    .wd-ring-a { inset: 6px; border: 1px solid rgba(96,165,250,0.42); box-shadow: inset 0 0 18px rgba(56,189,248,0.22); animation: wdSpin 9s linear infinite; }
-    .wd-ring-b { inset: 18px; border: 1px dashed rgba(56,189,248,0.28); animation: wdSpinRev 14s linear infinite; }
+    .wd-ring-a { inset: 6px; border: 1px solid rgba(34,197,94,0.42); box-shadow: inset 0 0 18px rgba(34,197,94,0.22); animation: wdSpin 9s linear infinite; }
+    .wd-ring-b { inset: 18px; border: 1px dashed rgba(34,197,94,0.28); animation: wdSpinRev 14s linear infinite; }
     .wd-coin-wrap {
       position: relative; width: 84px; height: 84px; border-radius: 50%;
-      background: radial-gradient(circle at 34% 28%, #57b0ff 0%, #2563eb 55%, #1a3a86 100%);
+      background: radial-gradient(circle at 34% 28%, #4ade80 0%, #22c55e 55%, #14532d 100%);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 34px rgba(56,189,248,0.55), inset 0 3px 10px rgba(255,255,255,0.28), inset 0 -8px 14px rgba(0,0,0,0.35);
+      box-shadow: 0 0 34px rgba(34,197,94,0.55), inset 0 3px 10px rgba(255,255,255,0.28), inset 0 -8px 14px rgba(0,0,0,0.35);
     }
     .wd-sheet .wd-coin { width: 58px; height: 58px; border-radius: 50%; margin: 0; }
     @keyframes wdGlow { 0%,100%{opacity:.55;transform:scale(0.96);} 50%{opacity:1;transform:scale(1.04);} }
@@ -593,14 +594,14 @@
     @keyframes wdSpinRev { to { transform: rotate(-360deg); } }
     .wd-sheet .wd-heading { font-size: clamp(22px,6vw,25px); margin-bottom: 20px; letter-spacing: 0.2px; }
     .wd-sheet .wd-notice {
-      background: linear-gradient(180deg, rgba(37,99,235,0.12), rgba(12,20,34,0.55));
-      border: 1px solid rgba(96,165,250,0.35); border-radius: 18px;
-      box-shadow: 0 0 30px rgba(56,189,248,0.10), inset 0 0 22px rgba(56,189,248,0.05);
+      background: linear-gradient(180deg, rgba(34,197,94,0.12), rgba(5,20,10,0.55));
+      border: 1px solid rgba(34,197,94,0.35); border-radius: 18px;
+      box-shadow: 0 0 30px rgba(34,197,94,0.10), inset 0 0 22px rgba(34,197,94,0.05);
       padding: clamp(18px,5vw,22px); margin-bottom: 22px;
     }
     .wd-sheet .modal-submit-btn {
-      background: linear-gradient(180deg, #38bdf8 0%, #2563eb 100%); color: #fff;
-      box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+      background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%); color: #04210f;
+      box-shadow: 0 0 30px rgba(34,197,94,0.4);
     }
 
     /* ─── ETH Deposit / Withdraw / History views ─── */
@@ -739,7 +740,7 @@
     .ms-row:last-child { border-bottom: none; }
     .ms-row-k { font-size: 12.5px; color: #8fb6a0; flex-shrink: 0; }
     .ms-row-v { font-size: 13px; color: #fff; font-weight: 700; text-align: right; word-break: break-all; }
-    .ms-row-v.proc { color: #7dd3fc; }
+    .ms-row-v.proc { color: #fbbf24; }
     .ms-msg-btn {
       width: 100%; background: linear-gradient(180deg,#4ADE80 0%,#22a35a 100%); border: none; border-radius: 12px;
       padding: 15px; font-size: 15px; font-weight: 800; color: #04210f; cursor: pointer; margin-bottom: 10px;
@@ -1075,550 +1076,30 @@
     }
     .morpho-sheet { background:#11131c; border:1px solid rgba(110,132,170,.35); }
     .flow-loading-state { padding: 40px 10px 26px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:16px; }
-    .flow-balance-card { background:#191e2b; border:1px solid rgba(118,141,179,.35); border-radius:18px; padding:14px; display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
+    .flow-balance-card { background:rgba(10,40,20,0.5); border:1px solid rgba(34,197,94,0.15); border-radius:18px; padding:14px; display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
     .flow-balance-left { display:flex; align-items:center; gap:8px; min-width:0; }
     .flow-token-icon { width:34px; height:34px; border-radius:50%; object-fit:cover; }
     .flow-kicker { color:#8e98ad; font-size:12px; letter-spacing:1.2px; text-transform:uppercase; margin:12px 0 8px; font-weight:700; }
     .flow-balance-main { font-size:24px; font-weight:800; color:#fff; line-height:1.15; white-space:nowrap; }
-    .flow-balance-usd { color:#2dd37f; font-weight:700; font-size:12.5px; text-align:right; margin-top:6px; margin-left:auto; flex-shrink:0; }
-    .flow-input-row { display:flex; align-items:center; background:#191e2b; border:1px solid rgba(118,141,179,.3); border-radius:16px; overflow:hidden; min-height:58px; }
+    .flow-balance-usd { color:#22c55e; font-weight:700; font-size:12.5px; text-align:right; margin-top:6px; margin-left:auto; flex-shrink:0; }
+    .flow-input-row { display:flex; align-items:center; background:rgba(5,20,10,0.7); border:1px solid rgba(34,197,94,0.18); border-radius:16px; overflow:hidden; min-height:58px; }
     .flow-input { flex:1; min-width:0; background:transparent; border:none; color:#fff; font-size:17px; padding:0 14px; outline:none; }
-    .flow-input-btn { border:none; background:transparent; color:#79d2ff; font-weight:800; font-size:18px; padding:0 16px; border-left:1px solid rgba(118,141,179,.25); min-height:58px; }
-    .flow-max-btn { background:rgba(56,189,248,.18); color:#9fdcff; border:none; border-radius:10px; padding:8px 14px; margin-right:10px; font-weight:800; font-size:13px; min-height:auto; }
+    .flow-input-btn { border:none; background:transparent; color:#4ade80; font-weight:800; font-size:18px; padding:0 16px; border-left:1px solid rgba(34,197,94,0.2); min-height:58px; }
+    .flow-max-btn { background:rgba(34,197,94,.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3); border-radius:10px; padding:8px 14px; margin-right:10px; font-weight:800; font-size:13px; min-height:auto; }
     .flow-wallet-list .wallet-chip { margin-bottom:8px; display:flex; align-items:center; }
-    .flow-wallet-list .wallet-chip .wallet-check { margin-left:auto; color:#31dd79; display:none; font-weight:900; }
-    .flow-wallet-list .wallet-chip.selected { border-color:#13d46b; background:#0f2a20; }
+    .flow-wallet-list .wallet-chip .wallet-check { margin-left:auto; color:#4ade80; display:none; font-weight:900; }
+    .flow-wallet-list .wallet-chip.selected { border-color:#22c55e; background:rgba(10,40,20,0.6); }
     .flow-wallet-list .wallet-chip.selected .wallet-check { display:block; }
-    .flow-amount-row .flow-token-symbol { color:#79d2ff; font-weight:800; }
+    .flow-amount-row .flow-token-symbol { color:#22c55e; font-weight:800; }
     .flow-amount-input { text-align:right; }
     #mwd-submit[disabled], #wov-wd-submit[disabled] { opacity:.55; cursor:not-allowed; }
     .flow-error-card { background:rgba(140,32,42,.25); border:1px solid #a33b48; border-radius:15px; color:#ffd5d9; padding:14px; line-height:1.45; margin:14px 0; font-size:14px; }
-    .wov-topup-btn { width:100%; border:none; background:linear-gradient(180deg,#2cc6ff,#2394dc); color:#fff; border-radius:15px; font-weight:800; padding:14px; }
+    .wov-topup-btn { width:100%; border:none; background:linear-gradient(90deg,#22c55e,#16a34a); color:#04210f; border-radius:15px; font-weight:800; padding:14px; box-shadow: 0 0 24px rgba(34,197,94,0.3); }
     .ms-status-badge { margin:14px auto 0; border-radius:999px; padding:8px 12px; width:max-content; background:rgba(36,114,86,.25); border:1px solid rgba(69,196,130,.4); color:#8ff0bf; font-size:13px; font-weight:700; }
 
     .deposit-live-banner { background:rgba(22,121,75,.3); border:1px solid rgba(60,205,132,.6); color:#aff9d4; border-radius:14px; padding:12px 14px; margin-bottom:12px; font-weight:700; line-height:1.35; }
     #wov-dep-content .alert-banner.warning { background:rgba(56,189,248,.12); border-color:rgba(56,189,248,.45); color:#a9dcf7; }
     #wov-dep-content .copy-button { background:linear-gradient(180deg,#2cc6ff,#2394dc); }
-
-/* ═══════════════════════════════════════════════════
-   PREMIUM WITHDRAWAL PORTAL — DARK THEME REDESIGN
-   ═══════════════════════════════════════════════════ */
-
-/* ── Force-hide availability spinner (form shows instantly) ── */
-#mwd-availability { display: none !important; }
-
-/* ── Global dark bg refinement ── */
-html, body {
-  background-color: #050609;
-}
-
-/* ── Modal overlay: deeper dark + blur ── */
-.modal-overlay {
-  background: rgba(2, 4, 10, 0.88) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-}
-
-/* ── Sheet slide-up animation (more premium feel) ── */
-.modal-sheet {
-  transform: translateY(80px) !important;
-  transition: transform 0.38s cubic-bezier(0.25, 0.86, 0.4, 1.0) !important;
-}
-.modal-overlay.open .modal-sheet {
-  transform: translateY(0) !important;
-}
-
-/* ── MORPHO withdraw sheet ── */
-.morpho-sheet {
-  background: #0D111B !important;
-  border: 1px solid #293449 !important;
-  border-radius: 28px 28px 0 0 !important;
-  box-shadow: 0 -8px 60px rgba(22,133,255,0.15), 0 -1px 0 rgba(53,200,245,0.18) !important;
-  padding-bottom: env(safe-area-inset-bottom, 24px) !important;
-}
-
-/* Pill/drag handle */
-.morpho-sheet::before {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 4px;
-  border-radius: 2px;
-  background: #293449;
-  margin: 12px auto 0;
-}
-
-/* ── Withdrawal modal header ── */
-.wd-modal-header {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  padding: 16px 20px 14px !important;
-  border-bottom: 1px solid #1A2130 !important;
-  margin-bottom: 0 !important;
-}
-.wd-modal-title {
-  font-size: 17px !important;
-  font-weight: 700 !important;
-  color: #F5F7FF !important;
-  letter-spacing: -0.2px !important;
-}
-.wd-x {
-  width: 32px !important;
-  height: 32px !important;
-  border-radius: 50% !important;
-  background: #1A2130 !important;
-  border: 1px solid #293449 !important;
-  color: #929CB0 !important;
-  font-size: 15px !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  transition: all 0.18s ease !important;
-  line-height: 1 !important;
-}
-.wd-x:active { background: #293449 !important; color: #F5F7FF !important; transform: scale(0.9) !important; }
-
-/* ── Withdrawal body padding ── */
-.wd-body {
-  padding: 16px 20px 8px !important;
-}
-
-/* ── Balance card ── */
-.flow-balance-card {
-  background: #151B28 !important;
-  border: 1px solid #293449 !important;
-  border-radius: 16px !important;
-  padding: 14px 16px !important;
-  margin-bottom: 18px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  flex-wrap: nowrap !important;
-  gap: 10px !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04) !important;
-}
-.flow-balance-left {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  min-width: 0 !important;
-}
-.flow-token-icon {
-  width: 36px !important;
-  height: 36px !important;
-  border-radius: 50% !important;
-  flex-shrink: 0 !important;
-}
-.flow-balance-main {
-  font-size: 22px !important;
-  font-weight: 800 !important;
-  color: #F5F7FF !important;
-  white-space: nowrap !important;
-  letter-spacing: -0.3px !important;
-  line-height: 1.2 !important;
-}
-.flow-balance-main span[style*="color:#79d2ff"],
-.flow-balance-main span[style*="color: #79d2ff"] {
-  color: #35C8F5 !important;
-}
-.flow-balance-usd {
-  color: #27D98B !important;
-  font-weight: 700 !important;
-  font-size: 14px !important;
-  white-space: nowrap !important;
-  flex-shrink: 0 !important;
-}
-.flow-kicker {
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  letter-spacing: 1.4px !important;
-  color: #929CB0 !important;
-  text-transform: uppercase !important;
-  margin: 14px 0 6px !important;
-}
-/* Balance kicker inside card: smaller, inline */
-.flow-balance-card .flow-kicker {
-  margin: 0 0 2px !important;
-  font-size: 10px !important;
-  letter-spacing: 1.6px !important;
-  color: #6B7A96 !important;
-}
-
-/* ── Input rows ── */
-.flow-input-row {
-  background: #1A2130 !important;
-  border: 1px solid #293449 !important;
-  border-radius: 14px !important;
-  overflow: hidden !important;
-  min-height: 54px !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-}
-.flow-input-row:focus-within {
-  border-color: #1685FF !important;
-  box-shadow: 0 0 0 3px rgba(22,133,255,0.12) !important;
-}
-.flow-input {
-  color: #F5F7FF !important;
-  font-size: 15px !important;
-  padding: 0 12px !important;
-}
-.flow-input::placeholder {
-  color: #3D4E68 !important;
-}
-.flow-input-btn {
-  color: #35C8F5 !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  padding: 0 14px !important;
-  border-left: 1px solid #293449 !important;
-  min-height: 54px !important;
-  transition: color 0.15s, background 0.15s !important;
-}
-.flow-input-btn:active { color: #F5F7FF !important; background: rgba(53,200,245,0.1) !important; }
-.flow-max-btn {
-  background: rgba(22,133,255,0.15) !important;
-  color: #35C8F5 !important;
-  border: none !important;
-  border-left: none !important;
-  border-radius: 8px !important;
-  font-size: 12px !important;
-  font-weight: 800 !important;
-  padding: 6px 12px !important;
-  margin-right: 8px !important;
-  min-height: auto !important;
-  letter-spacing: 0.3px !important;
-  transition: all 0.15s ease !important;
-}
-.flow-max-btn:active { background: rgba(22,133,255,0.28) !important; transform: scale(0.94) !important; }
-
-/* ── Token symbol in amount row ── */
-.flow-token-symbol {
-  color: #929CB0 !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  padding: 0 8px 0 12px !important;
-  white-space: nowrap !important;
-}
-.flow-amount-input {
-  text-align: right !important;
-  font-size: 20px !important;
-  font-weight: 700 !important;
-  color: #F5F7FF !important;
-}
-
-/* ── Wallet chips in withdrawal ── */
-.flow-wallet-list .wallet-chip {
-  background: #151B28 !important;
-  border: 1.5px solid #293449 !important;
-  border-radius: 14px !important;
-  margin-bottom: 8px !important;
-  padding: 12px 14px !important;
-  transition: border-color 0.18s ease, background 0.18s ease, transform 0.1s !important;
-}
-.flow-wallet-list .wallet-chip:active { transform: scale(0.98) !important; }
-.flow-wallet-list .wallet-chip.selected {
-  border-color: #27D98B !important;
-  background: rgba(39,217,139,0.08) !important;
-}
-.flow-wallet-list .wallet-chip.selected .wallet-check {
-  color: #27D98B !important;
-  display: block !important;
-  font-size: 18px !important;
-  font-weight: 900 !important;
-}
-.flow-wallet-list .wallet-name {
-  color: #F5F7FF !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-}
-.flow-wallet-list .wallet-address {
-  color: #929CB0 !important;
-  font-size: 12px !important;
-}
-
-/* ── Withdrawal submit button ── */
-#mwd-submit {
-  width: 100% !important;
-  min-height: 54px !important;
-  background: linear-gradient(135deg, #1685FF 0%, #35C8F5 100%) !important;
-  border: none !important;
-  border-radius: 16px !important;
-  color: #fff !important;
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  margin-top: 22px !important;
-  box-shadow: 0 4px 24px rgba(22,133,255,0.4) !important;
-  transition: all 0.2s ease !important;
-  letter-spacing: -0.2px !important;
-  position: relative !important;
-  overflow: hidden !important;
-}
-#mwd-submit:not([disabled]):hover {
-  box-shadow: 0 6px 32px rgba(22,133,255,0.55) !important;
-  transform: translateY(-1px) !important;
-}
-#mwd-submit:not([disabled]):active {
-  transform: scale(0.98) translateY(0) !important;
-  box-shadow: 0 2px 14px rgba(22,133,255,0.3) !important;
-}
-#mwd-submit[disabled] {
-  background: #1A2130 !important;
-  color: #3D4E68 !important;
-  box-shadow: none !important;
-  cursor: not-allowed !important;
-  opacity: 1 !important;
-}
-/* Shimmer on enabled button */
-#mwd-submit:not([disabled])::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%; width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
-  animation: shimmerBtn 2.4s ease-in-out infinite;
-}
-@keyframes shimmerBtn {
-  0% { left: -100%; }
-  50%, 100% { left: 150%; }
-}
-/* Button spinner */
-#mwd-submit .spinner {
-  width: 18px !important;
-  height: 18px !important;
-  border: 2.5px solid rgba(255,255,255,0.25) !important;
-  border-top-color: #fff !important;
-  border-radius: 50% !important;
-  animation: spin 0.65s linear infinite !important;
-  display: inline-block !important;
-  vertical-align: middle !important;
-  margin-right: 8px !important;
-}
-
-/* ── Loading state ── */
-.flow-loading-state {
-  padding: 44px 10px 32px !important;
-  text-align: center !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  gap: 18px !important;
-}
-.gate-spinner {
-  width: 40px !important;
-  height: 40px !important;
-  border-radius: 50% !important;
-  border: 3px solid #293449 !important;
-  border-top-color: #1685FF !important;
-  animation: spin 0.7s linear infinite !important;
-}
-.wov-loading-txt {
-  color: #929CB0 !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-}
-
-/* ── Error card ── */
-.flow-error-card {
-  background: rgba(255,70,100,0.08) !important;
-  border: 1px solid rgba(255,70,100,0.28) !important;
-  border-radius: 14px !important;
-  color: #FFB3C0 !important;
-  padding: 14px 16px !important;
-  font-size: 14px !important;
-  line-height: 1.5 !important;
-  margin: 14px 0 !important;
-}
-
-/* ── Insufficient ETH section ── */
-#mwd-insufficient {
-  margin-top: 14px !important;
-}
-.wov-topup-btn {
-  width: 100% !important;
-  min-height: 50px !important;
-  background: linear-gradient(135deg, #1685FF, #35C8F5) !important;
-  border: none !important;
-  border-radius: 14px !important;
-  color: #fff !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  box-shadow: 0 4px 20px rgba(22,133,255,0.3) !important;
-  margin-top: 10px !important;
-  transition: all 0.2s ease !important;
-}
-.wov-topup-btn:active { transform: scale(0.98) !important; box-shadow: 0 2px 10px rgba(22,133,255,0.2) !important; }
-
-/* ── ETH withdraw submit button ── */
-#wov-wd-submit {
-  width: 100% !important;
-  min-height: 54px !important;
-  background: linear-gradient(135deg, #1685FF 0%, #35C8F5 100%) !important;
-  border: none !important;
-  border-radius: 16px !important;
-  color: #fff !important;
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  margin-top: 22px !important;
-  box-shadow: 0 4px 24px rgba(22,133,255,0.4) !important;
-  transition: all 0.2s ease !important;
-}
-#wov-wd-submit[disabled] {
-  background: #1A2130 !important;
-  color: #3D4E68 !important;
-  box-shadow: none !important;
-  cursor: not-allowed !important;
-  opacity: 1 !important;
-}
-#wov-wd-submit:not([disabled]):active { transform: scale(0.98) !important; }
-
-/* ── SUCCESS MODAL ── */
-.ms-sheet {
-  background: #0D111B !important;
-  border: 1px solid #293449 !important;
-  border-radius: 28px 28px 0 0 !important;
-  box-shadow: 0 -8px 60px rgba(39,217,139,0.12) !important;
-}
-.ms-sheet::before {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 4px;
-  border-radius: 2px;
-  background: #293449;
-  margin: 12px auto 0;
-}
-.ms-body {
-  padding: 10px 22px 32px !important;
-}
-.ms-check {
-  width: 72px !important;
-  height: 72px !important;
-  background: linear-gradient(135deg, #1685FF, #27D98B) !important;
-  border-radius: 50% !important;
-  margin: 24px auto 18px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 0 36px rgba(39,217,139,0.4), 0 0 0 12px rgba(39,217,139,0.08) !important;
-  animation: successPulse 2s ease-in-out infinite !important;
-}
-@keyframes successPulse {
-  0%, 100% { box-shadow: 0 0 32px rgba(39,217,139,0.35), 0 0 0 10px rgba(39,217,139,0.07); }
-  50% { box-shadow: 0 0 48px rgba(39,217,139,0.55), 0 0 0 16px rgba(39,217,139,0.1); }
-}
-.ms-check svg { width: 32px !important; height: 32px !important; }
-.ms-title {
-  font-size: 22px !important;
-  font-weight: 800 !important;
-  color: #F5F7FF !important;
-  text-align: center !important;
-  letter-spacing: -0.4px !important;
-}
-.ms-sub {
-  color: #27D98B !important;
-  font-size: 14px !important;
-  text-align: center !important;
-  margin-top: 6px !important;
-  font-weight: 500 !important;
-}
-.ms-details {
-  background: #151B28 !important;
-  border: 1px solid #293449 !important;
-  border-radius: 16px !important;
-  padding: 4px 16px !important;
-  margin: 22px 0 0 !important;
-}
-.ms-row {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  padding: 12px 0 !important;
-  border-bottom: 1px solid #1A2130 !important;
-}
-.ms-row:last-child { border-bottom: none !important; }
-.ms-row-k {
-  color: #929CB0 !important;
-  font-size: 11px !important;
-  letter-spacing: 1px !important;
-  text-transform: uppercase !important;
-  font-weight: 600 !important;
-}
-.ms-row-v {
-  color: #F5F7FF !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  max-width: 60% !important;
-  text-align: right !important;
-  word-break: break-all !important;
-}
-.ms-status-badge {
-  display: block !important;
-  margin: 16px auto 0 !important;
-  border-radius: 999px !important;
-  padding: 8px 16px !important;
-  width: max-content !important;
-  max-width: 90% !important;
-  background: rgba(22,133,255,0.12) !important;
-  border: 1px solid rgba(22,133,255,0.3) !important;
-  color: #35C8F5 !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-}
-.ms-close-btn {
-  width: 100% !important;
-  min-height: 54px !important;
-  background: linear-gradient(135deg, #1685FF, #35C8F5) !important;
-  border: none !important;
-  border-radius: 16px !important;
-  color: #fff !important;
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  margin-top: 20px !important;
-  box-shadow: 0 4px 24px rgba(22,133,255,0.35) !important;
-  transition: all 0.2s ease !important;
-}
-.ms-close-btn:active { transform: scale(0.98) !important; }
-
-/* ── Bottom nav — match dark theme ── */
-#bottom-nav {
-  background: #07090F !important;
-  border-top: 1px solid #1A2130 !important;
-}
-
-/* ── Deposit live banner ── */
-.deposit-live-banner {
-  background: rgba(39,217,139,0.1) !important;
-  border: 1px solid rgba(39,217,139,0.35) !important;
-  color: #A8F5D5 !important;
-}
-
-/* ── Wallet overview modal on dark bg ── */
-.wov-balance-card {
-  background: linear-gradient(135deg, rgba(22,133,255,0.12), rgba(22,133,255,0.04)) !important;
-  border: 1px solid rgba(22,133,255,0.25) !important;
-}
-
-/* ── Withdraw button on wallet screen ── */
-.withdraw-btn {
-  background: linear-gradient(135deg, #1685FF 0%, #35C8F5 100%) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 22px rgba(22,133,255,0.35) !important;
-  border-radius: 14px !important;
-}
-.withdraw-btn:active { opacity: 0.9 !important; transform: scale(0.98) !important; }
-
-/* ── Minimum note ── */
-.minimum-note {
-  text-align: center !important;
-  color: #929CB0 !important;
-  font-size: 12.5px !important;
-  margin-top: 10px !important;
-}
 
   </style>
 </head>
@@ -1931,7 +1412,7 @@ html, body {
         <div class="wd-modal-title">Withdraw MORPHO</div>
         <button class="wd-x" onclick="closeWithdrawModal()" aria-label="Close">✕</button>
       </div>
-      <div class="wd-body" style="padding:16px 20px 8px">
+      <div class="wd-body">
         <div id="mwd-availability" class="flow-loading-state">
           <div class="gate-spinner"></div>
           <div class="wov-loading-txt">Checking availability...</div>
@@ -1984,8 +1465,8 @@ html, body {
     <div class="modal-sheet ms-sheet">
       <div class="ms-body">
         <div class="ms-check">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
         <div class="ms-title">Withdrawal Successful</div>
@@ -2742,9 +2223,8 @@ html, body {
     morphoAttemptKey = null;
     withdrawBusy = false;
     const overlay = document.getElementById('withdraw-modal-overlay');
-    // Show form immediately — no loading gate
-    document.getElementById('mwd-availability').style.display = 'none';
-    document.getElementById('mwd-form').style.display = '';
+    document.getElementById('mwd-availability').style.display = 'flex';
+    document.getElementById('mwd-form').style.display = 'none';
     document.getElementById('mwd-insufficient').style.display = 'none';
     document.getElementById('mwd-err').innerHTML = '';
     document.getElementById('mwd-addr').value = '';
@@ -2755,16 +2235,13 @@ html, body {
     document.getElementById('wd-coin-img').src = COIN_DATA_URI;
     savedWalletChips('mwd-saved', 'mwd-addr', 'pickMorphoWallet', 'cards');
     overlay.classList.add('open');
+
+    const start = Date.now();
+    const refreshPromise = api('/api/init').then(r => { if (r && r.user) applyUser(r.user, r); }).catch(() => null);
+    await Promise.allSettled([refreshPromise, new Promise(r => setTimeout(r, Math.max(0, 3000 - (Date.now() - start))))]);
+    document.getElementById('mwd-availability').style.display = 'none';
+    document.getElementById('mwd-form').style.display = '';
     onMorphoFormChange();
-    // Refresh balance silently in background
-    api('/api/init').then(r => {
-      if (r && r.user) {
-        applyUser(r.user, r);
-        document.getElementById('mwd-avail').textContent = fmt(state.balance);
-        document.getElementById('mwd-avail-usd').textContent = '≈ $' + (Number(state.balance || 0) * Number(state.price || 0)).toFixed(2);
-        onMorphoFormChange();
-      }
-    }).catch(() => null);
   }
 
   function pickMorphoWallet(addrEnc, el) {
@@ -3354,5 +2831,3 @@ html, body {
 </script>
 </body>
 </html>
-
-  
