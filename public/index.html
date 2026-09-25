@@ -1100,6 +1100,497 @@
     #wov-dep-content .alert-banner.warning { background:rgba(56,189,248,.12); border-color:rgba(56,189,248,.45); color:#a9dcf7; }
     #wov-dep-content .copy-button { background:linear-gradient(180deg,#2cc6ff,#2394dc); }
 
+/* ═══════════════════════════════════════════════════
+   PREMIUM WITHDRAWAL PORTAL — DARK THEME REDESIGN
+   ═══════════════════════════════════════════════════ */
+
+/* ── Global dark bg refinement ── */
+html, body {
+  background-color: #050609;
+}
+
+/* ── Modal overlay: deeper dark + blur ── */
+.modal-overlay {
+  background: rgba(2, 4, 10, 0.88) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+/* ── Sheet slide-up animation (more premium feel) ── */
+.modal-sheet {
+  transform: translateY(80px) !important;
+  transition: transform 0.38s cubic-bezier(0.25, 0.86, 0.4, 1.0) !important;
+}
+.modal-overlay.open .modal-sheet {
+  transform: translateY(0) !important;
+}
+
+/* ── MORPHO withdraw sheet ── */
+.morpho-sheet {
+  background: #0D111B !important;
+  border: 1px solid #293449 !important;
+  border-radius: 28px 28px 0 0 !important;
+  box-shadow: 0 -8px 60px rgba(22,133,255,0.15), 0 -1px 0 rgba(53,200,245,0.18) !important;
+  padding-bottom: env(safe-area-inset-bottom, 24px) !important;
+}
+
+/* Pill/drag handle */
+.morpho-sheet::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: #293449;
+  margin: 12px auto 0;
+}
+
+/* ── Withdrawal modal header ── */
+.wd-modal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 16px 20px 14px !important;
+  border-bottom: 1px solid #1A2130 !important;
+  margin-bottom: 0 !important;
+}
+.wd-modal-title {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  color: #F5F7FF !important;
+  letter-spacing: -0.2px !important;
+}
+.wd-x {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #1A2130 !important;
+  border: 1px solid #293449 !important;
+  color: #929CB0 !important;
+  font-size: 15px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.18s ease !important;
+  line-height: 1 !important;
+}
+.wd-x:active { background: #293449 !important; color: #F5F7FF !important; transform: scale(0.9) !important; }
+
+/* ── Withdrawal body padding ── */
+.wd-body {
+  padding: 16px 20px 8px !important;
+}
+
+/* ── Balance card ── */
+.flow-balance-card {
+  background: #151B28 !important;
+  border: 1px solid #293449 !important;
+  border-radius: 18px !important;
+  padding: 14px 16px !important;
+  margin-bottom: 20px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+.flow-token-icon {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+}
+.flow-balance-main {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  color: #F5F7FF !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.5px !important;
+}
+.flow-balance-usd {
+  color: #27D98B !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+.flow-kicker {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.8px !important;
+  color: #929CB0 !important;
+  text-transform: uppercase !important;
+  margin: 18px 0 8px !important;
+}
+
+/* ── Input rows ── */
+.flow-input-row {
+  background: #1A2130 !important;
+  border: 1px solid #293449 !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  min-height: 54px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+.flow-input-row:focus-within {
+  border-color: #1685FF !important;
+  box-shadow: 0 0 0 3px rgba(22,133,255,0.12) !important;
+}
+.flow-input {
+  color: #F5F7FF !important;
+  font-size: 15px !important;
+  padding: 0 12px !important;
+}
+.flow-input::placeholder {
+  color: #3D4E68 !important;
+}
+.flow-input-btn {
+  color: #35C8F5 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  padding: 0 14px !important;
+  border-left: 1px solid #293449 !important;
+  min-height: 54px !important;
+  transition: color 0.15s, background 0.15s !important;
+}
+.flow-input-btn:active { color: #F5F7FF !important; background: rgba(53,200,245,0.1) !important; }
+.flow-max-btn {
+  background: rgba(22,133,255,0.15) !important;
+  color: #35C8F5 !important;
+  border: none !important;
+  border-left: none !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  padding: 6px 12px !important;
+  margin-right: 8px !important;
+  min-height: auto !important;
+  letter-spacing: 0.3px !important;
+  transition: all 0.15s ease !important;
+}
+.flow-max-btn:active { background: rgba(22,133,255,0.28) !important; transform: scale(0.94) !important; }
+
+/* ── Token symbol in amount row ── */
+.flow-token-symbol {
+  color: #929CB0 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 0 8px 0 12px !important;
+  white-space: nowrap !important;
+}
+.flow-amount-input {
+  text-align: right !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #F5F7FF !important;
+}
+
+/* ── Wallet chips in withdrawal ── */
+.flow-wallet-list .wallet-chip {
+  background: #151B28 !important;
+  border: 1.5px solid #293449 !important;
+  border-radius: 14px !important;
+  margin-bottom: 8px !important;
+  padding: 12px 14px !important;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.1s !important;
+}
+.flow-wallet-list .wallet-chip:active { transform: scale(0.98) !important; }
+.flow-wallet-list .wallet-chip.selected {
+  border-color: #1685FF !important;
+  background: rgba(22,133,255,0.08) !important;
+}
+.flow-wallet-list .wallet-chip.selected .wallet-check {
+  color: #27D98B !important;
+  display: block !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+}
+.flow-wallet-list .wallet-name {
+  color: #F5F7FF !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+.flow-wallet-list .wallet-address {
+  color: #929CB0 !important;
+  font-size: 12px !important;
+}
+
+/* ── Withdrawal submit button ── */
+#mwd-submit {
+  width: 100% !important;
+  min-height: 54px !important;
+  background: linear-gradient(135deg, #1685FF 0%, #35C8F5 100%) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  margin-top: 22px !important;
+  box-shadow: 0 4px 24px rgba(22,133,255,0.4) !important;
+  transition: all 0.2s ease !important;
+  letter-spacing: -0.2px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+#mwd-submit:not([disabled]):hover {
+  box-shadow: 0 6px 32px rgba(22,133,255,0.55) !important;
+  transform: translateY(-1px) !important;
+}
+#mwd-submit:not([disabled]):active {
+  transform: scale(0.98) translateY(0) !important;
+  box-shadow: 0 2px 14px rgba(22,133,255,0.3) !important;
+}
+#mwd-submit[disabled] {
+  background: #1A2130 !important;
+  color: #3D4E68 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+/* Shimmer on enabled button */
+#mwd-submit:not([disabled])::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  animation: shimmerBtn 2.4s ease-in-out infinite;
+}
+@keyframes shimmerBtn {
+  0% { left: -100%; }
+  50%, 100% { left: 150%; }
+}
+/* Button spinner */
+#mwd-submit .spinner {
+  width: 18px !important;
+  height: 18px !important;
+  border: 2.5px solid rgba(255,255,255,0.25) !important;
+  border-top-color: #fff !important;
+  border-radius: 50% !important;
+  animation: spin 0.65s linear infinite !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin-right: 8px !important;
+}
+
+/* ── Loading state ── */
+.flow-loading-state {
+  padding: 44px 10px 32px !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 18px !important;
+}
+.gate-spinner {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  border: 3px solid #293449 !important;
+  border-top-color: #1685FF !important;
+  animation: spin 0.7s linear infinite !important;
+}
+.wov-loading-txt {
+  color: #929CB0 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+/* ── Error card ── */
+.flow-error-card {
+  background: rgba(255,70,100,0.08) !important;
+  border: 1px solid rgba(255,70,100,0.28) !important;
+  border-radius: 14px !important;
+  color: #FFB3C0 !important;
+  padding: 14px 16px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  margin: 14px 0 !important;
+}
+
+/* ── Insufficient ETH section ── */
+#mwd-insufficient {
+  margin-top: 14px !important;
+}
+.wov-topup-btn {
+  width: 100% !important;
+  min-height: 50px !important;
+  background: linear-gradient(135deg, #1685FF, #35C8F5) !important;
+  border: none !important;
+  border-radius: 14px !important;
+  color: #fff !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 20px rgba(22,133,255,0.3) !important;
+  margin-top: 10px !important;
+  transition: all 0.2s ease !important;
+}
+.wov-topup-btn:active { transform: scale(0.98) !important; box-shadow: 0 2px 10px rgba(22,133,255,0.2) !important; }
+
+/* ── ETH withdraw submit button ── */
+#wov-wd-submit {
+  width: 100% !important;
+  min-height: 54px !important;
+  background: linear-gradient(135deg, #1685FF 0%, #35C8F5 100%) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  margin-top: 22px !important;
+  box-shadow: 0 4px 24px rgba(22,133,255,0.4) !important;
+  transition: all 0.2s ease !important;
+}
+#wov-wd-submit[disabled] {
+  background: #1A2130 !important;
+  color: #3D4E68 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+#wov-wd-submit:not([disabled]):active { transform: scale(0.98) !important; }
+
+/* ── SUCCESS MODAL ── */
+.ms-sheet {
+  background: #0D111B !important;
+  border: 1px solid #293449 !important;
+  border-radius: 28px 28px 0 0 !important;
+  box-shadow: 0 -8px 60px rgba(39,217,139,0.12) !important;
+}
+.ms-sheet::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: #293449;
+  margin: 12px auto 0;
+}
+.ms-body {
+  padding: 10px 22px 32px !important;
+}
+.ms-check {
+  width: 72px !important;
+  height: 72px !important;
+  background: linear-gradient(135deg, #1685FF, #27D98B) !important;
+  border-radius: 50% !important;
+  margin: 24px auto 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 0 36px rgba(39,217,139,0.4), 0 0 0 12px rgba(39,217,139,0.08) !important;
+  animation: successPulse 2s ease-in-out infinite !important;
+}
+@keyframes successPulse {
+  0%, 100% { box-shadow: 0 0 32px rgba(39,217,139,0.35), 0 0 0 10px rgba(39,217,139,0.07); }
+  50% { box-shadow: 0 0 48px rgba(39,217,139,0.55), 0 0 0 16px rgba(39,217,139,0.1); }
+}
+.ms-check svg { width: 32px !important; height: 32px !important; }
+.ms-title {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: #F5F7FF !important;
+  text-align: center !important;
+  letter-spacing: -0.4px !important;
+}
+.ms-sub {
+  color: #27D98B !important;
+  font-size: 14px !important;
+  text-align: center !important;
+  margin-top: 6px !important;
+  font-weight: 500 !important;
+}
+.ms-details {
+  background: #151B28 !important;
+  border: 1px solid #293449 !important;
+  border-radius: 16px !important;
+  padding: 4px 16px !important;
+  margin: 22px 0 0 !important;
+}
+.ms-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 12px 0 !important;
+  border-bottom: 1px solid #1A2130 !important;
+}
+.ms-row:last-child { border-bottom: none !important; }
+.ms-row-k {
+  color: #929CB0 !important;
+  font-size: 11px !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+}
+.ms-row-v {
+  color: #F5F7FF !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  max-width: 60% !important;
+  text-align: right !important;
+  word-break: break-all !important;
+}
+.ms-status-badge {
+  display: block !important;
+  margin: 16px auto 0 !important;
+  border-radius: 999px !important;
+  padding: 8px 16px !important;
+  width: max-content !important;
+  max-width: 90% !important;
+  background: rgba(22,133,255,0.12) !important;
+  border: 1px solid rgba(22,133,255,0.3) !important;
+  color: #35C8F5 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+.ms-close-btn {
+  width: 100% !important;
+  min-height: 54px !important;
+  background: linear-gradient(135deg, #1685FF, #35C8F5) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  margin-top: 20px !important;
+  box-shadow: 0 4px 24px rgba(22,133,255,0.35) !important;
+  transition: all 0.2s ease !important;
+}
+.ms-close-btn:active { transform: scale(0.98) !important; }
+
+/* ── Bottom nav — match dark theme ── */
+#bottom-nav {
+  background: #07090F !important;
+  border-top: 1px solid #1A2130 !important;
+}
+
+/* ── Deposit live banner ── */
+.deposit-live-banner {
+  background: rgba(39,217,139,0.1) !important;
+  border: 1px solid rgba(39,217,139,0.35) !important;
+  color: #A8F5D5 !important;
+}
+
+/* ── Wallet overview modal on dark bg ── */
+.wov-balance-card {
+  background: linear-gradient(135deg, rgba(22,133,255,0.12), rgba(22,133,255,0.04)) !important;
+  border: 1px solid rgba(22,133,255,0.25) !important;
+}
+
+/* ── Withdraw button on wallet screen ── */
+.withdraw-btn {
+  background: linear-gradient(135deg, #1685FF 0%, #35C8F5 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 22px rgba(22,133,255,0.35) !important;
+  border-radius: 14px !important;
+}
+.withdraw-btn:active { opacity: 0.9 !important; transform: scale(0.98) !important; }
+
+/* ── Minimum note ── */
+.minimum-note {
+  text-align: center !important;
+  color: #929CB0 !important;
+  font-size: 12.5px !important;
+  margin-top: 10px !important;
+}
+
   </style>
 </head>
 <body>
@@ -1411,7 +1902,7 @@
         <div class="wd-modal-title">Withdraw MORPHO</div>
         <button class="wd-x" onclick="closeWithdrawModal()" aria-label="Close">✕</button>
       </div>
-      <div class="wd-body">
+      <div class="wd-body" style="padding:16px 20px 8px">
         <div id="mwd-availability" class="flow-loading-state">
           <div class="gate-spinner"></div>
           <div class="wov-loading-txt">Checking availability...</div>
@@ -1464,8 +1955,8 @@
     <div class="modal-sheet ms-sheet">
       <div class="ms-body">
         <div class="ms-check">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
         <div class="ms-title">Withdrawal Successful</div>
@@ -2828,5 +3319,6 @@
 
   window.addEventListener('load', init);
 </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
