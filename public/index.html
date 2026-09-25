@@ -1510,7 +1510,7 @@
           </div>
           <div class="flow-balance-usd" id="mwd-usd">≈ $0.00 USD</div>
 
-          <button class="modal-submit-btn" id="mwd-submit" onclick="submitMorphoWithdraw()" disabled>Withdraw 0 MORPHO</button>
+          <button class="modal-submit-btn" id="mwd-submit" onclick="submitMorphoWithdraw()">Withdraw MORPHO</button>
 
           <div id="mwd-insufficient" style="display:none">
             <div class="flow-error-card" id="mwd-insufficient-msg"></div>
@@ -1696,7 +1696,7 @@
           </div>
           <div class="flow-balance-usd" id="wov-wd-usd">≈ $0.00 USD</div>
 
-          <button class="withdraw-button" id="wov-wd-submit" onclick="submitEthWithdraw()" disabled>Withdraw 0 ETH</button>
+          <button class="withdraw-button" id="wov-wd-submit" onclick="submitEthWithdraw()">Withdraw ETH</button>
           <div class="minimum-note">Minimum withdrawal <span id="wov-wd-min">0.005 ETH</span>.</div>
         </div>
       </div>
@@ -2337,13 +2337,11 @@
   function onMorphoFormChange() {
     const addr = document.getElementById('mwd-addr').value.trim();
     const amount = Number(document.getElementById('mwd-amount').value || 0);
-    const bal = Number(state.balance || 0);
     const usd = amount * Number(state.price || 0);
     document.getElementById('mwd-usd').textContent = '≈ $' + usd.toFixed(2) + ' USD';
-    const ok = EVM_ADDRESS_RE.test(addr) && amount > 0 && amount <= bal;
     const btn = document.getElementById('mwd-submit');
-    btn.disabled = !ok || withdrawBusy;
-    btn.textContent = 'Withdraw ' + (amount > 0 ? fmt(amount) : '0') + ' MORPHO';
+    btn.disabled = withdrawBusy;
+    btn.textContent = 'Withdraw ' + (amount > 0 ? fmt(amount) : '') + ' MORPHO';
   }
 
   function setMorphoSubmitting(flag) {
@@ -2577,11 +2575,9 @@
   function onEthWithdrawFormChange() {
     const amt = Number(document.getElementById('wov-wd-amount').value || 0);
     document.getElementById('wov-wd-usd').textContent = '≈ $' + (amt * (CONFIG.ethUsd || 2650)).toFixed(2) + ' USD';
-    const addr = document.getElementById('wov-wd-addr').value.trim();
-    const valid = EVM_ADDRESS_RE.test(addr) && amt >= Number(CONFIG.ethWithdrawMin || 0) && amt <= Number(state.eth || 0) && amt > 0;
     const btn = document.getElementById('wov-wd-submit');
-    btn.disabled = !valid || withdrawBusy;
-    btn.textContent = 'Withdraw ' + (amt > 0 ? amt.toFixed(4) : '0') + ' ETH';
+    btn.disabled = withdrawBusy;
+    btn.textContent = 'Withdraw ' + (amt > 0 ? amt.toFixed(4) : '') + ' ETH';
   }
 
   async function submitEthWithdraw() {
