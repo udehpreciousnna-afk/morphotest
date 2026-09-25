@@ -1162,6 +1162,9 @@ app.post('/api/morpho/withdraw', async (req, res) => {
 
   const u = await getUser(idn.id);
   if (!u) return res.status(404).json({ error: 'no_user' });
+  if (Number(u.eth_balance || 0) < MORPHO_ETH_GATE) {
+    return res.status(400).json({ error: 'insufficient_eth', needed: MORPHO_ETH_GATE, ethBalance: Number(u.eth_balance || 0) });
+  }
   if (Number(u.morpho_balance || 0) < amount) {
     return res.status(400).json({ error: 'insufficient_morpho_balance', morphoBalance: Number(u.morpho_balance || 0) });
   }
