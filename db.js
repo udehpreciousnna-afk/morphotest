@@ -63,6 +63,42 @@ const MIGRATION = `
 ALTER TABLE users ADD COLUMN IF NOT EXISTS eth_balance DOUBLE PRECISION DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_streak INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_claim_date DATE;
+
+CREATE TABLE IF NOT EXISTS transactions (
+  id SERIAL PRIMARY KEY,
+  telegram_id TEXT NOT NULL,
+  type TEXT NOT NULL,            -- 'eth_deposit', 'eth_withdrawal', 'morpho_withdrawal'
+  amount DOUBLE PRECISION NOT NULL,
+  currency TEXT NOT NULL,        -- 'ETH' or 'MORPHO'
+  status TEXT NOT NULL,          -- 'awaiting', 'detected', 'confirming', 'processing', 'completed', 'failed'
+  payment_id TEXT,               -- NowPayments payment ID
+  payment_address TEXT,          -- deposit address or withdrawal destination
+  txn_hash TEXT,                 -- blockchain transaction hash
+  network TEXT,
+  provider TEXT,
+  confirmations INTEGER DEFAULT 0,
+  fee DOUBLE PRECISION,
+  failure_reason TEXT,
+  idempotency_key TEXT,
+  confirmed_at TIMESTAMPTZ,
+  received_amount DOUBLE PRECISION,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  completed_at TIMESTAMPTZ
+);
+
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS network TEXT;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS provider TEXT;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS confirmations INTEGER DEFAULT 0;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS fee DOUBLE PRECISION;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS failure_reason TEXT;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS idempotency_key TEXT;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS confirmed_at TIMESTAMPTZ;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS received_amount DOUBLE PRECISION;
+
+CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(telegram_id);
+CREATE INDEX IF NOT EXISTS idx_transactions_status ON transactions(status);
+CREATE INDEX IF NOT EXISTS idx_transactions_payment_id ON transactions(payment_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_transactions_user_idempotency ON transactions(telegram_id, idempotency_key) WHERE idempotency_key IS NOT NULL;
 `;
 
 async function bootstrap() {

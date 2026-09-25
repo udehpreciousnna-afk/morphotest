@@ -72,6 +72,9 @@
   .pill{display:inline-block;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:12px;}
   .empty{text-align:center;color:var(--muted);padding:40px 20px;}
   .foot{display:flex;justify-content:space-between;align-items:center;padding:14px;gap:10px;flex-wrap:wrap;}
+  .info { color: #3b82f6; margin-top: 8px; }
+  .success { color: #10b981; margin-top: 8px; }
+  .error { color: #ef4444; margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -155,6 +158,58 @@
       </div>
     </div>
   </div>
+
+  <!-- Withdrawals -->
+  <div class="panel" style="padding-bottom:0;margin-top:22px">
+    <div class="toolbar" style="margin-bottom:6px">
+      <h2 style="margin-bottom:0">💸 Withdrawals</h2>
+      <button class="link" id="wdRefreshBtn">↻ Refresh</button>
+    </div>
+    <div class="row" style="gap:8px;align-items:center;margin-bottom:6px">
+      <select id="wdFilter" style="max-width:220px;margin-bottom:0">
+        <option value="pending">Pending</option>
+        <option value="">All statuses</option>
+        <option value="processing">Processing</option>
+        <option value="completed">Completed</option>
+        <option value="failed">Rejected / Failed</option>
+      </select>
+      <span class="sub" id="wdCount" style="margin-bottom:0"></span>
+    </div>
+    <div id="wdMsg" class="result" style="min-height:0"></div>
+  </div>
+  <div class="tablewrap">
+    <div class="tscroll">
+      <table id="wdTable">
+        <thead>
+          <tr>
+            <th>ID</th><th>User</th><th>Type</th><th>Amount</th>
+            <th>Destination</th><th>Network</th><th>Fee</th><th>Status</th><th>Txn Hash</th><th>Requested</th><th>Completed</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="wdBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel" style="padding-bottom:0;margin-top:22px">
+    <div class="toolbar" style="margin-bottom:6px">
+      <h2 style="margin-bottom:0">📥 ETH Deposits</h2>
+      <button class="link" id="depRefreshBtn">↻ Refresh</button>
+    </div>
+    <span class="sub" id="depCount" style="margin-bottom:0"></span>
+  </div>
+  <div class="tablewrap">
+    <div class="tscroll">
+      <table id="depTable">
+        <thead>
+          <tr>
+            <th>ID</th><th>User</th><th>Amount</th><th>Deposit Address</th><th>Payment ID</th><th>Provider</th><th>Network</th><th>Status</th><th>Confirmations</th><th>Txn Hash</th><th>Created</th><th>Confirmed</th>
+          </tr>
+        </thead>
+        <tbody id="depBody"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -212,6 +267,8 @@
       renderUsers(data.users);
       renderPager(data);
       updateSortHeaders();
+      loadWithdrawals();
+      loadDeposits();
     }catch(e){
       if(String(e.message)==='unauthorized'){ localStorage.removeItem(LS_KEY); location.reload(); }
     }
@@ -323,7 +380,7 @@
     if(f.size > 50*1048576) $('mediaInfo').innerHTML += ' <span style="color:var(--red)">— too large (max 50MB)</span>';
   };
 
-  // ── Broadcast ──
+  // ── Broadcast (with background job polling) ──
   $('sendBtn').onclick = async () => {
     const message = $('msgIn').value.trim();
     const target = $('targetIn').value;
@@ -337,9 +394,17 @@
     const confMsg = target==='all' ? 'Send this broadcast to ALL users?' : ('Post this broadcast to '+target+'?');
     if(!confirm(confMsg)) return;
     $('sendBtn').disabled = true;
-    $('sendResult').innerHTML = (target==='all' ? 'Sending… this may take a while for many users.' : 'Posting to '+esc(target)+'…')
-      + (mediaFile ? ' Uploading media…' : '');
-    try{
+
+    const resultDiv = $('sendResult');
+    let progressDiv = document.getElementById('broadcast-progress');
+    resultDiv.textContent = '';
+    resultDiv.className = 'result';
+    if (progressDiv) progressDiv.style.display = 'none';
+
+    try {
+      resultDiv.textContent = 'Starting broadcast...';
+      resultDiv.style.color = '#3b82f6';
+
       const fd = new FormData();
       fd.append('key', adminKey);
       fd.append('message', message);
@@ -347,29 +412,247 @@
       fd.append('buttonText', buttonText);
       fd.append('buttonUrl', buttonUrl);
       if(mediaFile) fd.append('media', mediaFile, mediaFile.name);
-      const res = await fetch('/api/admin/broadcast', { method:'POST', body: fd });
-      const d = await res.json();
-      if(d.error){ $('sendResult').innerHTML = '<span style="color:var(--red)">Error: '+esc(d.error)+'</span>'; }
-      else if(d.channel){
-        $('sendResult').innerHTML = `✅ Posted to <b>${esc(d.channel)}</b>.`;
-        $('msgIn').value=''; $('mediaIn').value=''; $('mediaInfo').textContent='';
+
+      const r = await fetch('/api/admin/broadcast', { method:'POST', body: fd });
+      const data = await r.json();
+
+      if (!r.ok) {
+        resultDiv.innerHTML = '<span style="color:var(--red)">Error: '+esc(data.error || 'Broadcast failed')+'</span>';
+        $('sendBtn').disabled = false;
+        return;
       }
-      else{
-        let html = `✅ Done — <b>${d.sent}</b> sent, ${d.blocked} blocked, ${d.failed} failed (of ${d.total}).`;
-        if(d.sent===0 && d.total>0){
-          html += `<br><span style="color:var(--red)">No messages delivered.</span> This usually means those users have never opened a private chat with the bot (a bot cannot DM a user who hasn't pressed Start), or they blocked it.`;
-        }
-        if(Array.isArray(d.reasons) && d.reasons.length){
-          html += `<br><span class="sub">Reasons: ${esc(d.reasons.join(' · '))}</span>`;
-        }
-        $('sendResult').innerHTML = html;
+
+      // Channel broadcast (immediate result)
+      if (data.channel) {
+        resultDiv.innerHTML = `✅ Posted to <b>${esc(data.channel)}</b>.`;
+        resultDiv.style.color = '#10b981';
         $('msgIn').value=''; $('mediaIn').value=''; $('mediaInfo').textContent='';
+        $('sendBtn').disabled = false;
+        return;
       }
-    }catch(e){ $('sendResult').innerHTML = '<span style="color:var(--red)">Request failed.</span>'; }
-    finally{ $('sendBtn').disabled = false; }
+
+      // Mass broadcast (poll for progress)
+      if (data.jobId) {
+        if (!progressDiv) {
+          const pd = document.createElement('div');
+          pd.id = 'broadcast-progress';
+          pd.style.marginTop = '12px';
+          pd.style.padding = '12px';
+          pd.style.background = 'rgba(59,130,246,0.1)';
+          pd.style.borderRadius = '8px';
+          pd.style.fontFamily = 'monospace';
+          pd.style.fontSize = '13px';
+          resultDiv.parentElement.appendChild(pd);
+          progressDiv = pd;
+        }
+        progressDiv.style.display = 'block';
+
+        resultDiv.textContent = 'Broadcast running in background...';
+        resultDiv.style.color = '#3b82f6';
+
+        const pollInterval = setInterval(async () => {
+          try {
+            const sr = await fetch(`/api/admin/broadcast/status/${data.jobId}?key=${encodeURIComponent(adminKey)}`);
+            const status = await sr.json();
+
+            const pct = status.total > 0 ? Math.round((status.sent + status.blocked + status.failed) / status.total * 100) : 0;
+            progressDiv.innerHTML = `
+              <strong>Progress: ${pct}%</strong><br>
+              Total: ${status.total} | Sent: ${status.sent} | Blocked: ${status.blocked} | Failed: ${status.failed}
+            `;
+
+            if (status.status === 'done') {
+              clearInterval(pollInterval);
+              resultDiv.innerHTML = `✅ Done — <b>${status.sent}</b> sent, ${status.blocked} blocked, ${status.failed} failed (of ${status.total}).`;
+              resultDiv.style.color = '#10b981';
+              if (status.sent===0 && status.total>0){
+                resultDiv.innerHTML += `<br><span style="color:var(--red)">No messages delivered.</span> This usually means those users have never opened a private chat with the bot, or they blocked it.`;
+              }
+              if (status.failed > 0 && status.reasons) {
+                const reasons = Object.entries(status.reasons)
+                  .sort((a,b) => b[1] - a[1])
+                  .slice(0, 3)
+                  .map(([d,c]) => `${esc(d)} (${c})`)
+                  .join('; ');
+                progressDiv.innerHTML += `<br><small>Top errors: ${reasons}</small>`;
+              }
+              $('msgIn').value=''; $('mediaIn').value=''; $('mediaInfo').textContent='';
+              $('sendBtn').disabled = false;
+            } else if (status.status === 'error') {
+              clearInterval(pollInterval);
+              resultDiv.innerHTML = '<span style="color:var(--red)">Broadcast error: '+esc(status.error)+'</span>';
+              $('sendBtn').disabled = false;
+            }
+          } catch (e) {
+            clearInterval(pollInterval);
+            resultDiv.innerHTML = '<span style="color:var(--red)">Lost connection to broadcast job.</span>';
+            $('sendBtn').disabled = false;
+          }
+        }, 2000);
+      }
+    } catch(e) {
+      resultDiv.innerHTML = '<span style="color:var(--red)">Network error: '+esc(e.message)+'</span>';
+      $('sendBtn').disabled = false;
+    }
   };
 
   function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  // ══════════════════════════════════════════
+  //  Withdrawals management
+  // ══════════════════════════════════════════
+  function wdStatusPill(s){
+    const map = {
+      awaiting:   ['⏳ Awaiting','var(--gold)'],
+      detected:   ['👀 Detected','var(--blue)'],
+      confirming: ['🔄 Confirming','var(--blue)'],
+      processing: ['🔄 Processing','var(--blue)'],
+      completed:  ['✅ Completed','var(--green)'],
+      failed:     ['✖ Failed','var(--red)'],
+      pending:    ['⏳ Pending','var(--gold)'],
+    };
+    const [txt,col] = map[s] || [s || '—','var(--muted)'];
+    return `<span class="pill" style="color:${col};border-color:${col}">${esc(txt)}</span>`;
+  }
+  function wdTypePill(t){
+    if(t==='morpho_withdrawal') return `<span class="pill" style="color:var(--gold)">MORPHO</span>`;
+    return `<span class="pill" style="color:var(--blue)">ETH</span>`;
+  }
+  function fmtDateTime(v){
+    if(!v) return '<span style="color:#555">—</span>';
+    const d = new Date(v);
+    if(isNaN(d)) return '<span style="color:#555">—</span>';
+    return d.toLocaleString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  }
+  function wdMsg(text, cls){
+    const el = $('wdMsg');
+    el.textContent = text || '';
+    el.className = 'result ' + (cls || '');
+  }
+
+  async function loadWithdrawals(){
+    const status = $('wdFilter').value;
+    try{
+      const data = await api('/api/admin/withdrawals' + (status ? ('?status='+encodeURIComponent(status)) : ''));
+      renderWithdrawals(data.withdrawals || []);
+    }catch(e){
+      if(String(e.message)==='unauthorized'){ localStorage.removeItem(LS_KEY); location.reload(); return; }
+      wdMsg('Failed to load withdrawals.', 'error');
+    }
+  }
+
+  function renderWithdrawals(list){
+    const body = $('wdBody');
+    $('wdCount').textContent = list.length ? (list.length + ' shown') : '';
+    if(!list.length){
+      body.innerHTML = `<tr><td colspan="12" class="empty">No withdrawals found.</td></tr>`;
+      return;
+    }
+    body.innerHTML = list.map(w=>{
+      const who = w.username ? '@'+w.username : (w.firstName || '—');
+      const amt = Number(w.amount).toLocaleString(undefined,{maximumFractionDigits:6});
+      const cur = w.currency || (w.type==='morpho_withdrawal' ? 'MORPHO' : 'ETH');
+      const addr = w.address ? `<span class="wallet" title="${esc(w.address)}">${esc(shortAddr(w.address))}</span>` : '<span style="color:#555">—</span>';
+      const canAct = (w.status==='processing' || w.status==='confirming' || w.status==='awaiting' || w.status==='pending');
+      const actions = canAct
+        ? `<button class="link" style="color:var(--green)" onclick="approveWithdrawal(${w.id})">Approve</button>
+           &nbsp;·&nbsp;
+           <button class="link" style="color:var(--red)" onclick="rejectWithdrawal(${w.id})">Reject</button>`
+        : '<span style="color:#555">—</span>';
+      return `<tr>
+        <td><span class="pill">#${w.id}</span></td>
+        <td>${esc(who)}<br><span class="sub">${w.telegramId||''}</span></td>
+        <td>${wdTypePill(w.type)}</td>
+        <td class="num">${amt} ${esc(cur)}</td>
+        <td>${addr}</td>
+        <td>${esc(w.network || 'Ethereum')}</td>
+        <td>${w.fee!=null ? Number(w.fee).toFixed(4)+' ETH' : '—'}</td>
+        <td>${wdStatusPill(w.status)}</td>
+        <td>${w.txnHash ? `<span class="sub" title="${esc(w.txnHash)}">${esc(shortAddr(w.txnHash))}</span>` : '—'}</td>
+        <td>${fmtDateTime(w.createdAt)}</td>
+        <td>${fmtDateTime(w.completedAt)}</td>
+        <td>${actions}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function shortAddr(a){
+    a = String(a||'');
+    return a.length > 14 ? a.slice(0,8)+'…'+a.slice(-6) : a;
+  }
+
+  async function approveWithdrawal(id){
+    if(!confirm('Approve withdrawal #'+id+'? This marks it as completed/sent.')) return;
+    const txnHash = (prompt('Optional: paste the on-chain transaction hash (leave blank to skip).') || '').trim();
+    try{
+      const r = await fetch('/api/admin/withdrawals/'+id+'/approve', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ key: adminKey, txnHash: txnHash || undefined }),
+      });
+      const data = await r.json();
+      if(!r.ok){ wdMsg('Approve failed: '+(data.error||'error'), 'error'); return; }
+      wdMsg('✅ Withdrawal #'+id+' approved.', 'success');
+      loadWithdrawals();
+    }catch(e){ wdMsg('Network error approving withdrawal.', 'error'); }
+  }
+
+  async function rejectWithdrawal(id){
+    if(!confirm('Reject withdrawal #'+id+'? This marks it as failed.')) return;
+    try{
+      const r = await fetch('/api/admin/withdrawals/'+id+'/reject', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ key: adminKey }),
+      });
+      const data = await r.json();
+      if(!r.ok){ wdMsg('Reject failed: '+(data.error||'error'), 'error'); return; }
+      wdMsg('Withdrawal #'+id+' rejected.', 'success');
+      loadWithdrawals();
+    }catch(e){ wdMsg('Network error rejecting withdrawal.', 'error'); }
+  }
+
+  async function loadDeposits(){
+    try{
+      const data = await api('/api/admin/deposits');
+      renderDeposits(data.deposits || []);
+    }catch(e){
+      if(String(e.message)==='unauthorized'){ localStorage.removeItem(LS_KEY); location.reload(); return; }
+    }
+  }
+
+  function renderDeposits(list){
+    const body = $('depBody');
+    $('depCount').textContent = list.length ? (list.length + ' shown') : '';
+    if(!list.length){
+      body.innerHTML = `<tr><td colspan="12" class="empty">No deposits found.</td></tr>`;
+      return;
+    }
+    body.innerHTML = list.map(d=>{
+      const who = d.username ? '@'+d.username : (d.firstName || '—');
+      const amt = Number(d.amount).toLocaleString(undefined,{maximumFractionDigits:6});
+      const credited = d.receivedAmount != null ? Number(d.receivedAmount).toFixed(6) : amt;
+      return `<tr>
+        <td><span class="pill">#${d.id}</span></td>
+        <td>${esc(who)}<br><span class="sub">${d.telegramId||''}</span></td>
+        <td class="num">${credited} ETH</td>
+        <td><span class="wallet" title="${esc(d.address||'')}">${esc(shortAddr(d.address||''))}</span></td>
+        <td>${esc(d.paymentId || '—')}</td>
+        <td>${esc(d.provider || 'nowpayments')}</td>
+        <td>${esc(d.network || 'Ethereum')}</td>
+        <td>${wdStatusPill(d.status)}</td>
+        <td>${Number(d.confirmations || 0)}</td>
+        <td>${d.txnHash ? `<span class="sub" title="${esc(d.txnHash)}">${esc(shortAddr(d.txnHash))}</span>` : '—'}</td>
+        <td>${fmtDateTime(d.createdAt)}</td>
+        <td>${fmtDateTime(d.confirmedAt || d.completedAt)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  $('wdFilter').onchange = () => loadWithdrawals();
+  $('wdRefreshBtn').onclick = () => loadWithdrawals();
+  $('depRefreshBtn').onclick = () => loadDeposits();
+  setInterval(() => { if(!$('dash').classList.contains('hidden')) { loadWithdrawals(); loadDeposits(); } }, 15000);
 
   // ── Auto-login if key stored ──
   if(adminKey){

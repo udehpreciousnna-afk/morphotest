@@ -1,77 +1,67 @@
-# MORPHO — Telegram Mini App
+# MORPHO Telegram Mini App
 
-A butterfly-themed tap-to-mine crypto Telegram Mini App. Each user has their own
-database record storing balance, energy, referrals, tasks and wallets. Live
-MORPHO price is pulled from CoinGecko.
+Existing MORPHO mini app (Node/Express + single-file frontend) with tap-to-mine, tasks, referrals, wallet save, Telegram auth, admin dashboard, and MORPHO/ETH wallet flows.
 
-## Features
+## Stack
+- Backend: `server.js` (Express)
+- DB: PostgreSQL in production (`DATABASE_URL`) or local PGlite fallback (`PGLITE_DIR`)
+- Frontend: `public/index.html` (no framework/build step)
+- Admin: `public/admin.html`
 
-- **Per-user database** (PostgreSQL) — every Telegram user gets their own record.
-- **Welcome bonus** — new users start with **10 MORPHO**.
-- **Tap to mine** — **+0.05 MORPHO** per tap.
-- **Energy** — 1000 taps per cycle. When depleted it takes **5 hours** to refill
-  back to 1000. The 5-hour timer starts on your **first tap** of a cycle and the
-  button shows **"Ready"** when energy is full.
-- **Progress bar** reflects remaining energy (energy / 1000).
-- **Referrals** — share your link; you earn **10 MORPHO** per successful referral.
-- **Live price** from CoinGecko.
-- **ETH wallet pill** (top-right) — tapping it shows the airdrop-date notice
-  (Airdrop distribution starts on **September 25, 2026**).
-
-## Tech
-
-- Node.js + Express backend (`server.js`)
-- PostgreSQL in production; falls back to in-process **PGlite** locally (`db.js`)
-- Static frontend in `public/index.html`
-- Telegram `initData` is validated server-side with your bot token (HMAC-SHA256).
-
-## Local development
-
+## Local run
 ```bash
+cd /home/ubuntu/morphoapp
 npm install
-ALLOW_DEV=true npm start
-# open http://localhost:3000
+PGLITE_DIR=/home/ubuntu/.tmp/morpho-pglite ALLOW_DEV=true PORT=3000 npm start
 ```
-
-With no `DATABASE_URL` set, the app uses a built-in local database (PGlite) so you
-can test without installing PostgreSQL. `ALLOW_DEV=true` lets the app run in a
-normal browser without Telegram (a fake dev user is used).
-
-## Deploy to Render (free)
-
-1. Push this repo to GitHub (already at `udehpreciousnna-afk/morphoapp`).
-2. Go to <https://dashboard.render.com> → **New** → **Blueprint**.
-3. Connect the GitHub repo. Render reads `render.yaml` and creates:
-   - a **web service** (`morpho-app`)
-   - a free **PostgreSQL database** (`morpho-db`), auto-wired via `DATABASE_URL`.
-4. In the web service **Environment** settings, set:
-   - `BOT_TOKEN` = your bot token from **@BotFather** (required for secure login).
-   - `BOT_USERNAME` = `MorphoMiningBot` (already set).
-   - `APP_SHORT_NAME` = `myapp` (already set).
-   - Keep `ALLOW_DEV` = `false`.
-5. Click **Apply / Deploy**. When it's live you'll get a URL like
-   `https://morpho-app.onrender.com`.
-
-### Link it to your Telegram bot
-
-1. Open **@BotFather** → `/myapps` (or `/newapp`) → pick **MorphoMiningBot**.
-2. Set the **Web App URL** to your Render URL (e.g. `https://morpho-app.onrender.com`).
-3. Your Mini App opens at `https://t.me/MorphoMiningBot/myapp`.
-
-> **Note:** Render's free PostgreSQL database expires ~90 days after creation.
-> Before then, create a new free database (or upgrade) and update `DATABASE_URL`
-> to keep user data. The free web service also sleeps when idle and wakes on the
-> next request (first load may be slow).
+Open `http://localhost:3000` (on the VM).
 
 ## Environment variables
 
-See `.env.example`. Summary:
-
 | Variable | Purpose |
 |---|---|
-| `PORT` | Port to listen on (Render sets this). |
-| `DATABASE_URL` | PostgreSQL connection string (Render provides it). Empty = local PGlite. |
-| `BOT_TOKEN` | Telegram bot token, for validating logins. |
-| `BOT_USERNAME` | Bot username (default `MorphoMiningBot`). |
-| `APP_SHORT_NAME` | Mini App short name (default `myapp`). |
-| `ALLOW_DEV` | `true` only for local browser testing. |
+| `PORT` | Server port (use 3000 in this VM) |
+| `DATABASE_URL` | PostgreSQL URL (Render provides in production) |
+| `BOT_TOKEN` | Telegram bot token (required in production) |
+| `BOT_USERNAME` | Telegram bot username |
+| `APP_SHORT_NAME` | Mini app short name |
+| `ALLOW_DEV` | Enables browser fallback auth for local testing |
+| `PUBLIC_URL` | Optional public base URL used to build IPN callback URL |
+| `NOWPAYMENTS_API_KEY` | NOWPayments API key |
+| `NOWPAYMENTS_IPN_SECRET` | NOWPayments webhook signature secret |
+| `NOWPAYMENTS_SANDBOX` | `true` for NOWPayments sandbox |
+| `ETH_DEPOSIT_MIN` | Minimum ETH deposit (default `0.005`) |
+| `ETH_WITHDRAW_MIN` | Minimum ETH withdrawal (default `0.005`) |
+| `MORPHO_ETH_GATE` | ETH required to unlock MORPHO withdrawal (default `0.008`) |
+| `ETH_NETWORK_FEE` | Displayed network fee (default `0.0005`) |
+| `ETH_DEPOSIT_CONFIRMATIONS` | Confirmation requirement shown and tracked (default `12`) |
+| `ETH_DEPOSIT_ETA_TEXT` | Deposit ETA text shown in UI |
+| `ETH_USD` | Display-only ETH/USD estimate for UI |
+| `ADMIN_KEY` | Admin dashboard key |
+
+## Deposit processing and idempotency
+- NOWPayments webhook (`/api/webhook/nowpayments`) validates signature when IPN secret exists.
+- Deposit status polling endpoint (`/api/eth/deposit/status/:paymentId`) and webhook both use the same processing pipeline.
+- Deposit crediting is exactly-once guarded in DB update path.
+- Under-minimum deposits are marked failed with `below_minimum` and are not credited.
+
+## Dev-only deposit simulation
+To test end-to-end deposit UX without NOWPayments credentials:
+- Endpoint: `POST /api/dev/eth/deposit/simulate`
+- Enabled **only** when `ALLOW_DEV=true` **and** `NOWPAYMENTS_API_KEY` is empty.
+- Actions: `detected`, `confirming`, `completed`, `underpaid`.
+- Uses the same processing pipeline as webhook/poll logic.
+
+Example payload:
+```json
+{
+  "devUser": {"id": "12345", "first_name": "Dev"},
+  "paymentId": "mock_xxxxx",
+  "action": "completed",
+  "amount": 0.01
+}
+```
+
+## Notes
+- Keep `ALLOW_DEV=false` in production.
+- Secrets (`NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET`, `DATABASE_URL`) are server-side only.

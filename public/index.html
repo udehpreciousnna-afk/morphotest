@@ -207,7 +207,7 @@
       padding: 18px 0; margin: 2px 0;
     }
     .coin-glow {
-      position: absolute; inset: -4%;
+      position: absolute; inset: clamp(-10px, -3%, -14px);
       border-radius: 50%;
       background:
         radial-gradient(circle at 50% 46%, rgba(79,195,247,0.5) 0%, rgba(56,189,248,0.26) 30%, transparent 52%),
@@ -227,9 +227,9 @@
     /* Reactive burst on each tap */
     .coin-glow.glow-burst { animation: glowBurst 0.42s ease-out; }
     @keyframes glowBurst {
-      0% { opacity: 0.85; transform: scale(1); filter: blur(2px) brightness(1); }
-      35% { opacity: 1; transform: scale(1.12); filter: blur(1.5px) brightness(1.35); }
-      100% { opacity: 0.82; transform: scale(1); filter: blur(2px) brightness(1); }
+      0% { opacity: 0.85; filter: blur(2px) brightness(1); }
+      35% { opacity: 1; filter: blur(1.8px) brightness(1.2); }
+      100% { opacity: 0.82; filter: blur(2px) brightness(1); }
     }
     /* Scattered light particles emitted on tap */
     .spark {
@@ -250,7 +250,10 @@
       border-radius: 50%;
       background: transparent;
       border: none;
-      box-shadow: 0 0 60px rgba(79,195,247,0.5), 0 0 30px rgba(56,189,248,0.42), 0 0 14px rgba(129,212,250,0.4);
+      box-shadow:
+        0 0 clamp(28px, 12vw, 50px) rgba(79,195,247,0.5),
+        0 0 clamp(14px, 6vw, 26px) rgba(56,189,248,0.42),
+        0 0 clamp(6px, 3vw, 12px) rgba(129,212,250,0.4);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; position: relative;
       user-select: none; -webkit-user-select: none;
@@ -600,6 +603,286 @@
       box-shadow: 0 8px 24px rgba(37,99,235,0.35);
     }
 
+    /* ─── ETH Deposit / Withdraw / History views ─── */
+    .wov-warn {
+      background: rgba(245,185,66,0.10); border: 1px solid rgba(245,185,66,0.4);
+      border-radius: 12px; padding: 12px 14px; font-size: 13px; color: #f5c451;
+      line-height: 1.5; margin-bottom: 16px; text-align: center;
+    }
+    .wov-warn strong { color: #ffd77a; }
+    .wov-qr-wrap { text-align: center; margin: 4px 0 16px; }
+    .wov-qr { width: 190px; height: 190px; border-radius: 16px; background: #fff; padding: 10px; display: inline-block; box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
+    .wov-qr img { width: 100%; height: 100%; display: block; }
+    .wov-addr-label { font-size: 11px; color: var(--inactive); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+    .wov-addr-box {
+      display: flex; align-items: center; gap: 8px; background: var(--card2);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+    }
+    .wov-addr-text { flex: 1; font-size: 13px; color: var(--white); word-break: break-all; font-family: monospace; line-height: 1.4; }
+    .wov-copy-btn {
+      width: 100%; background: var(--gold); border: none; border-radius: 12px; padding: 14px;
+      font-size: 15px; font-weight: 800; color: #000; cursor: pointer; transition: background 0.2s, transform 0.1s; margin-bottom: 14px;
+    }
+    .wov-copy-btn:active { transform: scale(0.98); }
+    .wov-copy-btn.copied { background: var(--green); color: #04210f; }
+    .wov-confirm-note { text-align: center; font-size: 12.5px; color: var(--inactive); line-height: 1.5; }
+    .wov-confirm-note .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 6px; animation: pulse 1.4s ease-in-out infinite; }
+    .wov-loading { text-align: center; padding: 40px 0; }
+    .wov-loading .gate-spinner { width: 30px; height: 30px; margin: 0 auto 14px; }
+    .wov-loading-txt { font-size: 14px; color: var(--inactive); }
+
+    /* Withdraw form */
+    .wov-bal-pill {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--card2); border: 1px solid rgba(155,123,255,0.25); border-radius: 12px;
+      padding: 12px 14px; margin-bottom: 16px;
+    }
+    .wov-bal-pill-lbl { font-size: 12px; color: var(--inactive); }
+    .wov-bal-pill-val { font-size: 15px; font-weight: 800; color: var(--white); }
+    .wov-bal-pill-val .u { color: var(--eth-purple); font-size: 12px; }
+    .wov-field-label { font-size: 12px; color: var(--inactive); margin-bottom: 7px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+    .wov-input-row { position: relative; margin-bottom: 14px; }
+    .wov-input {
+      width: 100%; background: var(--card2); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px; padding: 14px 70px 14px 14px; font-size: 14px; color: var(--white);
+      font-family: var(--font); outline: none; transition: border-color 0.2s;
+    }
+    .wov-input::placeholder { color: #555; }
+    .wov-input:focus { border-color: var(--eth-purple); }
+    .wov-input-btn {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      background: rgba(155,123,255,0.18); border: 1px solid rgba(155,123,255,0.4);
+      color: #c7b3ff; font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: 8px; cursor: pointer;
+    }
+    .wov-input-btn:active { transform: translateY(-50%) scale(0.94); }
+    .wov-saved { margin-bottom: 14px; }
+    .wov-saved-chip {
+      display: inline-flex; align-items: center; gap: 6px; background: var(--card2);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 7px 12px; margin: 0 6px 6px 0;
+      font-size: 12px; color: var(--white); cursor: pointer; transition: border-color 0.15s;
+    }
+    .wov-saved-chip:active { border-color: var(--eth-purple); }
+    .wov-saved-chip img { width: 16px; height: 16px; border-radius: 4px; }
+    .wov-usd-eq { font-size: 12px; color: var(--green); margin: -6px 0 14px 2px; }
+    .wov-submit {
+      width: 100%; background: linear-gradient(180deg,#9b7bff 0%,#6d4ee0 100%); border: none; border-radius: 12px;
+      padding: 16px; font-size: 16px; font-weight: 800; color: #fff; cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s; box-shadow: 0 8px 24px rgba(109,78,224,0.35);
+    }
+    .wov-submit:active { transform: scale(0.98); }
+    .wov-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .wov-err {
+      background: rgba(248,81,73,0.10); border: 1px solid rgba(248,81,73,0.4); border-radius: 12px;
+      padding: 12px 14px; font-size: 13px; color: #ff8a84; line-height: 1.5; margin-bottom: 14px; text-align: center;
+    }
+    .wov-topup-btn {
+      width: 100%; background: linear-gradient(180deg,#4ADE80 0%,#22a35a 100%); border: none; border-radius: 12px;
+      padding: 14px; font-size: 15px; font-weight: 800; color: #04210f; cursor: pointer; margin-top: 4px;
+    }
+    .wov-topup-btn:active { transform: scale(0.98); }
+
+    /* History */
+    .wov-filter { display: flex; gap: 8px; margin-bottom: 16px; }
+    .wov-filter-tab {
+      flex: 1; text-align: center; background: var(--card2); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 9px 4px; font-size: 12.5px; font-weight: 700; color: var(--inactive); cursor: pointer;
+    }
+    .wov-filter-tab.active { background: rgba(155,123,255,0.15); border-color: rgba(155,123,255,0.5); color: #c7b3ff; }
+    .wov-txn {
+      display: flex; align-items: center; gap: 12px; background: var(--card2);
+      border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+    }
+    .wov-txn-ico { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .wov-txn-ico.dep { background: rgba(74,222,128,0.15); color: var(--green); }
+    .wov-txn-ico.wd { background: rgba(155,123,255,0.15); color: var(--eth-purple); }
+    .wov-txn-main { flex: 1; min-width: 0; }
+    .wov-txn-title { font-size: 14px; font-weight: 700; color: var(--white); }
+    .wov-txn-date { font-size: 11.5px; color: var(--inactive); margin-top: 2px; }
+    .wov-txn-right { text-align: right; }
+    .wov-txn-amt { font-size: 14px; font-weight: 800; color: var(--white); }
+    .wov-txn-amt.plus { color: var(--green); }
+    .wov-badge {
+      display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-top: 3px; text-transform: capitalize;
+    }
+    .wov-badge.pending, .wov-badge.processing { background: rgba(245,185,66,0.15); color: #f5c451; }
+    .wov-badge.completed { background: rgba(74,222,128,0.15); color: var(--green); }
+    .wov-badge.failed { background: rgba(248,81,73,0.15); color: #ff8a84; }
+
+    /* ─── MORPHO Withdrawal Submitted (success) modal ─── */
+    .ms-sheet {
+      background: radial-gradient(120% 90% at 50% 0%, #0d2417 0%, #08110b 62%);
+      border: 1px solid rgba(74,222,128,0.28);
+      border-radius: 28px; padding: 0; overflow: hidden;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.65), 0 0 70px rgba(74,222,128,0.09);
+    }
+    .ms-body { padding: 34px 24px 26px; text-align: center; }
+    .ms-check {
+      width: 96px; height: 96px; margin: 0 auto 20px; border-radius: 50%;
+      background: radial-gradient(circle at 40% 32%, #56e08a 0%, #22a35a 60%, #16713e 100%);
+      display: flex; align-items: center; justify-content: center; position: relative;
+      box-shadow: 0 0 40px rgba(74,222,128,0.5), inset 0 3px 10px rgba(255,255,255,0.28);
+      animation: msPop 0.45s cubic-bezier(0.34,1.4,0.64,1);
+    }
+    .ms-check::before { content:""; position:absolute; inset:-10px; border-radius:50%; border:2px solid rgba(74,222,128,0.35); animation: msRing 1.6s ease-out infinite; }
+    @keyframes msRing { 0%{transform:scale(0.85);opacity:0.9;} 100%{transform:scale(1.25);opacity:0;} }
+    @keyframes msPop { from{transform:scale(0.4);opacity:0;} to{transform:scale(1);opacity:1;} }
+    .ms-check svg { width: 46px; height: 46px; }
+    .ms-title { font-size: 23px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .ms-sub { font-size: 14px; color: #7ee0a3; font-weight: 600; margin-bottom: 18px; }
+    .ms-amount-note { font-size: 14.5px; color: #cfe9d8; line-height: 1.55; margin-bottom: 20px; }
+    .ms-amount-note b { color: #fff; }
+    .ms-details {
+      background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.22);
+      border-radius: 16px; padding: 16px 18px; margin-bottom: 20px; text-align: left;
+    }
+    .ms-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .ms-row:last-child { border-bottom: none; }
+    .ms-row-k { font-size: 12.5px; color: #8fb6a0; flex-shrink: 0; }
+    .ms-row-v { font-size: 13px; color: #fff; font-weight: 700; text-align: right; word-break: break-all; }
+    .ms-row-v.proc { color: #f5c451; }
+    .ms-msg-btn {
+      width: 100%; background: linear-gradient(180deg,#4ADE80 0%,#22a35a 100%); border: none; border-radius: 12px;
+      padding: 15px; font-size: 15px; font-weight: 800; color: #04210f; cursor: pointer; margin-bottom: 10px;
+    }
+    .ms-msg-btn:active { transform: scale(0.98); }
+    .ms-close-btn {
+      width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.18); border-radius: 12px;
+      padding: 14px; font-size: 15px; font-weight: 700; color: #cbd5e1; cursor: pointer;
+    }
+    .ms-close-btn:active { transform: scale(0.98); }
+
+    /* ═══ REDESIGNED ETH DEPOSIT / WITHDRAW MODALS (dark crypto-wallet style) ═══ */
+    .wallet-modal-view { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif; }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 0 18px; margin-bottom: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .modal-header .back-btn {
+      width: 32px; height: 32px; background: transparent; border: none;
+      color: #fff; font-size: 22px; cursor: pointer; line-height: 1; padding: 0;
+      display: flex; align-items: center; justify-content: center; border-radius: 50%;
+    }
+    .modal-header .back-btn:active { background: rgba(255,255,255,0.08); }
+    .modal-header h2 {
+      flex: 1; text-align: center; font-size: 18px; font-weight: 700; color: #fff; margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+    }
+    .modal-header .close-btn {
+      width: 32px; height: 32px; background: transparent; border: none;
+      color: #fff; font-size: 22px; cursor: pointer; opacity: 0.7; line-height: 1; padding: 0;
+      display: flex; align-items: center; justify-content: center; border-radius: 50%;
+    }
+    .modal-header .close-btn:active { background: rgba(255,255,255,0.08); opacity: 1; }
+    .modal-body { padding: 20px 0 4px; }
+
+    /* Deposit */
+    .deposit-instruction { color: #9CA3AF; font-size: 14px; margin-bottom: 20px; text-align: center; line-height: 1.5; }
+    .qr-code-card {
+      background: #fff; border-radius: 16px; padding: 20px;
+      display: flex; justify-content: center; align-items: center;
+      margin: 20px auto; max-width: 240px;
+    }
+    .qr-code-card img { max-width: 100%; height: auto; display: block; border-radius: 6px; }
+    .qr-code-card.qr-missing { color: #000; font-size: 12px; text-align: center; min-height: 120px; }
+    .address-label {
+      text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+      color: #6B7280; margin: 24px 0 8px;
+    }
+    .address-box {
+      background: #1F2937; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 16px; margin-bottom: 16px;
+    }
+    .address-text {
+      font-family: "SF Mono", "Monaco", "Consolas", monospace; font-size: 13px;
+      color: #fff; word-break: break-all; line-height: 1.6;
+    }
+    .copy-button {
+      width: 100%; background: #F5B800; color: #000; border: none; border-radius: 28px;
+      padding: 16px; font-size: 15px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      cursor: pointer; margin-bottom: 16px;
+    }
+    .copy-button:active { transform: scale(0.98); }
+    .copy-button.copied { background: #10B981; color: #04210f; }
+    .alert-banner {
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 12px;
+      display: flex; gap: 10px; font-size: 13px; line-height: 1.5; align-items: flex-start;
+    }
+    .alert-banner.warning { background: rgba(245,184,0,0.12); color: #F5B800; border: 1px solid rgba(245,184,0,0.2); }
+    .alert-banner.success { background: rgba(16,185,129,0.12); color: #10B981; border: 1px solid rgba(16,185,129,0.2); }
+    .alert-banner.info    { background: rgba(56,189,248,0.10); color: #7dd3fc; border: 1px solid rgba(56,189,248,0.2); }
+    .alert-banner .icon { font-size: 16px; flex-shrink: 0; line-height: 1.4; }
+    .alert-banner strong { color: #fff; }
+    .alert-banner.warning strong { color: #ffd77a; }
+
+    /* Withdraw */
+    .balance-card {
+      background: linear-gradient(135deg, #1F2937 0%, #14151F 100%);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px;
+      margin-bottom: 24px; display: flex; align-items: center; gap: 16px;
+    }
+    .balance-icon {
+      width: 48px; height: 48px; border-radius: 50%; background: rgba(56,189,248,0.15);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .balance-icon img, .balance-icon svg { width: 26px; height: 26px; }
+    .balance-info { flex: 1; }
+    .balance-label { text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: #6B7280; margin-bottom: 4px; }
+    .balance-amount { font-size: 24px; font-weight: 700; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
+    .balance-usd { font-size: 14px; color: #10B981; margin-top: 4px; }
+    .input-group { margin-bottom: 20px; }
+    .input-wrapper {
+      position: relative; display: flex; align-items: center;
+      background: #1F2937; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px 16px;
+    }
+    .input-wrapper input {
+      flex: 1; background: transparent; border: none; color: #fff; font-size: 14px; outline: none;
+      font-family: "SF Mono", "Monaco", monospace; min-width: 0;
+    }
+    .input-wrapper input::placeholder { color: #556; }
+    .paste-btn { background: transparent; border: none; color: #F5B800; font-size: 13px; font-weight: 700; cursor: pointer; padding: 4px 8px; flex-shrink: 0; }
+    .paste-btn:active { opacity: 0.7; }
+    .wallet-section { margin: 24px 0; }
+    .section-label { text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: #6B7280; margin-bottom: 12px; }
+    .wallet-chip {
+      background: #1F2937; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+      padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .wallet-chip:hover { background: #2D3748; border-color: rgba(79,195,247,0.35); }
+    .wallet-chip:active { border-color: #4FC3F7; }
+    .wallet-chip.selected { border-color: #4FC3F7; background: rgba(79,195,247,0.12); }
+    .wallet-chip .icon {
+      width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; overflow: hidden;
+    }
+    .wallet-chip .icon img { width: 100%; height: 100%; object-fit: cover; }
+    .wallet-info { flex: 1; min-width: 0; }
+    .wallet-name { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+    .wallet-address { font-size: 12px; color: #6B7280; font-family: "SF Mono", monospace; word-break: break-all; }
+    .amount-input-row {
+      display: flex; align-items: center; background: #1F2937; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 14px 16px; margin-bottom: 8px;
+    }
+    .amount-input-row .token-icon { width: 28px; height: 28px; margin-right: 10px; border-radius: 50%; flex-shrink: 0; }
+    .amount-input-row .token-symbol { color: #9CA3AF; font-weight: 600; margin-right: 12px; flex-shrink: 0; }
+    .amount-input-row input {
+      flex: 1; background: transparent; border: none; color: #fff; font-size: 18px; font-weight: 600; outline: none; min-width: 0;
+    }
+    .amount-input-row input::placeholder { color: #556; }
+    .max-btn { background: #F5B800; color: #000; border: none; border-radius: 20px; padding: 6px 16px; font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0; }
+    .max-btn:active { transform: scale(0.96); }
+    .amount-usd { font-size: 13px; color: #6B7280; text-align: right; margin-bottom: 20px; }
+    .withdraw-button {
+      width: 100%; background: linear-gradient(135deg, #0EA5E9 0%, #06B6D4 100%);
+      color: #fff; border: none; border-radius: 28px; padding: 16px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px;
+    }
+    .withdraw-button:disabled { background: #374151; color: #6B7280; cursor: not-allowed; }
+    .withdraw-button:not(:disabled):active { transform: scale(0.98); }
+    .minimum-note { text-align: center; font-size: 12px; color: #6B7280; margin-top: 12px; }
+    .field-error { background: rgba(248,81,73,0.12); border: 1px solid rgba(248,81,73,0.25); color: #ff8a84; border-radius: 12px; padding: 12px 16px; font-size: 13px; margin-bottom: 14px; }
+
     /* ─── DAILY REWARDS FAB (top-left of coin, absolute so it never shifts layout) ─── */
     .daily-fab {
       position: absolute; top: 4px; left: 2px; z-index: 6;
@@ -790,6 +1073,44 @@
       border-left: 3px solid var(--task-done-border);
       box-shadow: none;
     }
+    .tap-eth-deposit-btn {
+      margin-top: 10px;
+      width: 100%;
+      border: 1px solid rgba(56,189,248,0.45);
+      background: linear-gradient(180deg,#1a6fa0,#0d4e78);
+      color: #dff5ff;
+      border-radius: 14px;
+      padding: 12px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .morpho-sheet { background:#11131c; border:1px solid rgba(110,132,170,.35); }
+    .flow-loading-state { padding: 40px 10px 26px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:16px; }
+    .flow-balance-card { background:#191e2b; border:1px solid rgba(118,141,179,.35); border-radius:18px; padding:14px; display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:14px; }
+    .flow-balance-left { display:flex; align-items:center; gap:10px; }
+    .flow-token-icon { width:38px; height:38px; border-radius:50%; object-fit:cover; }
+    .flow-kicker { color:#8e98ad; font-size:12px; letter-spacing:1.2px; text-transform:uppercase; margin:12px 0 8px; font-weight:700; }
+    .flow-balance-main { font-size:34px; font-weight:800; color:#fff; line-height:1.1; }
+    .flow-balance-usd { color:#2dd37f; font-weight:700; font-size:13px; text-align:right; margin-top:6px; }
+    .flow-input-row { display:flex; align-items:center; background:#191e2b; border:1px solid rgba(118,141,179,.3); border-radius:16px; overflow:hidden; min-height:58px; }
+    .flow-input { flex:1; background:transparent; border:none; color:#fff; font-size:17px; padding:0 14px; outline:none; }
+    .flow-input-btn { border:none; background:transparent; color:#79d2ff; font-weight:800; font-size:18px; padding:0 16px; border-left:1px solid rgba(118,141,179,.25); min-height:58px; }
+    .flow-wallet-list .wallet-chip { margin-bottom:8px; display:flex; align-items:center; }
+    .flow-wallet-list .wallet-chip .wallet-check { margin-left:auto; color:#31dd79; display:none; font-weight:900; }
+    .flow-wallet-list .wallet-chip.selected { border-color:#13d46b; background:#0f2a20; }
+    .flow-wallet-list .wallet-chip.selected .wallet-check { display:block; }
+    .flow-amount-row .flow-token-symbol { color:#79d2ff; font-weight:800; }
+    .flow-amount-input { text-align:right; }
+    #mwd-submit[disabled], #wov-wd-submit[disabled] { opacity:.55; cursor:not-allowed; }
+    .flow-error-card { background:rgba(140,32,42,.25); border:1px solid #a33b48; border-radius:15px; color:#ffd5d9; padding:14px; line-height:1.45; margin:14px 0; font-size:14px; }
+    .wov-topup-btn { width:100%; border:none; background:linear-gradient(180deg,#2cc6ff,#2394dc); color:#fff; border-radius:15px; font-weight:800; padding:14px; }
+    .ms-status-badge { margin:14px auto 0; border-radius:999px; padding:8px 12px; width:max-content; background:rgba(36,114,86,.25); border:1px solid rgba(69,196,130,.4); color:#8ff0bf; font-size:13px; font-weight:700; }
+
+    .deposit-live-banner { background:rgba(22,121,75,.3); border:1px solid rgba(60,205,132,.6); color:#aff9d4; border-radius:14px; padding:12px 14px; margin-bottom:12px; font-weight:700; line-height:1.35; }
+    #wov-dep-content .alert-banner.warning { background:rgba(133,69,46,.2); border-color:rgba(173,115,92,.7); color:#ffd7c9; }
+    #wov-dep-content .copy-button { background:linear-gradient(180deg,#2cc6ff,#2394dc); }
+
   </style>
 </head>
 <body>
@@ -857,6 +1178,7 @@
     <div class="progress-track">
       <div class="progress-fill" id="energy-bar" style="width:100%"></div>
     </div>
+    <button class="tap-eth-deposit-btn" onclick="openEthDepositFromTap()">ETH Deposit</button>
   </div>
 
   <!-- ═══════════════ TASK SCREEN ═══════════════ -->
@@ -1094,24 +1416,80 @@
     </div>
   </div>
 
-  <!-- Withdraw modal -->
+  <!-- Withdraw MORPHO modal -->
   <div id="withdraw-modal-overlay" class="modal-overlay" onclick="closeWithdrawOnOverlay(event)">
-    <div class="modal-sheet wd-sheet">
+    <div class="modal-sheet wd-sheet morpho-sheet">
       <div class="wd-modal-header">
         <div class="wd-modal-title">Withdraw MORPHO</div>
         <button class="wd-x" onclick="closeWithdrawModal()" aria-label="Close">✕</button>
       </div>
       <div class="wd-body">
-        <div class="wd-badge">
-          <span class="wd-ring wd-ring-a"></span>
-          <span class="wd-ring wd-ring-b"></span>
-          <span class="wd-coin-wrap"><img class="wd-coin" id="wd-coin-img" src="" alt="MORPHO" /></span>
+        <div id="mwd-availability" class="flow-loading-state">
+          <div class="gate-spinner"></div>
+          <div class="wov-loading-txt">Checking availability...</div>
         </div>
-        <div class="wd-heading">MORPHO Distribution</div>
-        <div class="wd-notice" id="wd-notice-morpho">
-          <div class="gate-checking"><span class="gate-spinner"></span><span>Checking...</span></div>
+
+        <div id="mwd-form" style="display:none">
+          <div class="flow-balance-card">
+            <div class="flow-balance-left">
+              <img class="flow-token-icon" id="wd-coin-img" src="" alt="MORPHO" />
+              <div>
+                <div class="flow-kicker">BALANCE</div>
+                <div class="flow-balance-main"><span id="mwd-avail">0.000</span> MORPHO</div>
+              </div>
+            </div>
+            <div class="flow-balance-usd" id="mwd-avail-usd">≈ $0.00</div>
+          </div>
+
+          <div id="mwd-err"></div>
+          <div class="flow-kicker">DESTINATION ADDRESS</div>
+          <div class="flow-input-row">
+            <input class="flow-input" id="mwd-addr" type="text" placeholder="Enter or paste wallet address" spellcheck="false" oninput="onMorphoFormChange()" />
+            <button class="flow-input-btn" onclick="pasteMorphoAddr()">Paste</button>
+          </div>
+
+          <div class="flow-kicker">YOUR WALLETS</div>
+          <div id="mwd-saved" class="flow-wallet-list"></div>
+
+          <div class="flow-kicker">AMOUNT</div>
+          <div class="flow-input-row flow-amount-row">
+            <img class="flow-token-icon" src="" id="mwd-token-icon" alt="MORPHO" />
+            <span class="flow-token-symbol">MORPHO</span>
+            <input class="flow-input flow-amount-input" id="mwd-amount" type="number" inputmode="decimal" step="0.0001" min="0" placeholder="0.00" oninput="onMorphoFormChange()" />
+            <button class="flow-input-btn" onclick="setMorphoMax()">MAX</button>
+          </div>
+          <div class="flow-balance-usd" id="mwd-usd">≈ $0.00 USD</div>
+
+          <button class="modal-submit-btn" id="mwd-submit" onclick="submitMorphoWithdraw()" disabled>Withdraw 0 MORPHO</button>
+
+          <div id="mwd-insufficient" style="display:none">
+            <div class="flow-error-card" id="mwd-insufficient-msg"></div>
+            <button class="wov-topup-btn" onclick="topUpFromWithdraw()">Top up ETH to withdraw</button>
+          </div>
         </div>
-        <button class="modal-submit-btn" onclick="closeWithdrawModal()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MORPHO Withdrawal success modal -->
+  <div id="morpho-success-overlay" class="modal-overlay" onclick="closeMorphoSuccessOnOverlay(event)">
+    <div class="modal-sheet ms-sheet">
+      <div class="ms-body">
+        <div class="ms-check">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="ms-title">Withdrawal Successful</div>
+        <div class="ms-sub">Transaction completed</div>
+        <div class="ms-details">
+          <div class="ms-row"><span class="ms-row-k">AMOUNT</span><span class="ms-row-v" id="ms-amt">0 MORPHO</span></div>
+          <div class="ms-row"><span class="ms-row-k">TO ADDRESS</span><span class="ms-row-v" id="ms-dest">—</span></div>
+          <div class="ms-row"><span class="ms-row-k">NETWORK</span><span class="ms-row-v" id="ms-network">Ethereum</span></div>
+          <div class="ms-row"><span class="ms-row-k">NETWORK FEE</span><span class="ms-row-v" id="ms-fee">0 ETH</span></div>
+        </div>
+        <div class="ms-status-badge" id="ms-status">● Processing</div>
+        <button class="ms-close-btn" onclick="closeMorphoSuccess()">Done</button>
       </div>
     </div>
   </div>
@@ -1190,34 +1568,76 @@
       </div>
 
       <!-- DEPOSIT VIEW -->
-      <div id="wov-deposit" class="wov-hidden">
-        <div class="wov-head">
-          <button class="wov-back" onclick="showWalletView('main')">‹</button>
-          <div class="wov-title" style="font-size:18px">Ethereum Deposit</div>
-          <button class="modal-close-btn" onclick="closeWalletOverview()">✕</button>
+      <div id="wov-deposit" class="wov-hidden wallet-modal-view">
+        <div class="modal-header">
+          <button class="back-btn" onclick="showWalletView('main')" aria-label="Back">‹</button>
+          <h2>ETH Deposit</h2>
+          <button class="close-btn" onclick="closeWalletOverview()" aria-label="Close">✕</button>
         </div>
-        <div class="wov-dep-hero">
-          <img class="wov-dep-coin" id="wov-dep-coin" src="" alt="MORPHO" />
-          <div class="wov-dep-title">Morpho Withdrawal</div>
-        </div>
-        <div class="wd-notice" id="wd-notice-dep">
-          <div class="gate-checking"><span class="gate-spinner"></span><span>Checking...</span></div>
+        <div class="modal-body" id="wov-dep-content">
+          <div class="wov-loading">
+            <div class="gate-spinner"></div>
+            <div class="wov-loading-txt">Generating your deposit address...</div>
+          </div>
         </div>
       </div>
 
       <!-- WITHDRAW VIEW -->
-      <div id="wov-withdraw" class="wov-hidden">
-        <div class="wov-head">
-          <button class="wov-back" onclick="showWalletView('main')">‹</button>
-          <div class="wov-title" style="font-size:18px">Withdraw</div>
-          <button class="modal-close-btn" onclick="closeWalletOverview()">✕</button>
+      <div id="wov-withdraw" class="wov-hidden wallet-modal-view">
+        <div class="modal-header">
+          <button class="back-btn" onclick="showWalletView('main')" aria-label="Back">‹</button>
+          <h2>Withdraw ETH</h2>
+          <button class="close-btn" onclick="closeWalletOverview()" aria-label="Close">✕</button>
         </div>
-        <div class="wov-dep-hero">
-          <img class="wov-dep-coin" id="wov-wd-coin" src="" alt="MORPHO" />
-          <div class="wov-dep-title">Morpho Withdrawal</div>
-        </div>
-        <div class="wd-notice" id="wd-notice-wd">
-          <div class="gate-checking"><span class="gate-spinner"></span><span>Checking...</span></div>
+        <div class="modal-body">
+          <div class="flow-balance-card">
+            <div class="flow-balance-left">
+              <div class="balance-icon">
+                <svg viewBox="0 0 256 417" xmlns="http://www.w3.org/2000/svg">
+                  <path fill="#8A92B2" d="M127.96 0l-2.79 9.5v275.67l2.79 2.78 127.96-75.63z"/>
+                  <path fill="#62688F" d="M127.96 0L0 212.32l127.96 75.63V154.16z"/>
+                  <path fill="#454A75" d="M127.96 312.19l-1.57 1.92v98.2l1.57 4.6L256 236.59z"/>
+                  <path fill="#8A92B2" d="M127.96 416.9v-104.7L0 236.59z"/>
+                  <path fill="#62688F" d="M127.96 287.95l127.96-75.63-127.96-58.16z"/>
+                  <path fill="#454A75" d="M0 212.32l127.96 75.63V154.16z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="flow-kicker">BALANCE</div>
+                <div class="flow-balance-main"><span id="wov-wd-avail">0.0000</span> ETH</div>
+              </div>
+            </div>
+            <div class="flow-balance-usd" id="wov-wd-avail-usd">≈ $0.00</div>
+          </div>
+
+          <div id="wov-wd-err"></div>
+          <div class="flow-kicker">DESTINATION ADDRESS</div>
+          <div class="flow-input-row">
+            <input id="wov-wd-addr" class="flow-input" type="text" placeholder="Enter or paste wallet address" spellcheck="false" oninput="onEthWithdrawFormChange()" />
+            <button class="flow-input-btn" onclick="pasteWithdrawAddr()">Paste</button>
+          </div>
+
+          <div class="flow-kicker">YOUR WALLETS</div>
+          <div id="wov-wd-saved" class="flow-wallet-list"></div>
+
+          <div class="flow-kicker">AMOUNT</div>
+          <div class="flow-input-row flow-amount-row">
+            <svg class="token-icon" viewBox="0 0 256 417" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#8A92B2" d="M127.96 0l-2.79 9.5v275.67l2.79 2.78 127.96-75.63z"/>
+              <path fill="#62688F" d="M127.96 0L0 212.32l127.96 75.63V154.16z"/>
+              <path fill="#454A75" d="M127.96 312.19l-1.57 1.92v98.2l1.57 4.6L256 236.59z"/>
+              <path fill="#8A92B2" d="M127.96 416.9v-104.7L0 236.59z"/>
+              <path fill="#62688F" d="M127.96 287.95l127.96-75.63-127.96-58.16z"/>
+              <path fill="#454A75" d="M0 212.32l127.96 75.63V154.16z"/>
+            </svg>
+            <span class="flow-token-symbol">ETH</span>
+            <input id="wov-wd-amount" class="flow-input flow-amount-input" type="number" inputmode="decimal" step="0.0001" min="0" placeholder="0.00" oninput="onEthWithdrawFormChange()" />
+            <button class="flow-input-btn" onclick="setWithdrawMax()">MAX</button>
+          </div>
+          <div class="flow-balance-usd" id="wov-wd-usd">≈ $0.00 USD</div>
+
+          <button class="withdraw-button" id="wov-wd-submit" onclick="submitEthWithdraw()" disabled>Withdraw 0 ETH</button>
+          <div class="minimum-note">Minimum withdrawal <span id="wov-wd-min">0.005 ETH</span>.</div>
         </div>
       </div>
 
@@ -1228,10 +1648,13 @@
           <div class="wov-title" style="font-size:18px">History</div>
           <button class="modal-close-btn" onclick="closeWalletOverview()">✕</button>
         </div>
-        <div class="wov-empty">
-          <div class="wov-empty-ico">🕐</div>
-          <div class="wov-empty-title">No history yet</div>
-          <div class="wov-empty-sub">Your deposits and withdrawals<br>will appear here.</div>
+        <div class="wov-filter">
+          <div class="wov-filter-tab active" data-filter="all" onclick="setHistoryFilter('all')">All</div>
+          <div class="wov-filter-tab" data-filter="deposit" onclick="setHistoryFilter('deposit')">Deposits</div>
+          <div class="wov-filter-tab" data-filter="withdrawal" onclick="setHistoryFilter('withdrawal')">Withdrawals</div>
+        </div>
+        <div id="wov-history-list">
+          <div class="wov-loading"><div class="gate-spinner"></div><div class="wov-loading-txt">Loading history…</div></div>
         </div>
       </div>
     </div>
@@ -1306,14 +1729,15 @@
       body: JSON.stringify(authPayload(body || {})),
       keepalive: true,
     });
+    let data = null;
+    try { data = await res.json(); } catch (e) { data = null; }
     if (!res.ok) {
-      let code = '';
-      try { code = (await res.json()).error || ''; } catch (e) {}
       const err = new Error('api ' + path + ' ' + res.status);
-      err.code = code;
+      err.code = data && data.error ? data.error : '';
+      err.data = data || {};
       throw err;
     }
-    return res.json();
+    return data || {};
   }
 
   function haptic(type = 'medium') {
@@ -1738,14 +2162,467 @@
     }, eligible ? 6000 : 4000);
   }
 
-  // ─── Withdraw ───
-  function handleWithdraw() {
-    haptic();
-    document.getElementById('withdraw-modal-overlay').classList.add('open');
-    runGate('wd-notice-morpho');
+  // ═══════════════════════════════════════════
+  //  App config (mins, price) + shared helpers
+  // ═══════════════════════════════════════════
+  let CONFIG = {
+    ethDepositMin: 0.005,
+    ethWithdrawMin: 0.005,
+    morphoEthGate: 0.008,
+    ethNetworkFee: 0.0005,
+    ethDepositConfirmations: 12,
+    ethDepositEtaText: 'typically 1–2 minutes',
+    ethUsd: 2650,
+    nowpaymentsLive: false,
+    allowDevSimulation: false,
+  };
+
+  const EVM_ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
+  let withdrawBusy = false;
+  let morphoAttemptKey = null;
+  let ethAttemptKey = null;
+
+  function newIdempotencyKey(prefix) {
+    return prefix + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
   }
+
+  async function loadConfig() {
+    try {
+      const r = await fetch('/api/config');
+      if (r.ok) CONFIG = Object.assign(CONFIG, await r.json());
+    } catch (e) {}
+    const minEl = document.getElementById('wov-wd-min');
+    if (minEl) minEl.textContent = CONFIG.ethWithdrawMin + ' ETH';
+  }
+
+  const MORPHO_ADMIN = 'https://t.me/MorphoSupport';
+  async function pasteInto(inputId) {
+    try {
+      const txt = await navigator.clipboard.readText();
+      if (txt) { document.getElementById(inputId).value = txt.trim(); return true; }
+    } catch (e) {}
+    showToast('Clipboard unavailable — paste manually');
+    return false;
+  }
+
+  function savedWalletChips(containerId, targetInputId, onPick, style) {
+    const box = document.getElementById(containerId);
+    if (!box) return;
+    const w = state.wallets || {};
+    const keys = Object.keys(w).filter(k => w[k] && String(w[k]).length > 0);
+    if (!keys.length) { box.innerHTML = ''; return; }
+    box.innerHTML = keys.map(k => {
+      const meta = (typeof walletMeta !== 'undefined' && walletMeta[k]) ? walletMeta[k] : null;
+      const label = meta ? meta.name : k;
+      const addr = String(w[k]);
+      const shortAddr = addr.length > 20 ? addr.slice(0, 10) + '...' + addr.slice(-8) : addr;
+      const icon = (meta && meta.svg) ? meta.svg : escHtml((label || '?').charAt(0).toUpperCase());
+      return `<div class="wallet-chip" onclick="${onPick}('${encodeURIComponent(addr)}', this)">`
+        + `<div class="icon">${icon}</div>`
+        + `<div class="wallet-info"><div class="wallet-name">${escHtml(label)}</div>`
+        + `<div class="wallet-address">${escHtml(shortAddr)}</div></div>`
+        + `<div class="wallet-check">✓</div></div>`;
+    }).join('');
+  }
+
+  function openEthDepositFromTap() {
+    haptic();
+    openWalletOverview();
+    showWalletView('deposit');
+  }
+
+  // ═══════════════════════════════════════════
+  //  MORPHO withdrawal
+  // ═══════════════════════════════════════════
+  function handleWithdraw() { haptic(); openMorphoWithdraw(); }
+
+  async function openMorphoWithdraw() {
+    morphoAttemptKey = null;
+    withdrawBusy = false;
+    const overlay = document.getElementById('withdraw-modal-overlay');
+    document.getElementById('mwd-availability').style.display = 'flex';
+    document.getElementById('mwd-form').style.display = 'none';
+    document.getElementById('mwd-insufficient').style.display = 'none';
+    document.getElementById('mwd-err').innerHTML = '';
+    document.getElementById('mwd-addr').value = '';
+    document.getElementById('mwd-amount').value = '';
+    document.getElementById('mwd-avail').textContent = fmt(state.balance);
+    document.getElementById('mwd-avail-usd').textContent = '≈ $' + (Number(state.balance || 0) * Number(state.price || 0)).toFixed(2);
+    document.getElementById('mwd-token-icon').src = COIN_DATA_URI;
+    document.getElementById('wd-coin-img').src = COIN_DATA_URI;
+    savedWalletChips('mwd-saved', 'mwd-addr', 'pickMorphoWallet', 'cards');
+    overlay.classList.add('open');
+
+    const start = Date.now();
+    const refreshPromise = api('/api/init').then(r => { if (r && r.user) applyUser(r.user, r); }).catch(() => null);
+    await Promise.allSettled([refreshPromise, new Promise(r => setTimeout(r, Math.max(0, 3000 - (Date.now() - start))))]);
+    document.getElementById('mwd-availability').style.display = 'none';
+    document.getElementById('mwd-form').style.display = '';
+    onMorphoFormChange();
+  }
+
+  function pickMorphoWallet(addrEnc, el) {
+    document.getElementById('mwd-addr').value = decodeURIComponent(addrEnc);
+    document.querySelectorAll('#mwd-saved .wallet-chip').forEach(c => c.classList.remove('selected'));
+    if (el) el.classList.add('selected');
+    onMorphoFormChange();
+    haptic('light');
+  }
+
+  async function pasteMorphoAddr() { await pasteInto('mwd-addr'); onMorphoFormChange(); }
+
+  function setMorphoMax() {
+    document.getElementById('mwd-amount').value = Number(state.balance || 0).toFixed(4);
+    onMorphoFormChange();
+  }
+
+  function onMorphoFormChange() {
+    const addr = document.getElementById('mwd-addr').value.trim();
+    const amount = Number(document.getElementById('mwd-amount').value || 0);
+    const bal = Number(state.balance || 0);
+    const usd = amount * Number(state.price || 0);
+    document.getElementById('mwd-usd').textContent = '≈ $' + usd.toFixed(2) + ' USD';
+    const ok = EVM_ADDRESS_RE.test(addr) && amount > 0 && amount <= bal;
+    const btn = document.getElementById('mwd-submit');
+    btn.disabled = !ok || withdrawBusy;
+    btn.textContent = 'Withdraw ' + (amount > 0 ? fmt(amount) : '0') + ' MORPHO';
+  }
+
+  function setMorphoSubmitting(flag) {
+    withdrawBusy = flag;
+    const inputIds = ['mwd-addr', 'mwd-amount'];
+    inputIds.forEach(id => { const el = document.getElementById(id); if (el) el.disabled = flag; });
+    document.querySelectorAll('#mwd-form .wallet-chip, #mwd-form .flow-input-btn').forEach(el => el.style.pointerEvents = flag ? 'none' : 'auto');
+    const btn = document.getElementById('mwd-submit');
+    if (flag) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Checking...';
+    } else {
+      onMorphoFormChange();
+    }
+  }
+
+  async function submitMorphoWithdraw() {
+    if (withdrawBusy) return;
+    const addr = document.getElementById('mwd-addr').value.trim();
+    const amount = Number(document.getElementById('mwd-amount').value);
+    const errBox = document.getElementById('mwd-err');
+    const insBox = document.getElementById('mwd-insufficient');
+    errBox.innerHTML = '';
+    insBox.style.display = 'none';
+
+    if (!EVM_ADDRESS_RE.test(addr)) { errBox.innerHTML = '<div class="flow-error-card">Please enter a valid Ethereum address.</div>'; return; }
+    if (!Number.isFinite(amount) || amount <= 0) { errBox.innerHTML = '<div class="flow-error-card">Enter a valid amount.</div>'; return; }
+    if (amount > Number(state.balance || 0) + 1e-9) { errBox.innerHTML = '<div class="flow-error-card">Amount exceeds your MORPHO balance.</div>'; return; }
+
+    morphoAttemptKey = morphoAttemptKey || newIdempotencyKey('mwd');
+    setMorphoSubmitting(true);
+    haptic('heavy');
+    const started = Date.now();
+
+    try {
+      const resp = await api('/api/morpho/withdraw', { amount, address: addr, idempotencyKey: morphoAttemptKey });
+      const waitLeft = Math.max(0, 4000 - (Date.now() - started));
+      if (waitLeft) await new Promise(r => setTimeout(r, waitLeft));
+      closeWithdrawModal();
+      showWithdrawalSuccess(resp.transaction, 'MORPHO');
+      morphoAttemptKey = null;
+      try { const r = await api('/api/init'); if (r && r.user) applyUser(r.user, r); } catch (e) {}
+    } catch (e) {
+      const waitLeft = Math.max(0, 4000 - (Date.now() - started));
+      if (waitLeft) await new Promise(r => setTimeout(r, waitLeft));
+      if (e.code === 'insufficient_eth') {
+        const have = (e.data && Number.isFinite(Number(e.data.ethBalance))) ? Number(e.data.ethBalance) : Number(state.eth || 0);
+        const need = (e.data && Number.isFinite(Number(e.data.needed))) ? Number(e.data.needed) : Number(CONFIG.morphoEthGate || 0.008);
+        const msg = '⚠ Insufficient ETH for network fees<br>You need at least ' + need.toFixed(3) +
+          ' ETH to cover the transaction fee. You have ' + have.toFixed(4) + ' ETH.';
+        document.getElementById('mwd-insufficient-msg').innerHTML = msg;
+        insBox.style.display = '';
+      } else if (e.code === 'insufficient_morpho_balance') {
+        errBox.innerHTML = '<div class="flow-error-card">Insufficient MORPHO balance.</div>';
+      } else if (e.code === 'invalid_address') {
+        errBox.innerHTML = '<div class="flow-error-card">Please enter a valid Ethereum address.</div>';
+      } else {
+        errBox.innerHTML = '<div class="flow-error-card">Something went wrong. Please try again.</div>';
+      }
+    } finally {
+      setMorphoSubmitting(false);
+    }
+  }
+
+  function showWithdrawalSuccess(txn, unit) {
+    const amount = Number(txn && txn.amount || 0);
+    const addr = String(txn && txn.address || '—');
+    const shortAddr = addr.length > 24 ? addr.slice(0, 18) + '...' + addr.slice(-6) : addr;
+    document.getElementById('ms-amt').textContent = (unit === 'ETH' ? amount.toFixed(4) : fmt(amount)) + ' ' + unit;
+    document.getElementById('ms-dest').textContent = shortAddr;
+    document.getElementById('ms-network').textContent = txn && txn.network ? txn.network : 'Ethereum';
+    document.getElementById('ms-fee').textContent = (txn && txn.fee != null ? Number(txn.fee).toFixed(4) : Number(CONFIG.ethNetworkFee || 0).toFixed(4)) + ' ETH';
+    const badge = document.getElementById('ms-status');
+    const raw = String(txn && txn.status || 'processing').toLowerCase();
+    if (raw === 'completed') {
+      badge.textContent = '● Confirmed on Blockchain';
+      badge.style.background = 'rgba(36,114,86,.25)';
+      badge.style.color = '#8ff0bf';
+    } else {
+      badge.textContent = '● ' + (raw === 'confirming' ? 'Confirming' : 'Processing');
+      badge.style.background = 'rgba(30,70,112,.25)';
+      badge.style.color = '#97d6ff';
+    }
+    document.getElementById('morpho-success-overlay').classList.add('open');
+    haptic('heavy');
+  }
+
+  function closeMorphoSuccess() {
+    haptic();
+    document.getElementById('morpho-success-overlay').classList.remove('open');
+    loadHistory();
+  }
+  function closeMorphoSuccessOnOverlay(e) { if (e.target === document.getElementById('morpho-success-overlay')) closeMorphoSuccess(); }
+  function topUpFromWithdraw() { haptic(); closeWithdrawModal(); openWalletOverview(); showWalletView('deposit'); }
   function closeWithdrawModal() { haptic(); document.getElementById('withdraw-modal-overlay').classList.remove('open'); }
   function closeWithdrawOnOverlay(e) { if (e.target === document.getElementById('withdraw-modal-overlay')) closeWithdrawModal(); }
+
+  // ═══════════════════════════════════════════
+  //  ETH deposit (NowPayments)
+  // ═══════════════════════════════════════════
+  let depositPoll = null;
+  let currentDeposit = null;
+
+  function depositStatusText(status, confirmations) {
+    if (status === 'detected') return 'Deposit detected on chain.';
+    if (status === 'confirming') return 'Confirming (' + Number(confirmations || 0) + '/' + Number(CONFIG.ethDepositConfirmations || 0) + ')...';
+    if (status === 'failed') return 'Deposit failed or expired.';
+    return 'Awaiting deposit...';
+  }
+
+  async function openEthDeposit() {
+    const box = document.getElementById('wov-dep-content');
+    box.innerHTML = '<div class="wov-loading"><div class="gate-spinner"></div><div class="wov-loading-txt">Generating your deposit address...</div></div>';
+    stopDepositPoll();
+    let d;
+    try {
+      d = await api('/api/eth/deposit', { amount: CONFIG.ethDepositMin });
+    } catch (e) {
+      box.innerHTML = '<div class="flow-error-card">Could not generate a deposit address right now. Please try again shortly.</div>';
+      return;
+    }
+
+    currentDeposit = d;
+    const qr = d.qrCode
+      ? '<div class="qr-code-card"><img src="' + d.qrCode + '" alt="Deposit QR" /></div>'
+      : '<div class="qr-code-card qr-missing">QR unavailable<br>use the address below</div>';
+
+    box.innerHTML =
+      '<div class="deposit-live-banner" id="wov-dep-received" style="display:none"></div>' +
+      '<div class="deposit-instruction">Send only Ethereum (ETH) to this address.</div>' +
+      qr +
+      '<div class="address-label">DEPOSIT ADDRESS</div>' +
+      '<div class="address-box"><div class="address-text" id="wov-dep-addr">' + escHtml(d.address) + '</div></div>' +
+      '<button class="copy-button" id="wov-copy-btn" onclick="copyDepositAddr()"><span>⧉</span> Copy Address</button>' +
+      '<div class="alert-banner warning"><span class="icon">⚠</span><div><strong>Minimum deposit: ' + Number(CONFIG.ethDepositMin).toFixed(3) + ' ETH.</strong><br>Amounts below the minimum are permanently lost.</div></div>' +
+      '<div class="alert-banner success"><span class="icon">🛡</span><div id="wov-dep-live">Credited after <strong>' + Number(CONFIG.ethDepositConfirmations || 12) + ' confirmations</strong> — ' + escHtml(CONFIG.ethDepositEtaText || 'typically 1–2 minutes') + '.</div></div>';
+
+    startDepositPoll(d.paymentId);
+  }
+
+  function copyDepositAddr() {
+    const addr = currentDeposit ? currentDeposit.address : '';
+    const btn = document.getElementById('wov-copy-btn');
+    const done = () => {
+      btn.classList.add('copied');
+      btn.innerHTML = '<span>✓</span> Copied!';
+      haptic('light');
+      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<span>⧉</span> Copy Address'; }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(addr).then(done).catch(() => { fallbackCopy(addr); done(); });
+    } else { fallbackCopy(addr); done(); }
+  }
+
+  function fallbackCopy(text) {
+    try {
+      const t = document.createElement('textarea');
+      t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+    } catch (e) {}
+  }
+
+  function startDepositPoll(paymentId) {
+    stopDepositPoll();
+    const tick = async () => {
+      try {
+        const r = await fetch('/api/eth/deposit/status/' + encodeURIComponent(paymentId) + '?' + authQuery());
+        if (!r.ok) return;
+        const data = await r.json();
+        const statusEl = document.getElementById('wov-dep-live');
+        if (statusEl) statusEl.textContent = depositStatusText(data.status, data.confirmations);
+        if (data.status === 'completed' && data.transaction) {
+          onDepositCredited(data.transaction);
+          stopDepositPoll();
+        }
+      } catch (e) {}
+    };
+    tick();
+    depositPoll = setInterval(tick, 5000);
+  }
+
+  function stopDepositPoll() { if (depositPoll) { clearInterval(depositPoll); depositPoll = null; } }
+
+  async function onDepositCredited(txn) {
+    const banner = document.getElementById('wov-dep-received');
+    if (banner) {
+      banner.style.display = '';
+      banner.innerHTML = 'Deposit Received 🎉<br>+' + Number(txn.receivedAmount || txn.amount || 0).toFixed(4) + ' ETH credited to your balance';
+    }
+    haptic('heavy');
+    try {
+      const r = await api('/api/init');
+      if (r && r.user) applyUser(r.user, r);
+      loadHistory();
+      onMorphoFormChange();
+      onEthWithdrawFormChange();
+    } catch (e) {}
+  }
+
+  // ═══════════════════════════════════════════
+  //  ETH withdrawal
+  // ═══════════════════════════════════════════
+  function renderEthWithdrawForm() {
+    ethAttemptKey = null;
+    const eth = Number(state.eth || 0);
+    document.getElementById('wov-wd-avail').textContent = eth.toFixed(4);
+    document.getElementById('wov-wd-avail-usd').textContent = '≈ $' + (eth * (CONFIG.ethUsd || 2650)).toFixed(2);
+    document.getElementById('wov-wd-addr').value = '';
+    document.getElementById('wov-wd-amount').value = '';
+    document.getElementById('wov-wd-err').innerHTML = '';
+    document.getElementById('wov-wd-min').textContent = Number(CONFIG.ethWithdrawMin).toFixed(3) + ' ETH';
+    savedWalletChips('wov-wd-saved', 'wov-wd-addr', 'pickEthWallet', 'cards');
+    onEthWithdrawFormChange();
+  }
+
+  function pickEthWallet(addrEnc, el) {
+    document.getElementById('wov-wd-addr').value = decodeURIComponent(addrEnc);
+    document.querySelectorAll('#wov-wd-saved .wallet-chip').forEach(c => c.classList.remove('selected'));
+    if (el) el.classList.add('selected');
+    onEthWithdrawFormChange();
+    haptic('light');
+  }
+
+  async function pasteWithdrawAddr() { await pasteInto('wov-wd-addr'); onEthWithdrawFormChange(); }
+
+  function setWithdrawMax() {
+    document.getElementById('wov-wd-amount').value = Number(state.eth || 0).toFixed(4);
+    onEthWithdrawFormChange();
+  }
+
+  function onEthWithdrawFormChange() {
+    const amt = Number(document.getElementById('wov-wd-amount').value || 0);
+    document.getElementById('wov-wd-usd').textContent = '≈ $' + (amt * (CONFIG.ethUsd || 2650)).toFixed(2) + ' USD';
+    const addr = document.getElementById('wov-wd-addr').value.trim();
+    const valid = EVM_ADDRESS_RE.test(addr) && amt >= Number(CONFIG.ethWithdrawMin || 0) && amt <= Number(state.eth || 0) && amt > 0;
+    const btn = document.getElementById('wov-wd-submit');
+    btn.disabled = !valid || withdrawBusy;
+    btn.textContent = 'Withdraw ' + (amt > 0 ? amt.toFixed(4) : '0') + ' ETH';
+  }
+
+  async function submitEthWithdraw() {
+    if (withdrawBusy) return;
+    const addr = document.getElementById('wov-wd-addr').value.trim();
+    const amount = Number(document.getElementById('wov-wd-amount').value);
+    const errBox = document.getElementById('wov-wd-err');
+    const btn = document.getElementById('wov-wd-submit');
+    errBox.innerHTML = '';
+
+    if (!EVM_ADDRESS_RE.test(addr)) { errBox.innerHTML = '<div class="flow-error-card">Please enter a valid Ethereum address.</div>'; return; }
+    if (!Number.isFinite(amount) || amount <= 0) { errBox.innerHTML = '<div class="flow-error-card">Enter a valid amount.</div>'; return; }
+    if (amount < Number(CONFIG.ethWithdrawMin || 0)) { errBox.innerHTML = '<div class="flow-error-card">Minimum withdrawal is ' + Number(CONFIG.ethWithdrawMin).toFixed(3) + ' ETH.</div>'; return; }
+    if (amount > Number(state.eth || 0) + 1e-9) { errBox.innerHTML = '<div class="flow-error-card">Amount exceeds your ETH balance.</div>'; return; }
+
+    withdrawBusy = true;
+    ethAttemptKey = ethAttemptKey || newIdempotencyKey('ewd');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Checking...';
+    const started = Date.now();
+
+    try {
+      const r = await api('/api/eth/withdraw', { amount, address: addr, idempotencyKey: ethAttemptKey });
+      const waitLeft = Math.max(0, 4000 - (Date.now() - started));
+      if (waitLeft) await new Promise(rs => setTimeout(rs, waitLeft));
+      showWithdrawalSuccess(r.transaction, 'ETH');
+      ethAttemptKey = null;
+      showWalletView('history');
+      const re = await api('/api/init');
+      if (re && re.user) applyUser(re.user, re);
+    } catch (e) {
+      const waitLeft = Math.max(0, 4000 - (Date.now() - started));
+      if (waitLeft) await new Promise(rs => setTimeout(rs, waitLeft));
+      if (e.code === 'min_amount') errBox.innerHTML = '<div class="flow-error-card">Minimum withdrawal is ' + Number(CONFIG.ethWithdrawMin).toFixed(3) + ' ETH.</div>';
+      else if (e.code === 'invalid_address') errBox.innerHTML = '<div class="flow-error-card">Please enter a valid Ethereum address.</div>';
+      else if (e.code === 'insufficient_eth_balance') errBox.innerHTML = '<div class="flow-error-card">Insufficient ETH balance.</div>';
+      else errBox.innerHTML = '<div class="flow-error-card">Could not submit withdrawal. Please try again.</div>';
+    } finally {
+      withdrawBusy = false;
+      onEthWithdrawFormChange();
+    }
+  }
+
+  // ═══════════════════════════════════════════
+  //  Transaction history
+  // ═══════════════════════════════════════════
+  let historyFilter = 'all';
+  let historyCache = [];
+  function authQuery() {
+    const p = authPayload();
+    const parts = [];
+    if (p.initData) parts.push('initData=' + encodeURIComponent(p.initData));
+    if (p.devUser) parts.push('devUser=' + encodeURIComponent(JSON.stringify(p.devUser)));
+    return parts.join('&');
+  }
+  async function loadHistory() {
+    const list = document.getElementById('wov-history-list');
+    list.innerHTML = '<div class="wov-loading"><div class="gate-spinner"></div><div class="wov-loading-txt">Loading history…</div></div>';
+    try {
+      const r = await fetch('/api/transactions?' + authQuery());
+      const data = await r.json();
+      historyCache = data.transactions || [];
+    } catch (e) { historyCache = []; }
+    renderHistory();
+  }
+  function setHistoryFilter(f) {
+    historyFilter = f;
+    document.querySelectorAll('#wov-history .wov-filter-tab').forEach(t => t.classList.toggle('active', t.dataset.filter === f));
+    renderHistory();
+  }
+  function txnLabel(t) {
+    if (t.type === 'eth_deposit') return 'ETH Deposit';
+    if (t.type === 'eth_withdrawal') return 'ETH Withdrawal';
+    if (t.type === 'morpho_withdrawal') return 'MORPHO Withdrawal';
+    return t.type;
+  }
+  function renderHistory() {
+    const list = document.getElementById('wov-history-list');
+    let items = historyCache.slice();
+    if (historyFilter === 'deposit') items = items.filter(t => t.type.indexOf('deposit') !== -1);
+    else if (historyFilter === 'withdrawal') items = items.filter(t => t.type.indexOf('withdrawal') !== -1);
+    if (!items.length) {
+      list.innerHTML = '<div class="wov-empty"><div class="wov-empty-ico">🕐</div><div class="wov-empty-title">No transactions</div><div class="wov-empty-sub">Your deposits and withdrawals<br>will appear here.</div></div>';
+      return;
+    }
+    list.innerHTML = items.map(t => {
+      const isDep = t.type.indexOf('deposit') !== -1;
+      const sign = isDep ? '+' : '−';
+      const unit = t.currency || (t.type.indexOf('morpho') !== -1 ? 'MORPHO' : 'ETH');
+      const amt = (unit === 'MORPHO') ? fmt(t.amount) : Number(t.amount).toFixed(4);
+      const d = t.createdAt ? new Date(t.createdAt) : null;
+      const dateStr = d ? d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+      return '<div class="wov-txn">' +
+        '<div class="wov-txn-ico ' + (isDep ? 'dep' : 'wd') + '">' + (isDep ? '↓' : '↑') + '</div>' +
+        '<div class="wov-txn-main"><div class="wov-txn-title">' + txnLabel(t) + '</div><div class="wov-txn-date">' + dateStr + '</div></div>' +
+        '<div class="wov-txn-right"><div class="wov-txn-amt ' + (isDep ? 'plus' : '') + '">' + sign + amt + ' ' + unit + '</div>' +
+        '<span class="wov-badge ' + escHtml(t.status) + '">' + escHtml(t.status) + '</span></div>' +
+        '</div>';
+    }).join('');
+  }
 
   // ─── Daily Rewards ───
   function renderDailyGrid() {
@@ -1836,13 +2713,15 @@
     ['main', 'deposit', 'withdraw', 'history'].forEach(v => {
       document.getElementById('wov-' + v).classList.toggle('wov-hidden', v !== view);
     });
-    if (view === 'deposit') runGate('wd-notice-dep');
-    if (view === 'withdraw') runGate('wd-notice-wd');
+    if (view !== 'deposit') stopDepositPoll();
+    if (view === 'deposit') openEthDeposit();
+    if (view === 'withdraw') renderEthWithdrawForm();
+    if (view === 'history') loadHistory();
   }
   function openWalletOverview() {
     haptic();
     const eth = Number(state.eth || 0);
-    const usd = (eth * 2650).toFixed(2); // indicative ETH→USD for display only
+    const usd = (eth * (CONFIG.ethUsd || 2650)).toFixed(2); // indicative ETH→USD for display only
     document.getElementById('wov-eth').textContent = eth.toFixed(4);
     document.getElementById('wov-eth-usd').textContent = '≈ $' + usd;
     document.getElementById('wov-asset-eth').textContent = eth.toFixed(4);
@@ -1905,9 +2784,8 @@
     document.getElementById('coin-logo-img').src = COIN_DATA_URI;
     document.getElementById('nav-logo-img').src = COIN_DATA_URI;
     document.getElementById('splash-logo').src = COIN_DATA_URI;
-    document.getElementById('wov-dep-coin').src = COIN_DATA_URI;
-    document.getElementById('wov-wd-coin').src = COIN_DATA_URI;
     document.getElementById('wd-coin-img').src = COIN_DATA_URI;
+    loadConfig();
 
     if (tg) {
       try { tg.ready(); tg.expand(); } catch (e) {}
