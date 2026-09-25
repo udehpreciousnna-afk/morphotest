@@ -1162,8 +1162,8 @@ app.post('/api/morpho/withdraw', async (req, res) => {
 
   const u = await getUser(idn.id);
   if (!u) return res.status(404).json({ error: 'no_user' });
-  if (Number(u.eth_balance || 0) < MORPHO_ETH_GATE) {
-    return res.status(400).json({ error: 'insufficient_eth', needed: MORPHO_ETH_GATE, ethBalance: Number(u.eth_balance || 0) });
+  if (Number(u.morpho_balance || 0) < amount) {
+    return res.status(400).json({ error: 'insufficient_morpho_balance', morphoBalance: Number(u.morpho_balance || 0) });
   }
 
   try {
@@ -1174,24 +1174,20 @@ app.post('/api/morpho/withdraw', async (req, res) => {
                 last_active = now()
           WHERE telegram_id = $1
             AND morpho_balance >= $2
-            AND eth_balance >= $3
          RETURNING telegram_id, morpho_balance, eth_balance
        ), inserted AS (
          INSERT INTO transactions
            (telegram_id, type, amount, currency, status, payment_address, network, fee, idempotency_key)
-         SELECT telegram_id, 'morpho_withdrawal', $2, 'MORPHO', 'processing', $4, 'Ethereum', $5, $6
+         SELECT telegram_id, 'morpho_withdrawal', $2, 'MORPHO', 'processing', $3, 'Ethereum', $4, $5
            FROM deducted
          RETURNING *
        )
        SELECT * FROM inserted`,
-      [idn.id, amount, MORPHO_ETH_GATE, address, ETH_NETWORK_FEE, idempotencyKey]
+      [idn.id, amount, address, ETH_NETWORK_FEE, idempotencyKey]
     );
 
     if (!q.rows[0]) {
       const user = await getUser(idn.id);
-      if (Number(user?.eth_balance || 0) < MORPHO_ETH_GATE) {
-        return res.status(400).json({ error: 'insufficient_eth', needed: MORPHO_ETH_GATE, ethBalance: Number(user?.eth_balance || 0) });
-      }
       return res.status(400).json({ error: 'insufficient_morpho_balance', morphoBalance: Number(user?.morpho_balance || 0) });
     }
 
