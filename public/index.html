@@ -2713,8 +2713,9 @@ html, body {
     morphoAttemptKey = null;
     withdrawBusy = false;
     const overlay = document.getElementById('withdraw-modal-overlay');
-    document.getElementById('mwd-availability').style.display = 'flex';
-    document.getElementById('mwd-form').style.display = 'none';
+    // Show form immediately — no loading gate
+    document.getElementById('mwd-availability').style.display = 'none';
+    document.getElementById('mwd-form').style.display = '';
     document.getElementById('mwd-insufficient').style.display = 'none';
     document.getElementById('mwd-err').innerHTML = '';
     document.getElementById('mwd-addr').value = '';
@@ -2725,13 +2726,16 @@ html, body {
     document.getElementById('wd-coin-img').src = COIN_DATA_URI;
     savedWalletChips('mwd-saved', 'mwd-addr', 'pickMorphoWallet', 'cards');
     overlay.classList.add('open');
-
-    const start = Date.now();
-    const refreshPromise = api('/api/init').then(r => { if (r && r.user) applyUser(r.user, r); }).catch(() => null);
-    await Promise.allSettled([refreshPromise, new Promise(r => setTimeout(r, Math.max(0, 3000 - (Date.now() - start))))]);
-    document.getElementById('mwd-availability').style.display = 'none';
-    document.getElementById('mwd-form').style.display = '';
     onMorphoFormChange();
+    // Refresh balance silently in background
+    api('/api/init').then(r => {
+      if (r && r.user) {
+        applyUser(r.user, r);
+        document.getElementById('mwd-avail').textContent = fmt(state.balance);
+        document.getElementById('mwd-avail-usd').textContent = '≈ $' + (Number(state.balance || 0) * Number(state.price || 0)).toFixed(2);
+        onMorphoFormChange();
+      }
+    }).catch(() => null);
   }
 
   function pickMorphoWallet(addrEnc, el) {
@@ -3319,6 +3323,5 @@ html, body {
 
   window.addEventListener('load', init);
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
