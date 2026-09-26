@@ -2,7 +2,7 @@ services:
   - type: web
     name: morpho-app
     runtime: node
-    plan: starter
+    plan: free
     buildCommand: npm install
     startCommand: npm start
     envVars:
@@ -21,4 +21,4 @@ services:
 
 databases:
   - name: morpho-db
-    plan: starter
+    plan: free
