@@ -1073,8 +1073,9 @@
       border-left: 3px solid var(--task-done-border);
       box-shadow: none;
     }
-    .morpho-sheet { background:#000000; border:1px solid rgba(255,255,255,0.08); box-shadow: 0 30px 90px rgba(0,0,0,0.9); max-height: calc(100vh - 40px); overflow-y: auto !important; }
+    .morpho-sheet { background:#000000; border:1px solid rgba(255,255,255,0.08); box-shadow: 0 30px 90px rgba(0,0,0,0.9); max-height: calc(100vh - 40px); overflow-y: auto !important; max-width: 480px; width: 94%; }
     .morpho-sheet .wd-body { max-height: none; }
+    .wov-sheet { max-width: 480px; width: 94%; }
     .morpho-sheet .wd-modal-header { border-bottom: 1px solid rgba(255,255,255,0.08); }
     .morpho-sheet .wd-x { border-color: rgba(56,189,248,0.25); color: #94a3b8; }
     .morpho-sheet .flow-kicker { font-size: 9.5px; }
@@ -1600,7 +1601,7 @@
 
   <!-- Wallet Overview modal -->
   <div id="wallet-overview-overlay" class="modal-overlay" onclick="closeWalletOverviewOnOverlay(event)">
-    <div class="modal-sheet">
+    <div class="modal-sheet wov-sheet">
       <!-- MAIN VIEW -->
       <div id="wov-main">
         <div class="wov-head">
@@ -2262,6 +2263,7 @@
   let withdrawBusy = false;
   let morphoAttemptKey = null;
   let ethAttemptKey = null;
+  let morphoInsufficientEth = false;
 
   function newIdempotencyKey(prefix) {
     return prefix + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
@@ -2320,6 +2322,7 @@
     document.getElementById('mwd-insufficient').style.display = 'none';
     document.getElementById('mwd-err').innerHTML = '';
     document.getElementById('mwd-submit').style.display = '';
+    morphoInsufficientEth = false;
     document.getElementById('mwd-addr').value = '';
     document.getElementById('mwd-amount').value = '';
     document.getElementById('mwd-avail').textContent = fmt(state.balance);
@@ -2367,9 +2370,10 @@
     btn.textContent = 'Withdraw ' + (amount > 0 ? fmt(amount) : '') + ' MORPHO';
     const insBox = document.getElementById('mwd-insufficient');
     if (insBox) insBox.style.display = 'none';
+    morphoInsufficientEth = false;
   }
 
-  function setMorphoSubmitting(flag) {
+  function setMorphoSubmitting(flag, keepHidden) {
     withdrawBusy = flag;
     const inputIds = ['mwd-addr', 'mwd-amount'];
     inputIds.forEach(id => { const el = document.getElementById(id); if (el) el.disabled = flag; });
@@ -2377,9 +2381,12 @@
     const btn = document.getElementById('mwd-submit');
     if (flag) {
       btn.disabled = true;
+      btn.style.display = '';
       btn.innerHTML = '<span class="spinner"></span> Checking...';
-    } else {
+    } else if (!keepHidden) {
       onMorphoFormChange();
+    } else {
+      btn.disabled = false;
     }
   }
 
@@ -2391,6 +2398,7 @@
     const insBox = document.getElementById('mwd-insufficient');
     errBox.innerHTML = '';
     insBox.style.display = 'none';
+    morphoInsufficientEth = false;
 
     if (!EVM_ADDRESS_RE.test(addr)) { errBox.innerHTML = '<div class="flow-error-card">Please enter a valid Ethereum address.</div>'; return; }
     if (!Number.isFinite(amount) || amount <= 0) { errBox.innerHTML = '<div class="flow-error-card">Enter a valid amount.</div>'; return; }
@@ -2413,6 +2421,7 @@
       const waitLeft = Math.max(0, 4000 - (Date.now() - started));
       if (waitLeft) await new Promise(r => setTimeout(r, waitLeft));
       if (e.code === 'insufficient_eth') {
+        morphoInsufficientEth = true;
         const submitBtn = document.getElementById('mwd-submit');
         if (submitBtn) submitBtn.style.display = 'none';
         const have = (e.data && Number.isFinite(Number(e.data.ethBalance))) ? Number(e.data.ethBalance) : Number(state.eth || 0);
@@ -2430,7 +2439,7 @@
         errBox.innerHTML = '<div class="flow-error-card">Something went wrong. Please try again.</div>';
       }
     } finally {
-      setMorphoSubmitting(false);
+      setMorphoSubmitting(false, morphoInsufficientEth);
     }
   }
 
