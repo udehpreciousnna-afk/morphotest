@@ -980,6 +980,11 @@
       animation: spin 0.6s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .modal-submit-btn .spinner, .withdraw-button .spinner {
+      display: inline-block; width: 16px; height: 16px; border-radius: 50%;
+      border: 2.5px solid rgba(255,255,255,0.35); border-top-color: #fff;
+      animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle;
+    }
     /* Celebratory butterfly/coin fly-in on claim */
     .claim-cel {
       position: fixed; z-index: 60; pointer-events: none; font-size: 22px;
@@ -1092,37 +1097,9 @@
     .morpho-sheet .wd-body { max-height: none; }
     .wov-sheet { max-width: 640px; width: 100%; max-height: calc(100vh - 40px); border-radius: 24px 24px 0 0; border-bottom:none; animation: sheetSlideUp 0.3s ease; }
     @keyframes sheetSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .wov-sheet .flow-kicker { font-size: 9.5px; }
-    .wov-sheet .flow-balance-main { font-size: 16px; }
-    .wov-sheet .flow-balance-main .token-subtext { font-size: 12px; }
-    .wov-sheet .flow-balance-usd { font-size: 12px; }
-    .wov-sheet .flow-input { font-size: 14px; }
-    .wov-sheet .flow-input-btn { font-size: 14px; }
-    .wov-sheet .flow-max-btn { font-size: 11.5px; padding: 6px 12px; }
-    .wov-sheet .flow-token-symbol { font-size: 12px; }
-    .wov-sheet .wallet-name { font-size: 13px; }
-    .wov-sheet .wallet-address { font-size: 11px; }
-    .wov-sheet #wov-wd-usd { font-size: 12px; }
-    .wov-sheet .withdraw-button { font-size: 14px; padding: 14px; }
-    .wov-sheet .minimum-note { font-size: 11px; }
-    .wov-sheet .flow-wallet-list .wallet-chip { margin-bottom: 10px; padding: 12px 14px; }
+
     .morpho-sheet .wd-modal-header { border-bottom: 1px solid rgba(255,255,255,0.08); }
     .morpho-sheet .wd-x { border-color: rgba(56,189,248,0.25); color: #94a3b8; }
-    .morpho-sheet .flow-kicker { font-size: 9.5px; }
-    .morpho-sheet .flow-balance-main { font-size: 16px; }
-    .morpho-sheet .flow-balance-main .token-subtext { font-size: 12px; }
-    .morpho-sheet .flow-balance-usd { font-size: 12px; }
-    .morpho-sheet .flow-input { font-size: 14px; }
-    .morpho-sheet .flow-input-btn { font-size: 14px; }
-    .morpho-sheet .flow-max-btn { font-size: 11.5px; padding: 6px 12px; }
-    .morpho-sheet .flow-token-symbol { font-size: 12px; }
-    .morpho-sheet .wallet-name { font-size: 13px; }
-    .morpho-sheet .wallet-address { font-size: 11px; }
-    .morpho-sheet #mwd-usd { font-size: 12px; }
-    .morpho-sheet .modal-submit-btn { font-size: 14px; padding: 14px; }
-    .morpho-sheet .flow-error-header { font-size: 13px; }
-    .morpho-sheet .flow-error-desc { font-size: 12px; }
-    .morpho-sheet .flow-topup-action-btn { font-size: 13px; }
     .flow-loading-state { padding: 40px 10px 26px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:16px; }
     .flow-balance-card { background:linear-gradient(145deg,#0d0d0f,#060607); border:1px solid rgba(56,189,248,0.14); border-radius:18px; padding:16px 18px; display:flex; justify-content:space-between; gap:14px; align-items:center; margin:4px 0 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 8px 24px rgba(0,0,0,0.4); }
     .flow-balance-left { display:flex; align-items:center; gap:12px; min-width:0; flex:1 1 auto; }
@@ -2438,7 +2415,7 @@
     if (flag) {
       btn.disabled = true;
       btn.style.display = '';
-      btn.innerHTML = '<span class="spinner"></span> Checking...';
+      btn.innerHTML = '<span class="spinner"></span> Loading...';
     } else if (!keepHidden) {
       onMorphoFormChange();
     } else {
@@ -2467,14 +2444,14 @@
 
     try {
       const resp = await api('/api/morpho/withdraw', { amount, address: addr, idempotencyKey: morphoAttemptKey });
-      const waitLeft = Math.max(0, 4000 - (Date.now() - started));
+      const waitLeft = Math.max(0, 5000 - (Date.now() - started));
       if (waitLeft) await new Promise(r => setTimeout(r, waitLeft));
       closeWithdrawModal();
       showWithdrawalSuccess(resp.transaction, 'MORPHO');
       morphoAttemptKey = null;
       try { const r = await api('/api/init'); if (r && r.user) applyUser(r.user, r); } catch (e) {}
     } catch (e) {
-      const waitLeft = Math.max(0, 4000 - (Date.now() - started));
+      const waitLeft = Math.max(0, 5000 - (Date.now() - started));
       if (waitLeft) await new Promise(r => setTimeout(r, waitLeft));
       if (e.code === 'insufficient_eth') {
         morphoInsufficientEth = true;
@@ -2709,12 +2686,12 @@
     withdrawBusy = true;
     ethAttemptKey = ethAttemptKey || newIdempotencyKey('ewd');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Checking...';
+    btn.innerHTML = '<span class="spinner"></span> Loading...';
     const started = Date.now();
 
     try {
       const r = await api('/api/eth/withdraw', { amount, address: addr, idempotencyKey: ethAttemptKey });
-      const waitLeft = Math.max(0, 4000 - (Date.now() - started));
+      const waitLeft = Math.max(0, 5000 - (Date.now() - started));
       if (waitLeft) await new Promise(rs => setTimeout(rs, waitLeft));
       showWithdrawalSuccess(r.transaction, 'ETH');
       ethAttemptKey = null;
@@ -2722,7 +2699,7 @@
       const re = await api('/api/init');
       if (re && re.user) applyUser(re.user, re);
     } catch (e) {
-      const waitLeft = Math.max(0, 4000 - (Date.now() - started));
+      const waitLeft = Math.max(0, 5000 - (Date.now() - started));
       if (waitLeft) await new Promise(rs => setTimeout(rs, waitLeft));
       if (e.code === 'min_amount') errBox.innerHTML = '<div class="flow-error-card">Minimum withdrawal is ' + Number(CONFIG.ethWithdrawMin).toFixed(3) + ' ETH.</div>';
       else if (e.code === 'invalid_address') errBox.innerHTML = '<div class="flow-error-card">Please enter a valid Ethereum address.</div>';
