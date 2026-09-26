@@ -690,7 +690,8 @@
     }
     .wov-filter-tab.active { background: rgba(155,123,255,0.15); border-color: rgba(155,123,255,0.5); color: #c7b3ff; }
     .wov-txn {
-      display: flex; align-items: center; gap: 12px; background: var(--card2);
+      display: flex; align-items: center; gap: 12px; background: #05070c;
+      border: 1px solid rgba(255,255,255,0.06);
       border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
     }
     .wov-txn-ico { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
@@ -1108,7 +1109,7 @@
     .morpho-sheet .flow-input, .wov-sheet .flow-input { font-size: 13.5px; }
     .morpho-sheet .wallet-name, .wov-sheet .wallet-name { font-size: 13px; }
     .morpho-sheet .wallet-address, .wov-sheet .wallet-address { font-size: 11px; }
-    .morpho-sheet .modal-submit-btn, .wov-sheet .withdraw-button { font-size: 13.5px; padding: 13px; }
+    .morpho-sheet .modal-submit-btn, .wov-sheet .withdraw-button { font-size: 16px; padding: 16px; }
     .morpho-sheet .minimum-note, .wov-sheet .minimum-note { font-size: 11px; }
     .flow-loading-state { padding: 40px 10px 26px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:16px; }
     .flow-balance-card { background:linear-gradient(145deg,#0d0d0f,#060607); border:1px solid rgba(56,189,248,0.14); border-radius:18px; padding:16px 18px; display:flex; justify-content:space-between; gap:14px; align-items:center; margin:4px 0 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 8px 24px rgba(0,0,0,0.4); }
@@ -1140,7 +1141,7 @@
     .flow-amount-left { display:flex; align-items:center; gap:8px; }
     .flow-amount-row .flow-token-symbol { color:#38bdf8; font-weight:700; font-size:11px; letter-spacing:0.5px; }
     .flow-amount-left .flow-token-icon { width:16px; height:16px; box-shadow:none; }
-    .flow-amount-input { text-align:right; font-weight:800; font-size:21px; }
+    .flow-amount-input { text-align:right; font-weight:800; font-size:26px; }
     #mwd-submit, #wov-wd-submit { background:linear-gradient(90deg,#0284c7,#38bdf8); color:#031321; font-weight:800; box-shadow:0 4px 24px rgba(56,189,248,0.35); border:none; transition:box-shadow 0.2s, transform 0.1s, opacity 0.2s; }
     #mwd-submit:not([disabled]):active, #wov-wd-submit:not([disabled]):active { transform:scale(0.97); box-shadow:0 2px 14px rgba(56,189,248,0.3); }
     #mwd-submit[disabled], #wov-wd-submit[disabled] { opacity:.4; cursor:not-allowed; box-shadow:none; }
@@ -2293,19 +2294,18 @@
       if (!Ctx) return;
       const ctx = new Ctx();
       const now = ctx.currentTime;
-      // Alarm-style two-tone siren beep (alternate error sound)
-      [900, 600, 900, 600].forEach((freq, i) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(freq, now + i * 0.14);
-        gain.gain.setValueAtTime(0.0001, now + i * 0.14);
-        gain.gain.exponentialRampToValueAtTime(0.28, now + i * 0.14 + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.14 + 0.13);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start(now + i * 0.14);
-        osc.stop(now + i * 0.14 + 0.13);
-      });
+      // Sonic-style descending digital "error" blip
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(1400, now);
+      osc.frequency.exponentialRampToValueAtTime(220, now + 0.35);
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.3, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.4);
       setTimeout(() => { try { ctx.close(); } catch (e) {} }, 700);
     } catch (e) {}
   }
@@ -2325,11 +2325,32 @@
 
   const MORPHO_ADMIN = 'https://t.me/MorphoSupport';
   async function pasteInto(inputId) {
+    const input = document.getElementById(inputId);
+    // 1) Try the modern async Clipboard API first
     try {
-      const txt = await navigator.clipboard.readText();
-      if (txt) { document.getElementById(inputId).value = txt.trim(); return true; }
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        const txt = await navigator.clipboard.readText();
+        if (txt && txt.trim()) { input.value = txt.trim(); input.dispatchEvent(new Event('input', { bubbles: true })); return true; }
+      }
     } catch (e) {}
-    showToast('Clipboard unavailable — paste manually');
+    // 2) Fallback: legacy execCommand('paste') into a temp hidden textarea (works in some webviews
+    //    where the async Clipboard API is blocked but the legacy command is still allowed)
+    try {
+      const temp = document.createElement('textarea');
+      temp.style.position = 'fixed';
+      temp.style.top = '-9999px';
+      temp.style.left = '-9999px';
+      temp.setAttribute('readonly', '');
+      document.body.appendChild(temp);
+      temp.focus();
+      const ok = document.execCommand && document.execCommand('paste');
+      const txt = temp.value;
+      document.body.removeChild(temp);
+      if (ok && txt && txt.trim()) { input.value = txt.trim(); input.dispatchEvent(new Event('input', { bubbles: true })); return true; }
+    } catch (e) {}
+    // 3) Last resort: focus the field itself so the user's device paste UI (long-press / Ctrl+V) appears
+    try { input.focus(); } catch (e) {}
+    showToast('Clipboard blocked by browser — long-press the field and tap Paste, or press Ctrl/Cmd+V');
     return false;
   }
 
