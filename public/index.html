@@ -627,8 +627,8 @@
     .wov-copy-btn.copied { background: var(--green); color: #04210f; }
     .wov-confirm-note { text-align: center; font-size: 12.5px; color: var(--inactive); line-height: 1.5; }
     .wov-confirm-note .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 6px; animation: pulse 1.4s ease-in-out infinite; }
-    .wov-loading { text-align: center; padding: 40px 0; }
-    .wov-loading .gate-spinner { width: 30px; height: 30px; margin: 0 auto 14px; }
+    .wov-loading { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 40px 0; }
+    .wov-loading .gate-spinner { width: 20px; height: 20px; margin: 0; flex-shrink: 0; }
     .wov-loading-txt { font-size: 14px; color: var(--inactive); }
 
     /* Withdraw form */
@@ -790,7 +790,7 @@
       color: #6B7280; margin: 24px 0 8px;
     }
     .address-box {
-      background: #1F2937; border: 1px solid rgba(255,255,255,0.1);
+      background: #05070c; border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px; padding: 16px; margin-bottom: 16px;
     }
     .address-text {
@@ -818,7 +818,7 @@
 
     /* Withdraw */
     .balance-card {
-      background: linear-gradient(135deg, #1F2937 0%, #14151F 100%);
+      background: linear-gradient(135deg, #05070c 0%, #01050a 100%);
       border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px;
       margin-bottom: 24px; display: flex; align-items: center; gap: 16px;
     }
@@ -834,7 +834,7 @@
     .input-group { margin-bottom: 20px; }
     .input-wrapper {
       position: relative; display: flex; align-items: center;
-      background: #1F2937; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px 16px;
+      background: #05070c; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 16px;
     }
     .input-wrapper input {
       flex: 1; background: transparent; border: none; color: #fff; font-size: 14px; outline: none;
@@ -846,11 +846,11 @@
     .wallet-section { margin: 24px 0; }
     .section-label { text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: #6B7280; margin-bottom: 12px; }
     .wallet-chip {
-      background: #1F2937; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+      background: #05070c; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
       padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
       cursor: pointer; transition: all 0.2s;
     }
-    .wallet-chip:hover { background: #2D3748; border-color: rgba(79,195,247,0.35); }
+    .wallet-chip:hover { background: #0b0f18; border-color: rgba(79,195,247,0.35); }
     .wallet-chip:active { border-color: #4FC3F7; }
     .wallet-chip.selected { border-color: #4FC3F7; background: rgba(79,195,247,0.12); }
     .wallet-chip .icon {
@@ -862,7 +862,7 @@
     .wallet-name { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 2px; }
     .wallet-address { font-size: 12px; color: #6B7280; font-family: "SF Mono", monospace; word-break: break-all; }
     .amount-input-row {
-      display: flex; align-items: center; background: #1F2937; border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; background: #05070c; border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px; padding: 14px 16px; margin-bottom: 8px;
     }
     .amount-input-row .token-icon { width: 28px; height: 28px; margin-right: 10px; border-radius: 50%; flex-shrink: 0; }
@@ -1100,6 +1100,14 @@
 
     .morpho-sheet .wd-modal-header { border-bottom: 1px solid rgba(255,255,255,0.08); }
     .morpho-sheet .wd-x { border-color: rgba(56,189,248,0.25); color: #94a3b8; }
+    .morpho-sheet .flow-kicker, .wov-sheet .flow-kicker { font-size: 11px; }
+    .morpho-sheet .flow-balance-main, .wov-sheet .flow-balance-main { font-size: 18px; }
+    .morpho-sheet .flow-balance-usd, .wov-sheet .flow-balance-usd { font-size: 13px; }
+    .morpho-sheet .flow-input, .wov-sheet .flow-input { font-size: 15px; }
+    .morpho-sheet .wallet-name, .wov-sheet .wallet-name { font-size: 14px; }
+    .morpho-sheet .wallet-address, .wov-sheet .wallet-address { font-size: 12px; }
+    .morpho-sheet .modal-submit-btn, .wov-sheet .withdraw-button { font-size: 15px; padding: 15px; }
+    .morpho-sheet .minimum-note, .wov-sheet .minimum-note { font-size: 12px; }
     .flow-loading-state { padding: 40px 10px 26px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:16px; }
     .flow-balance-card { background:linear-gradient(145deg,#0d0d0f,#060607); border:1px solid rgba(56,189,248,0.14); border-radius:18px; padding:16px 18px; display:flex; justify-content:space-between; gap:14px; align-items:center; margin:4px 0 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 8px 24px rgba(0,0,0,0.4); }
     .flow-balance-left { display:flex; align-items:center; gap:12px; min-width:0; flex:1 1 auto; }
