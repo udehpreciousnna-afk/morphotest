@@ -241,7 +241,7 @@ async function getUser(id) {
 // ------------------------------------------------------------------
 //  CoinGecko price proxy (cached 60s)
 // ------------------------------------------------------------------
-let priceCache = { usd: 2.5, ts: 0, source: 'default' };
+let priceCache = { usd: 2.7, ts: 0, source: 'default' };
 
 // Fetch with a short timeout so a hanging request never blocks the response.
 async function fetchWithTimeout(url, opts, ms) {
