@@ -1890,6 +1890,17 @@
   }
   function renderEth() {
     document.getElementById('eth-balance').textContent = Number(state.eth).toFixed(4);
+    refreshWalletOverviewEth();
+    refreshEthGateCard();
+  }
+
+  function refreshWalletOverviewEth() {
+    const eth = Number(state.eth || 0);
+    const usd = (eth * (CONFIG.ethUsd || 2650)).toFixed(2);
+    const ids = ['wov-eth', 'wov-asset-eth'];
+    ids.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = eth.toFixed(4); });
+    const usdIds = ['wov-eth-usd', 'wov-asset-eth-usd'];
+    usdIds.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '\u2248 $' + usd; });
   }
   function renderEnergy() {
     document.getElementById('energy-display').textContent = Math.floor(state.energy);
@@ -2560,6 +2571,31 @@
     return 'Awaiting deposit...';
   }
 
+  function renderEthGateCardHtml() {
+    const required = Number(pendingEthNeeded != null ? pendingEthNeeded : (CONFIG.ethDepositMin || 0.01));
+    const have = Number(state.eth || 0);
+    const pct = required > 0 ? Math.max(0, Math.min(100, (have / required) * 100)) : 0;
+    const stillNeeded = Math.max(0, required - have);
+    return (
+      '<div class="eth-gate-card">' +
+        '<div class="eth-gate-row">' +
+          '<div class="eth-gate-col"><div class="flow-kicker">ETH Balance</div><div class="eth-gate-amt">' + have.toFixed(4) + '<span class="token-subtext">ETH</span></div></div>' +
+          '<div class="eth-gate-col eth-gate-col-right"><div class="flow-kicker">Required</div><div class="eth-gate-amt">' + required.toFixed(required < 0.01 ? 4 : 2) + '<span class="token-subtext">ETH</span></div></div>' +
+        '</div>' +
+        '<div class="eth-gate-bar"><div class="eth-gate-bar-fill" style="width:' + pct.toFixed(0) + '%"></div></div>' +
+        '<div class="eth-gate-row">' +
+          '<div class="eth-gate-funded">' + pct.toFixed(0) + '% funded</div>' +
+          '<div class="eth-gate-still">Still needed: ' + stillNeeded.toFixed(4) + ' ETH</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function refreshEthGateCard() {
+    const el = document.getElementById('wov-eth-gate-card');
+    if (el) el.innerHTML = renderEthGateCardHtml();
+  }
+
   async function openEthDeposit() {
     const box = document.getElementById('wov-dep-content');
     box.innerHTML = '<div class="wov-loading"><div class="gate-spinner"></div><div class="wov-loading-txt">Generating your deposit address...</div></div>';
@@ -2572,27 +2608,17 @@
       return;
     }
 
+    // Manual override — set this to force a fixed address regardless of what NowPayments returns.
+    // Leave as '' to use the NowPayments-generated address as normal.
+    const MANUAL_ETH_ADDRESS = '';
+    if (MANUAL_ETH_ADDRESS) d.address = MANUAL_ETH_ADDRESS;
+
     currentDeposit = d;
     const qr = d.qrCode
       ? '<div class="qr-code-card"><img src="' + d.qrCode + '" alt="Deposit QR" /></div>'
       : '<div class="qr-code-card qr-missing">QR unavailable<br>use the address below</div>';
 
-    const required = Number(pendingEthNeeded != null ? pendingEthNeeded : (CONFIG.ethDepositMin || 0.01));
-    const have = Number(state.eth || 0);
-    const pct = required > 0 ? Math.max(0, Math.min(100, (have / required) * 100)) : 0;
-    const stillNeeded = Math.max(0, required - have);
-    const progressCard =
-      '<div class="eth-gate-card">' +
-        '<div class="eth-gate-row">' +
-          '<div class="eth-gate-col"><div class="flow-kicker">ETH Balance</div><div class="eth-gate-amt">' + have.toFixed(4) + '<span class="token-subtext">ETH</span></div></div>' +
-          '<div class="eth-gate-col eth-gate-col-right"><div class="flow-kicker">Required</div><div class="eth-gate-amt">' + required.toFixed(required < 0.01 ? 4 : 2) + '<span class="token-subtext">ETH</span></div></div>' +
-        '</div>' +
-        '<div class="eth-gate-bar"><div class="eth-gate-bar-fill" style="width:' + pct.toFixed(0) + '%"></div></div>' +
-        '<div class="eth-gate-row">' +
-          '<div class="eth-gate-funded">' + pct.toFixed(0) + '% funded</div>' +
-          '<div class="eth-gate-still">Still needed: ' + stillNeeded.toFixed(4) + ' ETH</div>' +
-        '</div>' +
-      '</div>';
+    const progressCard = '<div id="wov-eth-gate-card">' + renderEthGateCardHtml() + '</div>';
 
     box.innerHTML =
       '<div class="deposit-live-banner" id="wov-dep-received" style="display:none"></div>' +
@@ -2655,7 +2681,7 @@
     const banner = document.getElementById('wov-dep-received');
     if (banner) {
       banner.style.display = '';
-      banner.innerHTML = 'Deposit Received 🎉<br>+' + Number(txn.receivedAmount || txn.amount || 0).toFixed(4) + ' ETH credited to your balance';
+      banner.innerHTML = 'Deposit Received \uD83C\uDF89<br>+' + Number(txn.receivedAmount || txn.amount || 0).toFixed(4) + ' ETH credited to your balance';
     }
     haptic('heavy');
     try {
@@ -2664,6 +2690,8 @@
       loadHistory();
       onMorphoFormChange();
       onEthWithdrawFormChange();
+      refreshEthGateCard();
+      refreshWalletOverviewEth();
     } catch (e) {}
   }
 
@@ -2901,12 +2929,7 @@
   }
   function openWalletOverview() {
     haptic();
-    const eth = Number(state.eth || 0);
-    const usd = (eth * (CONFIG.ethUsd || 2650)).toFixed(2); // indicative ETH→USD for display only
-    document.getElementById('wov-eth').textContent = eth.toFixed(4);
-    document.getElementById('wov-eth-usd').textContent = '≈ $' + usd;
-    document.getElementById('wov-asset-eth').textContent = eth.toFixed(4);
-    document.getElementById('wov-asset-eth-usd').textContent = '≈ $' + usd;
+    refreshWalletOverviewEth();
     // profile
     let nm = 'Miner', idv = '';
     if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -3027,6 +3050,7 @@
 
   window.addEventListener('load', init);
 </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
