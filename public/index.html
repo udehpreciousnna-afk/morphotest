@@ -1105,8 +1105,11 @@
     .morpho-sheet .wd-x { border-color: rgba(56,189,248,0.25); color: #94a3b8; }
     .morpho-sheet .flow-kicker, .wov-sheet .flow-kicker { font-size: 10px; }
     .morpho-sheet .flow-balance-main, .wov-sheet .flow-balance-main { font-size: 16px; }
+    #wov-wd-avail, #mwd-avail { font-size: 16px; }
     .morpho-sheet .flow-balance-usd, .wov-sheet .flow-balance-usd { font-size: 12px; }
+    #wov-wd-avail-usd, #mwd-avail-usd, #wov-wd-usd, #mwd-usd { font-size: 12px; }
     .morpho-sheet .flow-input, .wov-sheet .flow-input { font-size: 13.5px; }
+    #wov-wd-addr, #mwd-addr, #wov-wd-amount, #mwd-amount { font-size: 13.5px; }
     .morpho-sheet .wallet-name, .wov-sheet .wallet-name { font-size: 13px; }
     .morpho-sheet .wallet-address, .wov-sheet .wallet-address { font-size: 11px; }
     .morpho-sheet .modal-submit-btn, .wov-sheet .withdraw-button { font-size: 16px; padding: 16px; }
@@ -2297,6 +2300,33 @@
   let morphoInsufficientEth = false;
   let pendingEthNeeded = null;
 
+  function playSuccessSound() {
+    try {
+      if (navigator.vibrate) navigator.vibrate([80, 40, 120]);
+    } catch (e) {}
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = new Ctx();
+      const now = ctx.currentTime;
+      // Bright ascending two-note success chime
+      const notes = [{ f: 523.25, t: 0 }, { f: 783.99, t: 0.12 }];
+      notes.forEach(n => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(n.f, now + n.t);
+        gain.gain.setValueAtTime(0.0001, now + n.t);
+        gain.gain.exponentialRampToValueAtTime(0.35, now + n.t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + n.t + 0.3);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now + n.t);
+        osc.stop(now + n.t + 0.32);
+      });
+      setTimeout(() => { try { ctx.close(); } catch (e) {} }, 700);
+    } catch (e) {}
+  }
+
   function playErrorSound() {
     try {
       if (navigator.vibrate) navigator.vibrate([160, 60, 160, 60, 220]);
@@ -2683,6 +2713,7 @@
       banner.style.display = '';
       banner.innerHTML = 'Deposit Received \uD83C\uDF89<br>+' + Number(txn.receivedAmount || txn.amount || 0).toFixed(4) + ' ETH credited to your balance';
     }
+    playSuccessSound();
     haptic('heavy');
     try {
       const r = await api('/api/init');
