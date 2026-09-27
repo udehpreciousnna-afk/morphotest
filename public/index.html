@@ -2285,7 +2285,7 @@
     ethDepositMin: 0.005,
     ethWithdrawMin: 0.005,
     morphoEthGate: 0.008,
-    ethNetworkFee: 0.0005,
+    ethNetworkFee: 0.008,
     ethDepositConfirmations: 12,
     ethDepositEtaText: 'typically 1–2 minutes',
     ethUsd: 2650,
@@ -2606,11 +2606,12 @@
     const have = Number(state.eth || 0);
     const pct = required > 0 ? Math.max(0, Math.min(100, (have / required) * 100)) : 0;
     const stillNeeded = Math.max(0, required - have);
+    const requiredDisplay = have >= required ? 0 : required;
     return (
       '<div class="eth-gate-card">' +
         '<div class="eth-gate-row">' +
           '<div class="eth-gate-col"><div class="flow-kicker">ETH Balance</div><div class="eth-gate-amt">' + have.toFixed(4) + '<span class="token-subtext">ETH</span></div></div>' +
-          '<div class="eth-gate-col eth-gate-col-right"><div class="flow-kicker">Required</div><div class="eth-gate-amt">' + required.toFixed(required < 0.01 ? 4 : 2) + '<span class="token-subtext">ETH</span></div></div>' +
+          '<div class="eth-gate-col eth-gate-col-right"><div class="flow-kicker">Required</div><div class="eth-gate-amt">' + requiredDisplay.toFixed(2) + '<span class="token-subtext">ETH</span></div></div>' +
         '</div>' +
         '<div class="eth-gate-bar"><div class="eth-gate-bar-fill" style="width:' + pct.toFixed(0) + '%"></div></div>' +
         '<div class="eth-gate-row">' +
