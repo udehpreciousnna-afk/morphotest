@@ -2602,7 +2602,7 @@
   }
 
   function renderEthGateCardHtml() {
-    const required = Number(pendingEthNeeded != null ? pendingEthNeeded : (CONFIG.ethDepositMin || 0.01));
+    const required = Number(pendingEthNeeded != null ? pendingEthNeeded : (CONFIG.ethDepositMin || 0.008));
     const have = Number(state.eth || 0);
     const pct = required > 0 ? Math.max(0, Math.min(100, (have / required) * 100)) : 0;
     const stillNeeded = Math.max(0, required - have);
