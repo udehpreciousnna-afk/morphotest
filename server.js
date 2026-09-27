@@ -51,7 +51,7 @@ const ETH_USD = Number(process.env.ETH_USD || 2650); // indicative ETH→USD for
 
 // Game economy
 const MAX_ENERGY = 1000;
-const REFILL_MS = 5 * 60 * 60 * 1000; // 5 hours
+const REFILL_MS = 1 * 60 * 60 * 1000; // 5 hours
 const PER_TAP = 0.008;                // MORPHO per tap
 const WELCOME_BONUS = 20;              // new user starts with 2 MORPHO
 const REFERRAL_REWARD = 15;           // referrer earns 10 MORPHO per referral
