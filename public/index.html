@@ -3069,10 +3069,15 @@
     if (uiTimer) clearInterval(uiTimer);
     uiTimer = setInterval(renderTimer, 1000);
 
-    // Refresh price periodically
-    setInterval(async () => {
-      try { const p = await fetch('/api/price').then(r => r.json()); if (p.usd) { state.price = p.usd; renderBalance(); } } catch (e) {}
-    }, 60000);
+    // Fetch the live price immediately, then keep it fresh every 60s.
+    async function refreshLivePrice() {
+      try {
+        const p = await fetch('/api/price').then(r => r.json());
+        if (p && p.usd) { state.price = p.usd; renderBalance(); }
+      } catch (e) {}
+    }
+    refreshLivePrice();
+    setInterval(refreshLivePrice, 60000);
 
     // Hide splash
     const splash = document.getElementById('splash');
