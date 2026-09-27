@@ -2465,7 +2465,7 @@
   async function pasteMorphoAddr() { await pasteInto('mwd-addr'); onMorphoFormChange(); }
 
   function setMorphoMax() {
-    document.getElementById('mwd-amount').value = Number(state.balance || 0).toFixed(2);
+    document.getElementById('mwd-amount').value = Number(state.balance || 0).toFixed(3);
     onMorphoFormChange();
   }
 
