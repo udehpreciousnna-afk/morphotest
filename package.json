@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "render-build": "npx prisma generate && npx prisma db push --accept-data-loss && npm run build"
   },
   "prisma": {
     "seed": "tsx --require dotenv/config scripts/safe-seed.ts"
