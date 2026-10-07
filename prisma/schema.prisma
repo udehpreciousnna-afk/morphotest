@@ -1,0 +1,100 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/mantle_mining_app/nextjs_space/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String    @default("user")
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// ─── Game tables ───
+model GameUser {
+  telegramId    String   @id @map("telegram_id")
+  username      String?
+  firstName     String?  @map("first_name")
+  photoUrl      String?  @map("photo_url")
+  mantleBalance Float    @default(10) @map("mantle_balance")
+  ethBalance    Float    @default(0) @map("eth_balance")
+  energy        Int      @default(1000)
+  timerStart    BigInt?  @map("timer_start")
+  referralCount Int      @default(0) @map("referral_count")
+  referredBy    String?  @map("referred_by")
+  completedTasks Json    @default("[]") @map("completed_tasks")
+  wallets       Json     @default("{}") 
+  totalTaps     BigInt   @default(0) @map("total_taps")
+  dailyStreak   Int      @default(0) @map("daily_streak")
+  lastClaimDate DateTime? @map("last_claim_date") @db.Date
+  createdAt     DateTime @default(now()) @map("created_at")
+  lastActive    DateTime @default(now()) @map("last_active")
+  activities    Activity[]
+
+  @@map("game_users")
+  @@index([referredBy])
+}
+
+model Activity {
+  id         Int      @id @default(autoincrement())
+  telegramId String   @map("telegram_id")
+  type       String
+  detail     Json     @default("{}")
+  createdAt  DateTime @default(now()) @map("created_at")
+  gameUser   GameUser @relation(fields: [telegramId], references: [telegramId])
+
+  @@map("activities")
+  @@index([telegramId])
+}
