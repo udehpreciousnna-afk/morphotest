@@ -207,20 +207,20 @@
       padding: 18px 0; margin: 2px 0;
     }
     .coin-glow {
-      position: absolute; inset: clamp(-30px, -7%, -15px);
+      position: absolute; inset: clamp(-12px, -3%, -6px);
       border-radius: 50%;
       background:
-        radial-gradient(circle at 50% 48%, rgba(255,168,92,0.22) 0%, rgba(255,168,92,0.11) 32%, rgba(204,122,58,0.06) 55%, transparent 70%),
-        radial-gradient(circle at 32% 34%, rgba(255,168,92,0.07) 0%, transparent 38%),
-        radial-gradient(circle at 70% 40%, rgba(255,168,92,0.06) 0%, transparent 40%);
-      filter: blur(5px);
+        radial-gradient(circle at 50% 48%, rgba(255,168,92,0.12) 0%, rgba(255,168,92,0.06) 34%, rgba(204,122,58,0.03) 56%, transparent 70%),
+        radial-gradient(circle at 32% 34%, rgba(255,168,92,0.04) 0%, transparent 36%),
+        radial-gradient(circle at 70% 40%, rgba(255,168,92,0.03) 0%, transparent 38%);
+      filter: blur(4px);
       pointer-events: none;
       animation: coinGlowPulse 2.4s ease-in-out infinite;
       will-change: transform, opacity, filter;
     }
     @keyframes coinGlowPulse {
-      0%,100% { opacity: 0.35; transform: scale(0.98); filter: blur(6px) brightness(1); }
-      50% { opacity: 0.50; transform: scale(1.02); filter: blur(6px) brightness(1.06); }
+      0%,100% { opacity: 0.20; transform: scale(0.99); filter: blur(5px) brightness(1); }
+      50% { opacity: 0.30; transform: scale(1.01); filter: blur(5px) brightness(1.04); }
     }
     /* Reactive burst on each tap */
     .coin-glow.glow-burst { animation: glowBurst 0.42s ease-out; }
@@ -239,6 +239,27 @@
     @keyframes sparkFly {
       0% { opacity: 0.95; transform: translate(-50%, -50%) scale(0.4); }
       100% { opacity: 0; transform: translate(calc(-50% + var(--sx)), calc(-50% + var(--sy))) scale(1.15); }
+    }
+    /* ── Immediate tap ring: bounces only on tap, not the ambient glow ── */
+    .coin-ring {
+      position: absolute;
+      width: calc(100% + 10px); height: calc(100% + 10px);
+      top: -5px; left: -5px;
+      border-radius: 50%;
+      box-shadow:
+        0 0 10px 3px rgba(255,168,92,0.55),
+        0 0 4px 1px rgba(255,168,92,0.35);
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .coin-ring.ring-burst {
+      animation: ringBounce 0.38s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    @keyframes ringBounce {
+      0%   { transform: scale(1);    opacity: 0.7; }
+      30%  { transform: scale(0.94); opacity: 1;   }
+      65%  { transform: scale(1.10); opacity: 0.95;}
+      100% { transform: scale(1);    opacity: 0.7; }
     }
     .coin-circle {
       width: min(63vw, 268px);
@@ -295,7 +316,7 @@
     /* Floating text */
     .float-text {
       position: fixed; pointer-events: none; font-weight: 800; font-size: 25px;
-      color: #fff; text-shadow: 0 0 12px var(--gold), 0 2px 4px rgba(0,0,0,0.5);
+      color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.6);
       z-index: 999; animation: floatUp 0.7s ease forwards; white-space: nowrap;
     }
     .float-text-ghost {
@@ -849,6 +870,7 @@
       <div class="coin-glow"></div>
       <div class="coin-circle" id="coin">
         <img class="coin-logo" id="coin-logo-img" src="" alt="MANTLE" />
+        <div class="coin-ring" id="coin-ring"></div>
       </div>
     </div>
 
@@ -907,13 +929,13 @@
       </div>
       <div class="task-text">
         <div class="task-title">Follow Twitter Page</div>
-        <div class="task-subtitle task-link" onclick="openLink('https://x.com/MantleOfficial')">@MantleOfficial</div>
+        <div class="task-subtitle task-link" onclick="openLink('https://x.com/Mantle_Official')">@Mantle_Official</div>
         <div class="task-rewards">
           <span class="reward-item reward-morpho"><img class="reward-logo-img" src="/mantle-logo.png" alt="" /> +1</span>
           <span class="reward-item reward-sol">◆ +0.0005</span>
         </div>
       </div>
-      <button class="task-btn task-btn-start" id="task-btn-3" onclick="handleTaskStart(3,'https://x.com/MantleOfficial')">Start</button>
+      <button class="task-btn task-btn-start" id="task-btn-3" onclick="handleTaskStart(3,'https://x.com/Mantle_Official')">Start</button>
     </div>
 
     <div class="task-card" id="task-card-4">
@@ -1261,7 +1283,7 @@
 
   // Economy constants (mirror server)
   const MAX_ENERGY = 1000;
-  function randTap() { return Math.round((0.010 + Math.random() * 0.089) * 1000) / 1000; }
+  function randTap() { return 0.050; }
   const REFILL_MS = 5 * 60 * 60 * 1000;   // 5 hours
   const AIRDROP_DATE = new Date('2026-10-01T00:00:00Z');
 
@@ -1411,7 +1433,7 @@
     if (earned) earned.textContent = state.referralCount * 10;
     document.getElementById('ref-link-text').textContent = state.refLink;
   }
-  const TASK_URLS = { 1: 'https://t.me/MantleMining', 2: 'https://t.me/Crypto365team', 3: 'https://x.com/MantleOfficial', 4: 'https://t.me/addlist/EeYT6q-Kq0gyNGQ0', 5: 'https://youtube.com/@crypt_365?si=0Q-EerBaO-zQ1sGj' };
+  const TASK_URLS = { 1: 'https://t.me/MantleMining', 2: 'https://t.me/Crypto365team', 3: 'https://x.com/Mantle_Official', 4: 'https://t.me/addlist/EeYT6q-Kq0gyNGQ0', 5: 'https://youtube.com/@crypt_365?si=0Q-EerBaO-zQ1sGj' };
   function renderTasks() {
     for (let i = 1; i <= 5; i++) {
       const btn = document.getElementById('task-btn-' + i);
@@ -1490,9 +1512,9 @@
     // Spring bounce — restart cleanly so rapid taps never block
     coin.classList.remove('tap-anim'); void coin.offsetWidth; coin.classList.add('tap-anim');
 
-    // Brief glow intensity pulse behind the coin
-    const glow = document.querySelector('.coin-glow');
-    if (glow) { glow.classList.remove('glow-burst'); void glow.offsetWidth; glow.classList.add('glow-burst'); }
+    // Bounce only the tight ring around the coin, not the ambient glow
+    const ring = document.getElementById('coin-ring');
+    if (ring) { ring.classList.remove('ring-burst'); void ring.offsetWidth; ring.classList.add('ring-burst'); }
 
     let x, y;
     if (event.touches && event.touches[0]) { x = event.touches[0].clientX; y = event.touches[0].clientY; }
