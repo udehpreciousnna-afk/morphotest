@@ -207,20 +207,20 @@
       padding: 18px 0; margin: 2px 0;
     }
     .coin-glow {
-      position: absolute; inset: clamp(-55px, -13%, -30px);
+      position: absolute; inset: clamp(-30px, -7%, -15px);
       border-radius: 50%;
       background:
-        radial-gradient(circle at 50% 48%, rgba(255,168,92,0.40) 0%, rgba(255,168,92,0.22) 30%, rgba(204,122,58,0.12) 52%, transparent 68%),
-        radial-gradient(circle at 32% 34%, rgba(255,168,92,0.14) 0%, transparent 40%),
-        radial-gradient(circle at 70% 40%, rgba(255,168,92,0.12) 0%, transparent 42%);
-      filter: blur(8px);
+        radial-gradient(circle at 50% 48%, rgba(255,168,92,0.22) 0%, rgba(255,168,92,0.11) 32%, rgba(204,122,58,0.06) 55%, transparent 70%),
+        radial-gradient(circle at 32% 34%, rgba(255,168,92,0.07) 0%, transparent 38%),
+        radial-gradient(circle at 70% 40%, rgba(255,168,92,0.06) 0%, transparent 40%);
+      filter: blur(5px);
       pointer-events: none;
       animation: coinGlowPulse 2.4s ease-in-out infinite;
       will-change: transform, opacity, filter;
     }
     @keyframes coinGlowPulse {
-      0%,100% { opacity: 0.55; transform: scale(0.98); filter: blur(8px) brightness(1); }
-      50% { opacity: 0.75; transform: scale(1.03); filter: blur(8px) brightness(1.1); }
+      0%,100% { opacity: 0.35; transform: scale(0.98); filter: blur(6px) brightness(1); }
+      50% { opacity: 0.50; transform: scale(1.02); filter: blur(6px) brightness(1.06); }
     }
     /* Reactive burst on each tap */
     .coin-glow.glow-burst { animation: glowBurst 0.42s ease-out; }
@@ -290,7 +290,7 @@
       0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);}
       40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);}
     }
-    .coin-logo { width: 138%; height: 138%; object-fit: contain; border-radius: 50%; pointer-events: none; transform: scale(1); }
+    .coin-logo { width: 118%; height: 118%; object-fit: contain; border-radius: 50%; pointer-events: none; transform: scale(1); }
 
     /* Floating text */
     .float-text {
