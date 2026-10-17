@@ -1665,9 +1665,9 @@
   function spawnFloat(coin, gain) {
   const r = coin.getBoundingClientRect();
 
-  // Centered horizontally over the coin, rising upward and spilling above the top
-  const fx = r.left + r.width * 0.5;
-  const fy = r.top + r.height * 0.20;
+  // Positioned to the left of the coin circle, vertically centered, rising upward
+  const fx = r.left + r.width * 0.5 - 20;
+  const fy = r.top + r.height * 0.30;
   const label = '+' + (gain != null ? gain : randTap()).toFixed(3);
 
   // Rising ghost trail (faded copies stacked slightly above), then the bright number
@@ -1678,7 +1678,7 @@
     g.style.top = (fy - i * 22) + 'px';
     g.style.opacity = String(0.28 - i * 0.07);
     document.body.appendChild(g);
-    g.style.left = (fx - g.offsetWidth / 2) + 'px';
+    g.style.left = (fx - g.offsetWidth) + 'px';
     setTimeout(() => g.remove(), 720);
   }
 
@@ -1687,9 +1687,9 @@
   el.textContent = label;
   el.style.top = fy + 'px';
   document.body.appendChild(el);
-  el.style.left = (fx - el.offsetWidth / 2) + 'px';
+  el.style.left = (fx - el.offsetWidth) + 'px';
   setTimeout(() => { el.remove(); }, 720);
-  }
+}
 
   let isFlushing = false;
   let flushSeq = 0;
