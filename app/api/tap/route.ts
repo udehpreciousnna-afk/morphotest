@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { resolveIdentity } from '@/lib/telegram-auth';
 import { publicUser, computeState } from '@/lib/game-helpers';
-import { MAX_ENERGY } from '@/lib/game-config';
+import { MAX_ENERGY, TAP_MIN, TAP_MAX } from '@/lib/game-config';
 
 export async function POST(req: Request) {
   try {
@@ -14,6 +14,7 @@ export async function POST(req: Request) {
     let taps = parseInt(body?.taps, 10);
     if (!Number.isFinite(taps) || taps <= 0) taps = 0;
     taps = Math.min(taps, MAX_ENERGY);
+    const clientGain = Number(body?.gain);
 
     let row = await prisma.gameUser.findUnique({ where: { telegramId: idn.id } });
     if (!row) return NextResponse.json({ error: 'no_user' }, { status: 404 });
@@ -26,9 +27,15 @@ export async function POST(req: Request) {
     if (allowed > 0) {
       if (timerStart == null) timerStart = Date.now();
       energy -= allowed;
-      let gained = 0;
-      for (let i = 0; i < allowed; i++) gained += Math.round((0.010 + Math.random() * 0.089) * 1000) / 1000;
-      gained = Math.round(gained * 1000) / 1000;
+      let gained;
+      const minG = allowed * TAP_MIN, maxG = allowed * TAP_MAX;
+      if (Number.isFinite(clientGain) && clientGain >= minG - 0.0005 && clientGain <= maxG + 0.0005) {
+        gained = Math.round(clientGain * 1000) / 1000;
+      } else {
+        gained = 0;
+        for (let i = 0; i < allowed; i++) gained += Math.round((0.010 + Math.random() * 0.089) * 1000) / 1000;
+        gained = Math.round(gained * 1000) / 1000;
+      }
       row = await prisma.gameUser.update({
         where: { telegramId: idn.id },
         data: {
