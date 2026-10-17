@@ -319,14 +319,14 @@
       aspect-ratio: 1 / 1;
       border-radius: 50%;
       background: #000;
-      /* Layered bezel: thick dark outer ring → thin metallic mid-ring → dark inner edge */
-      border: 4px solid #1a1a1a;
-      outline: 12px solid #2a2520;
+      /* Layered black bezel: charcoal outer ring, distinct from the pure-black logo center */
+      border: 4px solid #2b2b2b;
+      outline: 12px solid #202020;
       outline-offset: 0px;
       box-shadow:
         /* outer dark shadow for depth */
         0 4px 16px rgba(0,0,0,0.7),
-        0 0 0 16px #1c1815,
+        0 0 0 16px #181818,
         /* subtle metallic highlight on upper-left rim */
         inset 3px 3px 6px rgba(255,255,255,0.06),
         inset -2px -2px 5px rgba(0,0,0,0.5),
@@ -1636,9 +1636,9 @@
   function spawnFloat(coin, gain) {
   const r = coin.getBoundingClientRect();
 
-  // Upper-left over the coin, like the reference video
-  const fx = r.left + r.width * 0.08;
-  const fy = r.top + r.height * 0.30;
+  // Center-left of the coin, close to the black circle
+  const fx = r.left + r.width * 0.14;
+  const fy = r.top + r.height * 0.50;
   const label = '+' + (gain != null ? gain : randTap()).toFixed(3);
 
   // Rising ghost trail (faded copies stacked slightly above), then the bright number
