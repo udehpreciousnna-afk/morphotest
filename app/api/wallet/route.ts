@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
     const key = String(body?.wallet ?? '').toLowerCase();
     const address = String(body?.address ?? '').trim();
-    const valid = ['trustwallet', 'binance', 'bitget', 'okx', 'bybit'];
+    const valid = ['trustwallet', 'coinbase', 'mexc', 'okx', 'bybit'];
     if (!valid.includes(key) || !address) {
       return NextResponse.json({ error: 'bad_wallet' }, { status: 400 });
     }
