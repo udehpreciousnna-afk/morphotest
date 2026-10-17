@@ -1,6 +1,6 @@
 // Game economy constants
 export const MAX_ENERGY = 1000;
-export const REFILL_MS = 4 * 60 * 60 * 1000; // 5 hours
+export const REFILL_MS = 5 * 60 * 60 * 1000; // 5 hours
 export const TAP_MIN = 0.010;              // min MANTLE per tap
 export const TAP_MAX = 0.099;              // max MANTLE per tap
 export const WELCOME_BONUS = 20;             // new user starts with 20 MANTLE
