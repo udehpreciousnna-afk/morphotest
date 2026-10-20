@@ -869,6 +869,9 @@
     .tap-logo-img{width:18px;height:18px;border-radius:50%;vertical-align:-4px;display:inline-block;object-fit:cover;}
     .chip-logo-img{width:24px;height:24px;border-radius:50%;object-fit:cover;}
     .d-logo-img{width:26px;height:26px;border-radius:50%;object-fit:cover;}
+    .lang-bar{display:flex;justify-content:center;gap:5px;margin:0 0 8px;}
+    .lang-btn{background:#000;color:rgba(255,255,255,0.6);border:1px solid rgba(56,189,248,0.3);border-radius:10px;padding:3px 8px;font-size:10px;font-weight:700;letter-spacing:0.5px;cursor:pointer;font-family:inherit;line-height:1.2;}
+    .lang-btn.active{background:rgba(14,165,233,0.18);color:#38BDF8;border-color:#38BDF8;}
   </style>
 </head>
 <body>
@@ -877,6 +880,13 @@
 
   <!-- ═══════════════ TAP SCREEN ═══════════════ -->
   <div id="screen-tap" class="screen active">
+    <div class="lang-bar" id="langBar">
+      <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" data-lang="fa" onclick="setLang('fa')">FA</button>
+      <button class="lang-btn" data-lang="ru" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn" data-lang="hi" onclick="setLang('hi')">HI</button>
+      <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+    </div>
     <div class="user-info-bar">
       <div class="user-left">
         <div class="user-avatar" id="user-avatar">M</div>
@@ -2107,8 +2117,173 @@
 
   window.addEventListener('load', init);
 </script>
+<script>
+/* ═══════════ i18n: EN (default) · FA · RU · HI · DE ═══════════ */
+(function(){
+  var IDX={fa:1,ru:2,hi:3,de:4};
+  var R=[
+["Daily","روزانه","Ежедневно","दैनिक","Täglich"],
+["Rewards","جوایز","Награды","पुरस्कार","Belohnungen"],
+["⛏️ Tap to mine","⛏️ برای استخراج ضربه بزنید","⛏️ Нажмите, чтобы майнить","⛏️ माइन करने के लिए टैप करें","⛏️ Tippen zum Minen"],
+["WALLET","کیف پول","КОШЕЛЁК","वॉलेट","WALLET"],
+["Ready","آماده","Готово","तैयार","Bereit"],
+["Refer","دعوت","Рефералы","रेफर","Empfehlen"],
+["Task","وظیفه","Задания","टास्क","Aufgaben"],
+["Tap","ضربه","Тап","टैप","Tippen"],
+["Wallet","کیف پول","Кошелёк","वॉलेट","Wallet"],
+["Tasks","وظایف","Задания","टास्क","Aufgaben"],
+["Join Telegram Channel","عضویت در کانال تلگرام","Вступить в Telegram-канал","टेलीग्राम चैनल जॉइन करें","Telegram-Kanal beitreten"],
+["Join Sponsor Channel","عضویت در کانال اسپانسر","Вступить в канал спонсора","स्पॉन्सर चैनल जॉइन करें","Sponsor-Kanal beitreten"],
+["Follow Twitter Page","دنبال کردن صفحه توییتر","Подписаться на Twitter","ट्विटर पेज फॉलो करें","Twitter-Seite folgen"],
+["Join our Telegram Folder","عضویت در پوشه تلگرام ما","Добавить нашу папку Telegram","हमारा टेलीग्राम फ़ोल्डर जॉइन करें","Unserem Telegram-Ordner beitreten"],
+["Telegram Folder","پوشه تلگرام","Папка Telegram","टेलीग्राम फ़ोल्डर","Telegram-Ordner"],
+["Subscribe to Sponsor YouTube","اشتراک در یوتیوب اسپانسر","Подписаться на YouTube спонсора","स्पॉन्सर YouTube सब्सक्राइब करें","Sponsor-YouTube abonnieren"],
+["Must Watch Full Video #1","حتماً ویدیوی کامل #1 را ببینید","Обязательно досмотрите видео #1","पूरा वीडियो #1 ज़रूर देखें","Video #1 vollständig ansehen"],
+["Must Watch Full Video #2","حتماً ویدیوی کامل #2 را ببینید","Обязательно досмотрите видео #2","पूरा वीडियो #2 ज़रूर देखें","Video #2 vollständig ansehen"],
+["Watch Video","تماشای ویدیو","Смотреть видео","वीडियो देखें","Video ansehen"],
+["Start","شروع","Начать","शुरू करें","Start"],
+["Complete tasks to earn MANTLE and ETH. Rewards are credited instantly.","وظایف را انجام دهید تا MANTLE و ETH کسب کنید. جوایز فوراً واریز می‌شوند.","Выполняйте задания, чтобы получать MANTLE и ETH. Награды начисляются мгновенно.","MANTLE और ETH कमाने के लिए टास्क पूरे करें। पुरस्कार तुरंत जमा होते हैं।","Erledige Aufgaben, um MANTLE und ETH zu verdienen. Belohnungen werden sofort gutgeschrieben."],
+["Refer & Earn","دعوت کن و درآمد کسب کن","Приглашай и зарабатывай","रेफर करें और कमाएँ","Empfehlen & Verdienen"],
+["Invite friends and earn more","دوستان را دعوت کنید و بیشتر کسب کنید","Приглашайте друзей и зарабатывайте больше","दोस्तों को आमंत्रित करें और ज़्यादा कमाएँ","Lade Freunde ein und verdiene mehr"],
+["Per Invite","به ازای هر دعوت","За приглашение","प्रति आमंत्रण","Pro Einladung"],
+["YOUR REFERRAL LINK","لینک دعوت شما","ВАША РЕФЕРАЛЬНАЯ ССЫЛКА","आपका रेफरल लिंक","DEIN EMPFEHLUNGSLINK"],
+["Loading your link…","در حال بارگذاری لینک…","Загрузка ссылки…","आपका लिंक लोड हो रहा है…","Link wird geladen…"],
+["⧉ Copy Link","⧉ کپی لینک","⧉ Копировать","⧉ लिंक कॉपी करें","⧉ Link kopieren"],
+["➤ Share","➤ اشتراک‌گذاری","➤ Поделиться","➤ शेयर करें","➤ Teilen"],
+["Total Referrals","کل دعوت‌ها","Всего рефералов","कुल रेफरल","Empfehlungen gesamt"],
+["Active Referrals","دعوت‌های فعال","Активные рефералы","सक्रिय रेफरल","Aktive Empfehlungen"],
+["Total Earned","کل درآمد","Всего заработано","कुल कमाई","Gesamt verdient"],
+["Total Balance","موجودی کل","Общий баланс","कुल बैलेंस","Gesamtguthaben"],
+["↑ Withdraw MANTLE","↑ برداشت MANTLE","↑ Вывести MANTLE","↑ MANTLE निकालें","↑ MANTLE abheben"],
+["Your wallets","کیف پول‌های شما","Ваши кошельки","आपके वॉलेट","Deine Wallets"],
+["Connect →","اتصال ←","Подключить →","कनेक्ट करें →","Verbinden →"],
+["Edit","ویرایش","Изменить","बदलें","Bearbeiten"],
+["Connect your wallet now so withdrawal are ready when MANTLE goes live.","همین حالا کیف پول خود را متصل کنید تا هنگام راه‌اندازی MANTLE برداشت آماده باشد.","Подключите кошелёк сейчас, чтобы вывод был готов к запуску MANTLE.","अभी अपना वॉलेट कनेक्ट करें ताकि MANTLE लाइव होने पर निकासी तैयार रहे।","Verbinde jetzt deine Wallet, damit Auszahlungen bereit sind, wenn MANTLE live geht."],
+["Connect your wallet","کیف پول خود را متصل کنید","Подключите кошелёк","अपना वॉलेट कनेक्ट करें","Verbinde deine Wallet"],
+["Edit your address","ویرایش آدرس","Изменить адрес","अपना पता बदलें","Adresse bearbeiten"],
+["Enter or paste wallet address","آدرس کیف پول را وارد یا جای‌گذاری کنید","Введите или вставьте адрес кошелька","वॉलेट पता दर्ज करें या पेस्ट करें","Wallet-Adresse eingeben oder einfügen"],
+["Connect Wallet","اتصال کیف پول","Подключить кошелёк","वॉलेट कनेक्ट करें","Wallet verbinden"],
+["Update Wallet","به‌روزرسانی کیف پول","Обновить кошелёк","वॉलेट अपडेट करें","Wallet aktualisieren"],
+["Airdrop","ایردراپ","Аирдроп","एयरड्रॉप","Airdrop"],
+["MANTLE token distribution","توزیع توکن MANTLE","Распределение токенов MANTLE","MANTLE टोकन वितरण","MANTLE-Token-Verteilung"],
+["Airdrop Coming Soon","ایردراپ به‌زودی","Аирдроп скоро","एयरड्रॉप जल्द आ रहा है","Airdrop kommt bald"],
+["Keep mining and completing tasks to grow your MANTLE balance. Tokens will be distributed to your connected wallet.","به استخراج و انجام وظایف ادامه دهید تا موجودی MANTLE شما افزایش یابد. توکن‌ها به کیف پول متصل شما ارسال می‌شوند.","Продолжайте майнить и выполнять задания, чтобы увеличить баланс MANTLE. Токены будут отправлены на подключённый кошелёк.","अपना MANTLE बैलेंस बढ़ाने के लिए माइनिंग और टास्क जारी रखें। टोकन आपके कनेक्टेड वॉलेट में भेजे जाएँगे।","Mine weiter und erledige Aufgaben, um dein MANTLE-Guthaben zu erhöhen. Token werden an deine verbundene Wallet verteilt."],
+["📅 3rd week of November 2026","📅 هفته سوم نوامبر ۲۰۲۶","📅 3-я неделя ноября 2026","📅 नवंबर 2026 का तीसरा सप्ताह","📅 3. Woche im November 2026"],
+["Distribution in progress","توزیع در حال انجام است","Распределение в процессе","वितरण जारी है","Verteilung läuft"],
+["Withdraw","برداشت","Вывод","निकासी","Abheben"],
+["MANTLE Withdrawal","برداشت MANTLE","Вывод MANTLE","MANTLE निकासी","MANTLE-Auszahlung"],
+["Checking...","در حال بررسی...","Проверка...","जाँच हो रही है...","Wird geprüft..."],
+["OK","باشه","ОК","ठीक है","OK"],
+["🎁 Daily Rewards","🎁 جوایز روزانه","🎁 Ежедневные награды","🎁 दैनिक पुरस्कार","🎁 Tägliche Belohnungen"],
+["Keep your streak alive","زنجیره خود را حفظ کنید","Не прерывайте серию","अपनी स्ट्रीक बनाए रखें","Halte deine Serie am Leben"],
+["Check in daily to claim rewards and keep your streak alive!","هر روز وارد شوید تا جوایز بگیرید و زنجیره را حفظ کنید!","Заходите каждый день, получайте награды и не прерывайте серию!","पुरस्कार पाने और स्ट्रीक बनाए रखने के लिए रोज़ चेक-इन करें!","Checke täglich ein, um Belohnungen zu erhalten und deine Serie zu halten!"],
+["STREAK PROGRESS","پیشرفت زنجیره","ПРОГРЕСС СЕРИИ","स्ट्रीक प्रगति","SERIENFORTSCHRITT"],
+["Claim Reward","دریافت جایزه","Получить награду","पुरस्कार लें","Belohnung abholen"],
+["Come back tomorrow","فردا برگردید","Возвращайтесь завтра","कल वापस आएँ","Komm morgen wieder"],
+["Claiming…","در حال دریافت…","Получение…","क्लेम हो रहा है…","Wird abgeholt…"],
+["👛 Wallet","👛 کیف پول","👛 Кошелёк","👛 वॉलेट","👛 Wallet"],
+["● Active","● فعال","● Активен","● सक्रिय","● Aktiv"],
+["Deposit","واریز","Депозит","जमा","Einzahlen"],
+["History","تاریخچه","История","इतिहास","Verlauf"],
+["Assets","دارایی‌ها","Активы","एसेट्स","Vermögenswerte"],
+["Ethereum Deposit","واریز اتریوم","Депозит Ethereum","Ethereum जमा","Ethereum-Einzahlung"],
+["No history yet","هنوز تاریخچه‌ای نیست","Истории пока нет","अभी कोई इतिहास नहीं","Noch kein Verlauf"],
+["Your deposits and withdrawals","واریزها و برداشت‌های شما","Ваши депозиты и выводы","आपकी जमा और निकासी","Deine Ein- und Auszahlungen"],
+["will appear here.","اینجا نمایش داده می‌شوند.","появятся здесь.","यहाँ दिखाई देंगी।","werden hier angezeigt."],
+["⚡ No energy! Wait for the 5h refill.","⚡ انرژی ندارید! منتظر شارژ ۵ ساعته بمانید.","⚡ Нет энергии! Подождите 5 ч до восстановления.","⚡ ऊर्जा नहीं! 5 घंटे के रिफ़िल का इंतज़ार करें।","⚡ Keine Energie! Warte auf die 5h-Auffüllung."],
+["⚠️ Join first, then tap Start again.","⚠️ ابتدا عضو شوید، سپس دوباره شروع را بزنید.","⚠️ Сначала вступите, затем снова нажмите «Начать».","⚠️ पहले जॉइन करें, फिर दोबारा शुरू करें दबाएँ।","⚠️ Erst beitreten, dann erneut auf Start tippen."],
+["⚠️ Could not verify. Try again.","⚠️ تأیید نشد. دوباره تلاش کنید.","⚠️ Не удалось проверить. Попробуйте снова.","⚠️ सत्यापित नहीं हो सका। फिर से प्रयास करें।","⚠️ Überprüfung fehlgeschlagen. Erneut versuchen."],
+["⚠️ Please enter a wallet address","⚠️ لطفاً آدرس کیف پول را وارد کنید","⚠️ Введите адрес кошелька","⚠️ कृपया वॉलेट पता दर्ज करें","⚠️ Bitte Wallet-Adresse eingeben"],
+["✅ Wallet saved!","✅ کیف پول ذخیره شد!","✅ Кошелёк сохранён!","✅ वॉलेट सेव हो गया!","✅ Wallet gespeichert!"],
+["⚠️ Could not save. Try again.","⚠️ ذخیره نشد. دوباره تلاش کنید.","⚠️ Не удалось сохранить. Попробуйте снова.","⚠️ सेव नहीं हो सका। फिर से प्रयास करें।","⚠️ Speichern fehlgeschlagen. Erneut versuchen."],
+["✓ Already claimed today","✓ امروز دریافت شده است","✓ Сегодня уже получено","✓ आज पहले ही क्लेम किया जा चुका है","✓ Heute bereits abgeholt"],
+["⚠️ Could not claim. Try again.","⚠️ دریافت نشد. دوباره تلاش کنید.","⚠️ Не удалось получить. Попробуйте снова.","⚠️ क्लेम नहीं हो सका। फिर से प्रयास करें।","⚠️ Abholen fehlgeschlagen. Erneut versuchen."],
+["⚠️ Could not reach server. Retrying…","⚠️ اتصال به سرور ممکن نشد. تلاش مجدد…","⚠️ Сервер недоступен. Повтор…","⚠️ सर्वर तक नहीं पहुँच सके। फिर से प्रयास…","⚠️ Server nicht erreichbar. Neuer Versuch…"],
+["✓ Open","✓ باز کنید","✓ Открыть","✓ खोलें","✓ Öffnen"],
+["✔ Copied","✔ کپی شد","✔ Скопировано","✔ कॉपी हो गया","✔ Kopiert"],
+["You must refer 8 friends to become eligible for MANTLE withdrawal!","برای واجد شرایط شدن برداشت MANTLE باید ۸ دوست دعوت کنید!","Чтобы получить право на вывод MANTLE, пригласите 8 друзей!","MANTLE निकासी के योग्य बनने के लिए आपको 8 दोस्तों को रेफर करना होगा!","Du musst 8 Freunde empfehlen, um für die MANTLE-Auszahlung berechtigt zu sein!"]
+  ];
+  var P=[
+[/^🎉 \+([\d.]+) MANTLE earned!$/,"🎉 +$1 MANTLE کسب شد!","🎉 +$1 MANTLE получено!","🎉 +$1 MANTLE कमाए!","🎉 +$1 MANTLE verdient!"],
+[/^🎁 \+([\d.]+) MANTLE claimed!$/,"🎁 +$1 MANTLE دریافت شد!","🎁 +$1 MANTLE получено!","🎁 +$1 MANTLE क्लेम किए!","🎁 +$1 MANTLE abgeholt!"],
+[/^⏳ (\d+) days to go$/,"⏳ $1 روز مانده","⏳ Осталось дней: $1","⏳ $1 दिन बाकी","⏳ Noch $1 Tage"],
+[/^Day (\d+)$/,"روز $1","День $1","दिन $1","Tag $1"],
+[/^(\d+) \/ (\d+) days$/,"$1 / $2 روز","$1 / $2 дн.","$1 / $2 दिन","$1 / $2 Tage"],
+[/^Claim Day (\d+) Reward$/,"دریافت جایزه روز $1","Получить награду дня $1","दिन $1 का पुरस्कार लें","Belohnung für Tag $1 abholen"],
+[/^(\d+)\/8 referrals completed$/,"$1/8 دعوت انجام شد","$1/8 рефералов выполнено","$1/8 रेफरल पूरे","$1/8 Empfehlungen abgeschlossen"],
+[/^SUBMIT ETH OR MANTLE WALLET ADDRESS FROM YOUR (.+)$/,"آدرس کیف پول ETH یا MANTLE را از $1 خود وارد کنید","ВВЕДИТЕ АДРЕС ETH ИЛИ MANTLE ИЗ ВАШЕГО $1","अपने $1 से ETH या MANTLE वॉलेट पता दर्ज करें","ETH- ODER MANTLE-WALLET-ADRESSE AUS DEINEM $1 EINGEBEN"],
+[/^🎉 Congratulations (.+), you are now qualified for MANTLE token withdrawal\.$/,"🎉 تبریک $1، شما اکنون واجد شرایط برداشت توکن MANTLE هستید.","🎉 Поздравляем, $1! Теперь вы можете вывести токены MANTLE.","🎉 बधाई हो $1, अब आप MANTLE टोकन निकासी के योग्य हैं।","🎉 Glückwunsch $1, du bist jetzt für die MANTLE-Token-Auszahlung qualifiziert."],
+[/^Your ([\d.]+) MANTLE token will be sent to your wallet address on the 3rd of November 2026\.$/,"$1 توکن MANTLE شما در ۳ نوامبر ۲۰۲۶ به آدرس کیف پولتان ارسال می‌شود.","Ваши $1 MANTLE будут отправлены на ваш кошелёк 3 ноября 2026 г.","आपके $1 MANTLE टोकन 3 नवंबर 2026 को आपके वॉलेट पते पर भेजे जाएँगे।","Deine $1 MANTLE-Token werden am 3. November 2026 an deine Wallet-Adresse gesendet."]
+  ];
+  var D={};
+  R.forEach(function(r){D[r[0]]=r;});
+  var L=localStorage.getItem('mantle_lang')||'en';
+  if(L!=='en'&&!IDX[L])L='en';
+
+  function tr(s){
+    if(L==='en'||!s)return s;
+    var t=s.trim(); if(!t)return s;
+    var i=IDX[L], out=null;
+    if(D[t])out=D[t][i];
+    else for(var k=0;k<P.length;k++){ if(P[k][0].test(t)){ out=t.replace(P[k][0],P[k][i]); break; } }
+    if(out==null)return s;
+    return s.replace(t,function(){return out;});
+  }
+  function skip(n){
+    var p=n.parentNode;
+    while(p&&p.nodeType===1){
+      var tg=p.tagName; if(tg==='SCRIPT'||tg==='STYLE'||(p.id==='langBar'))return true;
+      p=p.parentNode;
+    }
+    return false;
+  }
+  function doText(n){
+    if(skip(n))return;
+    var cur=n.nodeValue;
+    if(n.__tr===undefined||cur!==n.__tr)n.__en=cur;
+    var out=tr(n.__en);
+    n.__tr=out;
+    if(out!==cur)n.nodeValue=out;
+  }
+  function doPh(el){
+    var cur=el.getAttribute('placeholder');
+    if(el.__trph===undefined||cur!==el.__trph)el.__enph=cur;
+    var out=tr(el.__enph); el.__trph=out;
+    if(out!==cur)el.setAttribute('placeholder',out);
+  }
+  function walk(root){
+    if(!root)return;
+    if(root.nodeType===3){doText(root);return;}
+    if(root.nodeType!==1)return;
+    var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null,false),n;
+    while((n=w.nextNode()))doText(n);
+    if(root.hasAttribute&&root.hasAttribute('placeholder'))doPh(root);
+    var ph=root.querySelectorAll?root.querySelectorAll('[placeholder]'):[];
+    for(var j=0;j<ph.length;j++)doPh(ph[j]);
+  }
+  function mark(){
+    var b=document.querySelectorAll('#langBar .lang-btn');
+    for(var j=0;j<b.length;j++)b[j].classList.toggle('active',b[j].getAttribute('data-lang')===L);
+    document.documentElement.lang=L;
+  }
+  window.setLang=function(code){
+    L=(code==='en'||IDX[code])?code:'en';
+    try{localStorage.setItem('mantle_lang',L);}catch(e){}
+    mark(); walk(document.body);
+  };
+  mark(); walk(document.body);
+  new MutationObserver(function(ms){
+    ms.forEach(function(m){
+      if(m.type==='characterData')doText(m.target);
+      else if(m.type==='attributes')doPh(m.target);
+      else for(var j=0;j<m.addedNodes.length;j++)walk(m.addedNodes[j]);
+    });
+  }).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['placeholder']});
+})();
+</script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"f0f03d0605bf45f1a3b17cf7d5e6861f","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
