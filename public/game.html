@@ -869,7 +869,7 @@
     .tap-logo-img{width:18px;height:18px;border-radius:50%;vertical-align:-4px;display:inline-block;object-fit:cover;}
     .chip-logo-img{width:24px;height:24px;border-radius:50%;object-fit:cover;}
     .d-logo-img{width:26px;height:26px;border-radius:50%;object-fit:cover;}
-    .lang-bar{display:flex;justify-content:center;gap:5px;margin:0 0 8px;}
+    .lang-bar{position:absolute;right:2px;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:4px;}
     .lang-btn{background:#000;color:rgba(255,255,255,0.6);border:1px solid rgba(56,189,248,0.3);border-radius:10px;padding:3px 8px;font-size:10px;font-weight:700;letter-spacing:0.5px;cursor:pointer;font-family:inherit;line-height:1.2;}
     .lang-btn.active{background:rgba(14,165,233,0.18);color:#38BDF8;border-color:#38BDF8;}
   </style>
@@ -880,13 +880,6 @@
 
   <!-- ═══════════════ TAP SCREEN ═══════════════ -->
   <div id="screen-tap" class="screen active">
-    <div class="lang-bar" id="langBar">
-      <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" data-lang="fa" onclick="setLang('fa')">FA</button>
-      <button class="lang-btn" data-lang="ru" onclick="setLang('ru')">RU</button>
-      <button class="lang-btn" data-lang="hi" onclick="setLang('hi')">HI</button>
-      <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
-    </div>
     <div class="user-info-bar">
       <div class="user-left">
         <div class="user-avatar" id="user-avatar">M</div>
@@ -932,6 +925,13 @@
       <div class="coin-circle" id="coin">
         <img class="coin-logo" id="coin-logo-img" src="" alt="MANTLE" />
         <div class="coin-ring" id="coin-ring"></div>
+      </div>
+      <div class="lang-bar" id="langBar">
+        <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" data-lang="fa" onclick="setLang('fa')">فا</button>
+        <button class="lang-btn" data-lang="ru" onclick="setLang('ru')">РУ</button>
+        <button class="lang-btn" data-lang="hi" onclick="setLang('hi')">हि</button>
+        <button class="lang-btn" data-lang="de" onclick="setLang('de')">De</button>
       </div>
     </div>
 
