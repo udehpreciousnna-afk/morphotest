@@ -375,24 +375,24 @@
 
     /* Floating text */
     .float-text {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 25px;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 29px;
       color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.6);
       z-index: 999; animation: floatUp 0.7s ease forwards; white-space: nowrap;
     }
     .float-text-ghost {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 23px;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 27px;
       color: rgba(56,189,248,0.25); z-index: 998;
       animation: floatUpGhost 0.7s ease forwards; white-space: nowrap;
     }
     @keyframes floatUp {
       0%{opacity:0;transform:translateY(0) scale(0.6);}
-      25%{opacity:1;transform:translateY(-14px) scale(1.25);}
-      45%{opacity:1;transform:translateY(-28px) scale(1.0);}
-      100%{opacity:0;transform:translateY(-90px) scale(0.9);}
+      25%{opacity:1;transform:translateY(-8px) scale(1.25);}
+      45%{opacity:1;transform:translateY(-16px) scale(1.0);}
+      100%{opacity:0;transform:translateY(-50px) scale(0.9);}
     }
     @keyframes floatUpGhost {
       0%{opacity:0.3;transform:translateY(0) scale(1.1);}
-      100%{opacity:0;transform:translateY(-70px) scale(1.0);}
+      100%{opacity:0;transform:translateY(-38px) scale(1.0);}
     }
 
     .tap-label {
@@ -930,6 +930,7 @@
         <button class="lang-btn" data-lang="fa" onclick="setLang('fa')">فا</button>
         <button class="lang-btn" data-lang="ru" onclick="setLang('ru')">РУ</button>
         <button class="lang-btn" data-lang="hi" onclick="setLang('hi')">हि</button>
+        <button class="lang-btn" data-lang="bn" onclick="setLang('bn')">বাং</button>
         <button class="lang-btn" data-lang="de" onclick="setLang('de')">De</button>
       </div>
     </div>
@@ -2123,100 +2124,100 @@
 <script>
 /* ═══════════ i18n: EN (default) · FA · RU · HI · DE ═══════════ */
 (function(){
-  var IDX={fa:1,ru:2,hi:3,de:4};
+  var IDX={fa:1,ru:2,hi:3,bn:4,de:5};
   var R=[
-["Daily","روزانه","Ежедневно","दैनिक","Täglich"],
-["Rewards","جوایز","Награды","पुरस्कार","Belohnungen"],
-["⛏️ Tap to mine","⛏️ برای استخراج ضربه بزنید","⛏️ Нажмите, чтобы майнить","⛏️ माइन करने के लिए टैप करें","⛏️ Tippen zum Minen"],
-["WALLET","کیف پول","КОШЕЛЁК","वॉलेट","WALLET"],
-["Ready","آماده","Готово","तैयार","Bereit"],
-["Refer","دعوت","Рефералы","रेफर","Empfehlen"],
-["Task","وظیفه","Задания","टास्क","Aufgaben"],
-["Tap","ضربه","Тап","टैप","Tippen"],
-["Wallet","کیف پول","Кошелёк","वॉलेट","Wallet"],
-["Tasks","وظایف","Задания","टास्क","Aufgaben"],
-["Join Telegram Channel","عضویت در کانال تلگرام","Вступить в Telegram-канал","टेलीग्राम चैनल जॉइन करें","Telegram-Kanal beitreten"],
-["Join Sponsor Channel","عضویت در کانال اسپانسر","Вступить в канал спонсора","स्पॉन्सर चैनल जॉइन करें","Sponsor-Kanal beitreten"],
-["Follow Twitter Page","دنبال کردن صفحه توییتر","Подписаться на Twitter","ट्विटर पेज फॉलो करें","Twitter-Seite folgen"],
-["Join our Telegram Folder","عضویت در پوشه تلگرام ما","Добавить нашу папку Telegram","हमारा टेलीग्राम फ़ोल्डर जॉइन करें","Unserem Telegram-Ordner beitreten"],
-["Telegram Folder","پوشه تلگرام","Папка Telegram","टेलीग्राम फ़ोल्डर","Telegram-Ordner"],
-["Subscribe to Sponsor YouTube","اشتراک در یوتیوب اسپانسر","Подписаться на YouTube спонсора","स्पॉन्सर YouTube सब्सक्राइब करें","Sponsor-YouTube abonnieren"],
-["Must Watch Full Video #1","حتماً ویدیوی کامل #1 را ببینید","Обязательно досмотрите видео #1","पूरा वीडियो #1 ज़रूर देखें","Video #1 vollständig ansehen"],
-["Must Watch Full Video #2","حتماً ویدیوی کامل #2 را ببینید","Обязательно досмотрите видео #2","पूरा वीडियो #2 ज़रूर देखें","Video #2 vollständig ansehen"],
-["Watch Video","تماشای ویدیو","Смотреть видео","वीडियो देखें","Video ansehen"],
-["Start","شروع","Начать","शुरू करें","Start"],
-["Complete tasks to earn MANTLE and ETH. Rewards are credited instantly.","وظایف را انجام دهید تا MANTLE و ETH کسب کنید. جوایز فوراً واریز می‌شوند.","Выполняйте задания, чтобы получать MANTLE и ETH. Награды начисляются мгновенно.","MANTLE और ETH कमाने के लिए टास्क पूरे करें। पुरस्कार तुरंत जमा होते हैं।","Erledige Aufgaben, um MANTLE und ETH zu verdienen. Belohnungen werden sofort gutgeschrieben."],
-["Refer & Earn","دعوت کن و درآمد کسب کن","Приглашай и зарабатывай","रेफर करें और कमाएँ","Empfehlen & Verdienen"],
-["Invite friends and earn more","دوستان را دعوت کنید و بیشتر کسب کنید","Приглашайте друзей и зарабатывайте больше","दोस्तों को आमंत्रित करें और ज़्यादा कमाएँ","Lade Freunde ein und verdiene mehr"],
-["Per Invite","به ازای هر دعوت","За приглашение","प्रति आमंत्रण","Pro Einladung"],
-["YOUR REFERRAL LINK","لینک دعوت شما","ВАША РЕФЕРАЛЬНАЯ ССЫЛКА","आपका रेफरल लिंक","DEIN EMPFEHLUNGSLINK"],
-["Loading your link…","در حال بارگذاری لینک…","Загрузка ссылки…","आपका लिंक लोड हो रहा है…","Link wird geladen…"],
-["⧉ Copy Link","⧉ کپی لینک","⧉ Копировать","⧉ लिंक कॉपी करें","⧉ Link kopieren"],
-["➤ Share","➤ اشتراک‌گذاری","➤ Поделиться","➤ शेयर करें","➤ Teilen"],
-["Total Referrals","کل دعوت‌ها","Всего рефералов","कुल रेफरल","Empfehlungen gesamt"],
-["Active Referrals","دعوت‌های فعال","Активные рефералы","सक्रिय रेफरल","Aktive Empfehlungen"],
-["Total Earned","کل درآمد","Всего заработано","कुल कमाई","Gesamt verdient"],
-["Total Balance","موجودی کل","Общий баланс","कुल बैलेंस","Gesamtguthaben"],
-["↑ Withdraw MANTLE","↑ برداشت MANTLE","↑ Вывести MANTLE","↑ MANTLE निकालें","↑ MANTLE abheben"],
-["Your wallets","کیف پول‌های شما","Ваши кошельки","आपके वॉलेट","Deine Wallets"],
-["Connect →","اتصال ←","Подключить →","कनेक्ट करें →","Verbinden →"],
-["Edit","ویرایش","Изменить","बदलें","Bearbeiten"],
-["Connect your wallet now so withdrawal are ready when MANTLE goes live.","همین حالا کیف پول خود را متصل کنید تا هنگام راه‌اندازی MANTLE برداشت آماده باشد.","Подключите кошелёк сейчас, чтобы вывод был готов к запуску MANTLE.","अभी अपना वॉलेट कनेक्ट करें ताकि MANTLE लाइव होने पर निकासी तैयार रहे।","Verbinde jetzt deine Wallet, damit Auszahlungen bereit sind, wenn MANTLE live geht."],
-["Connect your wallet","کیف پول خود را متصل کنید","Подключите кошелёк","अपना वॉलेट कनेक्ट करें","Verbinde deine Wallet"],
-["Edit your address","ویرایش آدرس","Изменить адрес","अपना पता बदलें","Adresse bearbeiten"],
-["Enter or paste wallet address","آدرس کیف پول را وارد یا جای‌گذاری کنید","Введите или вставьте адрес кошелька","वॉलेट पता दर्ज करें या पेस्ट करें","Wallet-Adresse eingeben oder einfügen"],
-["Connect Wallet","اتصال کیف پول","Подключить кошелёк","वॉलेट कनेक्ट करें","Wallet verbinden"],
-["Update Wallet","به‌روزرسانی کیف پول","Обновить кошелёк","वॉलेट अपडेट करें","Wallet aktualisieren"],
-["Airdrop","ایردراپ","Аирдроп","एयरड्रॉप","Airdrop"],
-["MANTLE token distribution","توزیع توکن MANTLE","Распределение токенов MANTLE","MANTLE टोकन वितरण","MANTLE-Token-Verteilung"],
-["Airdrop Coming Soon","ایردراپ به‌زودی","Аирдроп скоро","एयरड्रॉप जल्द आ रहा है","Airdrop kommt bald"],
-["Keep mining and completing tasks to grow your MANTLE balance. Tokens will be distributed to your connected wallet.","به استخراج و انجام وظایف ادامه دهید تا موجودی MANTLE شما افزایش یابد. توکن‌ها به کیف پول متصل شما ارسال می‌شوند.","Продолжайте майнить и выполнять задания, чтобы увеличить баланс MANTLE. Токены будут отправлены на подключённый кошелёк.","अपना MANTLE बैलेंस बढ़ाने के लिए माइनिंग और टास्क जारी रखें। टोकन आपके कनेक्टेड वॉलेट में भेजे जाएँगे।","Mine weiter und erledige Aufgaben, um dein MANTLE-Guthaben zu erhöhen. Token werden an deine verbundene Wallet verteilt."],
-["📅 3rd week of November 2026","📅 هفته سوم نوامبر ۲۰۲۶","📅 3-я неделя ноября 2026","📅 नवंबर 2026 का तीसरा सप्ताह","📅 3. Woche im November 2026"],
-["Distribution in progress","توزیع در حال انجام است","Распределение в процессе","वितरण जारी है","Verteilung läuft"],
-["Withdraw","برداشت","Вывод","निकासी","Abheben"],
-["MANTLE Withdrawal","برداشت MANTLE","Вывод MANTLE","MANTLE निकासी","MANTLE-Auszahlung"],
-["Checking...","در حال بررسی...","Проверка...","जाँच हो रही है...","Wird geprüft..."],
-["OK","باشه","ОК","ठीक है","OK"],
-["🎁 Daily Rewards","🎁 جوایز روزانه","🎁 Ежедневные награды","🎁 दैनिक पुरस्कार","🎁 Tägliche Belohnungen"],
-["Keep your streak alive","زنجیره خود را حفظ کنید","Не прерывайте серию","अपनी स्ट्रीक बनाए रखें","Halte deine Serie am Leben"],
-["Check in daily to claim rewards and keep your streak alive!","هر روز وارد شوید تا جوایز بگیرید و زنجیره را حفظ کنید!","Заходите каждый день, получайте награды и не прерывайте серию!","पुरस्कार पाने और स्ट्रीक बनाए रखने के लिए रोज़ चेक-इन करें!","Checke täglich ein, um Belohnungen zu erhalten und deine Serie zu halten!"],
-["STREAK PROGRESS","پیشرفت زنجیره","ПРОГРЕСС СЕРИИ","स्ट्रीक प्रगति","SERIENFORTSCHRITT"],
-["Claim Reward","دریافت جایزه","Получить награду","पुरस्कार लें","Belohnung abholen"],
-["Come back tomorrow","فردا برگردید","Возвращайтесь завтра","कल वापस आएँ","Komm morgen wieder"],
-["Claiming…","در حال دریافت…","Получение…","क्लेम हो रहा है…","Wird abgeholt…"],
-["👛 Wallet","👛 کیف پول","👛 Кошелёк","👛 वॉलेट","👛 Wallet"],
-["● Active","● فعال","● Активен","● सक्रिय","● Aktiv"],
-["Deposit","واریز","Депозит","जमा","Einzahlen"],
-["History","تاریخچه","История","इतिहास","Verlauf"],
-["Assets","دارایی‌ها","Активы","एसेट्स","Vermögenswerte"],
-["Ethereum Deposit","واریز اتریوم","Депозит Ethereum","Ethereum जमा","Ethereum-Einzahlung"],
-["No history yet","هنوز تاریخچه‌ای نیست","Истории пока нет","अभी कोई इतिहास नहीं","Noch kein Verlauf"],
-["Your deposits and withdrawals","واریزها و برداشت‌های شما","Ваши депозиты и выводы","आपकी जमा और निकासी","Deine Ein- und Auszahlungen"],
-["will appear here.","اینجا نمایش داده می‌شوند.","появятся здесь.","यहाँ दिखाई देंगी।","werden hier angezeigt."],
-["⚡ No energy! Wait for the 5h refill.","⚡ انرژی ندارید! منتظر شارژ ۵ ساعته بمانید.","⚡ Нет энергии! Подождите 5 ч до восстановления.","⚡ ऊर्जा नहीं! 5 घंटे के रिफ़िल का इंतज़ार करें।","⚡ Keine Energie! Warte auf die 5h-Auffüllung."],
-["⚠️ Join first, then tap Start again.","⚠️ ابتدا عضو شوید، سپس دوباره شروع را بزنید.","⚠️ Сначала вступите, затем снова нажмите «Начать».","⚠️ पहले जॉइन करें, फिर दोबारा शुरू करें दबाएँ।","⚠️ Erst beitreten, dann erneut auf Start tippen."],
-["⚠️ Could not verify. Try again.","⚠️ تأیید نشد. دوباره تلاش کنید.","⚠️ Не удалось проверить. Попробуйте снова.","⚠️ सत्यापित नहीं हो सका। फिर से प्रयास करें।","⚠️ Überprüfung fehlgeschlagen. Erneut versuchen."],
-["⚠️ Please enter a wallet address","⚠️ لطفاً آدرس کیف پول را وارد کنید","⚠️ Введите адрес кошелька","⚠️ कृपया वॉलेट पता दर्ज करें","⚠️ Bitte Wallet-Adresse eingeben"],
-["✅ Wallet saved!","✅ کیف پول ذخیره شد!","✅ Кошелёк сохранён!","✅ वॉलेट सेव हो गया!","✅ Wallet gespeichert!"],
-["⚠️ Could not save. Try again.","⚠️ ذخیره نشد. دوباره تلاش کنید.","⚠️ Не удалось сохранить. Попробуйте снова.","⚠️ सेव नहीं हो सका। फिर से प्रयास करें।","⚠️ Speichern fehlgeschlagen. Erneut versuchen."],
-["✓ Already claimed today","✓ امروز دریافت شده است","✓ Сегодня уже получено","✓ आज पहले ही क्लेम किया जा चुका है","✓ Heute bereits abgeholt"],
-["⚠️ Could not claim. Try again.","⚠️ دریافت نشد. دوباره تلاش کنید.","⚠️ Не удалось получить. Попробуйте снова.","⚠️ क्लेम नहीं हो सका। फिर से प्रयास करें।","⚠️ Abholen fehlgeschlagen. Erneut versuchen."],
-["⚠️ Could not reach server. Retrying…","⚠️ اتصال به سرور ممکن نشد. تلاش مجدد…","⚠️ Сервер недоступен. Повтор…","⚠️ सर्वर तक नहीं पहुँच सके। फिर से प्रयास…","⚠️ Server nicht erreichbar. Neuer Versuch…"],
-["✓ Open","✓ باز کنید","✓ Открыть","✓ खोलें","✓ Öffnen"],
-["✔ Copied","✔ کپی شد","✔ Скопировано","✔ कॉपी हो गया","✔ Kopiert"],
+["Daily","روزانه","Ежедневно","दैनिक","রোজ","Täglich"],
+["Rewards","جوایز","Награды","पुरस्कार","পুরস্কার","Belohnungen"],
+["⛏️ Tap to mine","⛏️ برای استخراج ضربه بزنید","⛏️ Нажмите, чтобы майнить","⛏️ माइन करने के लिए टैप करें","⛏️ মাইন করতে ট্যাপ করুন","⛏️ Tippen zum Minen"],
+["WALLET","کیف پول","КОШЕЛЁК","वॉलेट","ওয়ালেট","WALLET"],
+["Ready","آماده","Готово","तैयार","প্রস্তুত","Bereit"],
+["Refer","دعوت","Рефералы","रेफर","রেফার","Empfehlen"],
+["Task","وظیفه","Задания","टास्क","টাস্ক","Aufgaben"],
+["Tap","ضربه","Тап","टैप","ট্যাপ","Tippen"],
+["Wallet","کیف پول","Кошелёк","वॉलेट","ওয়ালেট","Wallet"],
+["Tasks","وظایف","Задания","टास्क","টাস্কসমূহ","Aufgaben"],
+["Join Telegram Channel","عضویت در کانال تلگرام","Вступить в Telegram-канал","टेलीग्राम चैनल जॉइन करें","টেলিগ্রাম চ্যানেলে যোগ দিন","Telegram-Kanal beitreten"],
+["Join Sponsor Channel","عضویت در کانال اسپانسر","Вступить в канал спонсора","स्पॉन्सर चैनल जॉइन करें","স্পনসর চ্যানেলে যোগ দিন","Sponsor-Kanal beitreten"],
+["Follow Twitter Page","دنبال کردن صفحه توییتر","Подписаться на Twitter","ट्विटर पेज फॉलो करें","টুইটার পেজ ফলো করুন","Twitter-Seite folgen"],
+["Join our Telegram Folder","عضویت در پوشه تلگرام ما","Добавить нашу папку Telegram","हमारा टेलीग्राम फ़ोल्डर जॉइन करें","আমাদের টেলিগ্রাম ফোল্ডারে যোগ দিন","Unserem Telegram-Ordner beitreten"],
+["Telegram Folder","پوشه تلگرام","Папка Telegram","टेलीग्राम फ़ोल्डर","টেলিগ্রাম ফোল্ডার","Telegram-Ordner"],
+["Subscribe to Sponsor YouTube","اشتراک در یوتیوب اسپانسر","Подписаться на YouTube спонсора","स्पॉन्सर YouTube सब्सक्राइब करें","স্পনসর YouTube সাবস্ক্রাইব করুন","Sponsor-YouTube abonnieren"],
+["Must Watch Full Video #1","حتماً ویدیوی کامل #1 را ببینید","Обязательно досмотрите видео #1","पूरा वीडियो #1 ज़रूर देखें","পুরো ভিডিও #1 দেখতেই হবে","Video #1 vollständig ansehen"],
+["Must Watch Full Video #2","حتماً ویدیوی کامل #2 را ببینید","Обязательно досмотрите видео #2","पूरा वीडियो #2 ज़रूर देखें","পুরো ভিডিও #2 দেখতেই হবে","Video #2 vollständig ansehen"],
+["Watch Video","تماشای ویدیو","Смотреть видео","वीडियो देखें","ভিডিও দেখুন","Video ansehen"],
+["Start","شروع","Начать","शुरू करें","শুরু করুন","Start"],
+["Complete tasks to earn MANTLE and ETH. Rewards are credited instantly.","وظایف را انجام دهید تا MANTLE و ETH کسب کنید. جوایز فوراً واریز می‌شوند.","Выполняйте задания, чтобы получать MANTLE и ETH. Награды начисляются мгновенно.","MANTLE और ETH कमाने के लिए टास्क पूरे करें। पुरस्कार तुरंत जमा होते हैं।","MANTLE ও ETH উপার্জনের জন্য টাস্ক সম্পন্ন করুন। পুরস্কার তাৎক্ষণিকভাবে জমা হয়।","Erledige Aufgaben, um MANTLE und ETH zu verdienen. Belohnungen werden sofort gutgeschrieben."],
+["Refer & Earn","دعوت کن و درآمد کسب کن","Приглашай и зарабатывай","रेफर करें और कमाएँ","রেফার করুন ও উপার্জন করুন","Empfehlen & Verdienen"],
+["Invite friends and earn more","دوستان را دعوت کنید و بیشتر کسب کنید","Приглашайте друзей и зарабатывайте больше","दोस्तों को आमंत्रित करें और ज़्यादा कमाएँ","বন্ধুদের আমন্ত্রণ জানান ও বেশি উপার্জন করুন","Lade Freunde ein und verdiene mehr"],
+["Per Invite","به ازای هر دعوت","За приглашение","प्रति आमंत्रण","প্রতি আমন্ত্রণে","Pro Einladung"],
+["YOUR REFERRAL LINK","لینک دعوت شما","ВАША РЕФЕРАЛЬНАЯ ССЫЛКА","आपका रेफरल लिंक","আপনার রেফারেল লিংক","DEIN EMPFEHLUNGSLINK"],
+["Loading your link…","در حال بارگذاری لینک…","Загрузка ссылки…","आपका लिंक लोड हो रहा है…","Loading your link…","Link wird geladen…"],
+["⧉ Copy Link","⧉ کپی لینک","⧉ Копировать","⧉ लिंक कॉपी करें","⧉ লিংক কপি করুন","⧉ Link kopieren"],
+["➤ Share","➤ اشتراک‌گذاری","➤ Поделиться","➤ शेयर करें","➤ শেয়ার করুন","➤ Teilen"],
+["Total Referrals","کل دعوت‌ها","Всего рефералов","कुल रेफरल","মোট রেফারেল","Empfehlungen gesamt"],
+["Active Referrals","دعوت‌های فعال","Активные рефералы","सक्रिय रेफरल","সক্রিয় রেফারেল","Aktive Empfehlungen"],
+["Total Earned","کل درآمد","Всего заработано","कुल कमाई","মোট উপার্জন","Gesamt verdient"],
+["Total Balance","موجودی کل","Общий баланс","कुल बैलेंस","মোট ব্যালেন্স","Gesamtguthaben"],
+["↑ Withdraw MANTLE","↑ برداشت MANTLE","↑ Вывести MANTLE","↑ MANTLE निकालें","↑ MANTLE উত্তোলন করুন","↑ MANTLE abheben"],
+["Your wallets","کیف پول‌های شما","Ваши кошельки","आपके वॉलेट","আপনার ওয়ালেটসমূহ","Deine Wallets"],
+["Connect →","اتصال ←","Подключить →","कनेक्ट करें →","সংযুক্ত করুন →","Verbinden →"],
+["Edit","ویرایش","Изменить","बदलें","সম্পাদনা","Bearbeiten"],
+["Connect your wallet now so withdrawal are ready when MANTLE goes live.","همین حالا کیف پول خود را متصل کنید تا هنگام راه‌اندازی MANTLE برداشت آماده باشد.","Подключите кошелёк сейчас, чтобы вывод был готов к запуску MANTLE.","अभी अपना वॉलेट कनेक्ट करें ताकि MANTLE लाइव होने पर निकासी तैयार रहे।","এখনই আপনার ওয়ালেট সংযুক্ত করুন যাতে MANTLE চালু হলে উত্তোলন প্রস্তুত থাকে।","Verbinde jetzt deine Wallet, damit Auszahlungen bereit sind, wenn MANTLE live geht."],
+["Connect your wallet","کیف پول خود را متصل کنید","Подключите кошелёк","अपना वॉलेट कनेक्ट करें","আপনার ওয়ালেট সংযুক্ত করুন","Verbinde deine Wallet"],
+["Edit your address","ویرایش آدرس","Изменить адрес","अपना पता बदलें","আপনার ঠিকানা সম্পাদনা করুন","Adresse bearbeiten"],
+["Enter or paste wallet address","آدرس کیف پول را وارد یا جای‌گذاری کنید","Введите или вставьте адрес кошелька","वॉलेट पता दर्ज करें या पेस्ट करें","ওয়ালেট ঠিকানা লিখুন বা পেস্ট করুন","Wallet-Adresse eingeben oder einfügen"],
+["Connect Wallet","اتصال کیف پول","Подключить кошелёк","वॉलेट कनेक्ट करें","ওয়ালেট সংযুক্ত করুন","Wallet verbinden"],
+["Update Wallet","به‌روزرسانی کیف پول","Обновить кошелёк","वॉलेट अपडेट करें","ওয়ালেট আপডেট করুন","Wallet aktualisieren"],
+["Airdrop","ایردراپ","Аирдроп","एयरड्रॉप","এয়ারড্রপ","Airdrop"],
+["MANTLE token distribution","توزیع توکن MANTLE","Распределение токенов MANTLE","MANTLE टोकन वितरण","MANTLE টোকেন বিতরণ","MANTLE-Token-Verteilung"],
+["Airdrop Coming Soon","ایردراپ به‌زودی","Аирдроп скоро","एयरड्रॉप जल्द आ रहा है","এয়ারড্রপ শীঘ্রই আসছে","Airdrop kommt bald"],
+["Keep mining and completing tasks to grow your MANTLE balance. Tokens will be distributed to your connected wallet.","به استخراج و انجام وظایف ادامه دهید تا موجودی MANTLE شما افزایش یابد. توکن‌ها به کیف پول متصل شما ارسال می‌شوند.","Продолжайте майнить и выполнять задания, чтобы увеличить баланс MANTLE. Токены будут отправлены на подключённый кошелёк.","अपना MANTLE बैलेंस बढ़ाने के लिए माइनिंग और टास्क जारी रखें। टोकन आपके कनेक्टेड वॉलेट में भेजे जाएँगे।","আপনার MANTLE ব্যালেন্স বাড়াতে মাইনিং ও টাস্ক চালিয়ে যান। টোকেন আপনার সংযুক্ত ওয়ালেটে পাঠানো হবে।","Mine weiter und erledige Aufgaben, um dein MANTLE-Guthaben zu erhöhen. Token werden an deine verbundene Wallet verteilt."],
+["📅 3rd week of November 2026","📅 هفته سوم نوامبر ۲۰۲۶","📅 3-я неделя ноября 2026","📅 नवंबर 2026 का तीसरा सप्ताह","📅 নভেম্বর ২০২৬-এর তৃতীয় সপ্তাহ","📅 3. Woche im November 2026"],
+["Distribution in progress","توزیع در حال انجام است","Распределение в процессе","वितरण जारी है","বিতরণ চলছে","Verteilung läuft"],
+["Withdraw","برداشت","Вывод","निकासी","উত্তোলন","Abheben"],
+["MANTLE Withdrawal","برداشت MANTLE","Вывод MANTLE","MANTLE निकासी","MANTLE উত্তোলন","MANTLE-Auszahlung"],
+["Checking...","در حال بررسی...","Проверка...","जाँच हो रही है...","যাচাই হচ্ছে...","Wird geprüft..."],
+["OK","باشه","ОК","ठीक है","ঠিক আছে","OK"],
+["🎁 Daily Rewards","🎁 جوایز روزانه","🎁 Ежедневные награды","🎁 दैनिक पुरस्कार","🎁 দৈনিক পুরস্কার","🎁 Tägliche Belohnungen"],
+["Keep your streak alive","زنجیره خود را حفظ کنید","Не прерывайте серию","अपनी स्ट्रीक बनाए रखें","আপনার স্ট্রিক বজায় রাখুন","Halte deine Serie am Leben"],
+["Check in daily to claim rewards and keep your streak alive!","هر روز وارد شوید تا جوایز بگیرید و زنجیره را حفظ کنید!","Заходите каждый день, получайте награды и не прерывайте серию!","पुरस्कार पाने और स्ट्रीक बनाए रखने के लिए रोज़ चेक-इन करें!","পুরস্কার নিতে ও স্ট্রিক বজায় রাখতে প্রতিদিন চেক-ইন করুন!","Checke täglich ein, um Belohnungen zu erhalten und deine Serie zu halten!"],
+["STREAK PROGRESS","پیشرفت زنجیره","ПРОГРЕСС СЕРИИ","स्ट्रीक प्रगति","স্ট্রিক অগ্রগতি","SERIENFORTSCHRITT"],
+["Claim Reward","دریافت جایزه","Получить награду","पुरस्कार लें","পুরস্কার নিন","Belohnung abholen"],
+["Come back tomorrow","فردا برگردید","Возвращайтесь завтра","कल वापस आएँ","আগামীকাল ফিরে আসুন","Komm morgen wieder"],
+["Claiming…","در حال دریافت…","Получение…","क्लेम हो रहा है…","Claiming…","Wird abgeholt…"],
+["👛 Wallet","👛 کیف پول","👛 Кошелёк","👛 वॉलेट","👛 ওয়ালেট","👛 Wallet"],
+["● Active","● فعال","● Активен","● सक्रिय","● সক্রিয়","● Aktiv"],
+["Deposit","واریز","Депозит","जमा","জমা","Einzahlen"],
+["History","تاریخچه","История","इतिहास","ইতিহাস","Verlauf"],
+["Assets","دارایی‌ها","Активы","एसेट्स","সম্পদ","Vermögenswerte"],
+["Ethereum Deposit","واریز اتریوم","Депозит Ethereum","Ethereum जमा","Ethereum জমা","Ethereum-Einzahlung"],
+["No history yet","هنوز تاریخچه‌ای نیست","Истории пока нет","अभी कोई इतिहास नहीं","এখনো কোনো ইতিহাস নেই","Noch kein Verlauf"],
+["Your deposits and withdrawals","واریزها و برداشت‌های شما","Ваши депозиты и выводы","आपकी जमा और निकासी","আপনার জমা ও উত্তোলন","Deine Ein- und Auszahlungen"],
+["will appear here.","اینجا نمایش داده می‌شوند.","появятся здесь.","यहाँ दिखाई देंगी।","এখানে দেখা যাবে।","werden hier angezeigt."],
+["⚡ No energy! Wait for the 5h refill.","⚡ انرژی ندارید! منتظر شارژ ۵ ساعته بمانید.","⚡ Нет энергии! Подождите 5 ч до восстановления.","⚡ ऊर्जा नहीं! 5 घंटे के रिफ़िल का इंतज़ार करें।","⚡ শক্তি নেই! ৫ ঘণ্টার রিফিলের জন্য অপেক্ষা করুন।","⚡ Keine Energie! Warte auf die 5h-Auffüllung."],
+["⚠️ Join first, then tap Start again.","⚠️ ابتدا عضو شوید، سپس دوباره شروع را بزنید.","⚠️ Сначала вступите, затем снова нажмите «Начать».","⚠️ पहले जॉइन करें, फिर दोबारा शुरू करें दबाएँ।","⚠️ আগে যোগ দিন, তারপর আবার শুরু করুন চাপুন।","⚠️ Erst beitreten, dann erneut auf Start tippen."],
+["⚠️ Could not verify. Try again.","⚠️ تأیید نشد. دوباره تلاش کنید.","⚠️ Не удалось проверить. Попробуйте снова.","⚠️ सत्यापित नहीं हो सका। फिर से प्रयास करें।","⚠️ যাচাই করা যায়নি। আবার চেষ্টা করুন।","⚠️ Überprüfung fehlgeschlagen. Erneut versuchen."],
+["⚠️ Please enter a wallet address","⚠️ لطفاً آدرس کیف پول را وارد کنید","⚠️ Введите адрес кошелька","⚠️ कृपया वॉलेट पता दर्ज करें","⚠️ অনুগ্রহ করে ওয়ালেট ঠিকানা দিন","⚠️ Bitte Wallet-Adresse eingeben"],
+["✅ Wallet saved!","✅ کیف پول ذخیره شد!","✅ Кошелёк сохранён!","✅ वॉलेट सेव हो गया!","✅ ওয়ালেট সংরক্ষিত হয়েছে!","✅ Wallet gespeichert!"],
+["⚠️ Could not save. Try again.","⚠️ ذخیره نشد. دوباره تلاش کنید.","⚠️ Не удалось сохранить. Попробуйте снова.","⚠️ सेव नहीं हो सका। फिर से प्रयास करें।","⚠️ সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।","⚠️ Speichern fehlgeschlagen. Erneut versuchen."],
+["✓ Already claimed today","✓ امروز دریافت شده است","✓ Сегодня уже получено","✓ आज पहले ही क्लेम किया जा चुका है","✓ আজকে ইতিমধ্যে নেওয়া হয়েছে","✓ Heute bereits abgeholt"],
+["⚠️ Could not claim. Try again.","⚠️ دریافت نشد. دوباره تلاش کنید.","⚠️ Не удалось получить. Попробуйте снова.","⚠️ क्लेम नहीं हो सका। फिर से प्रयास करें।","⚠️ নেওয়া যায়নি। আবার চেষ্টা করুন।","⚠️ Abholen fehlgeschlagen. Erneut versuchen."],
+["⚠️ Could not reach server. Retrying…","⚠️ اتصال به سرور ممکن نشد. تلاش مجدد…","⚠️ Сервер недоступен. Повтор…","⚠️ सर्वर तक नहीं पहुँच सके। फिर से प्रयास…","⚠️ Could not reach server. Retrying…","⚠️ Server nicht erreichbar. Neuer Versuch…"],
+["✓ Open","✓ باز کنید","✓ Открыть","✓ खोलें","✓ খুলুন","✓ Öffnen"],
+["✔ Copied","✔ کپی شد","✔ Скопировано","✔ कॉपी हो गया","✔ কপি হয়েছে","✔ Kopiert"],
 ["You must refer 8 friends to become eligible for MANTLE withdrawal!","برای واجد شرایط شدن برداشت MANTLE باید ۸ دوست دعوت کنید!","Чтобы получить право на вывод MANTLE, пригласите 8 друзей!","MANTLE निकासी के योग्य बनने के लिए आपको 8 दोस्तों को रेफर करना होगा!","Du musst 8 Freunde empfehlen, um für die MANTLE-Auszahlung berechtigt zu sein!"]
   ];
   var P=[
-[/^🎉 \+([\d.]+) MANTLE earned!$/,"🎉 +$1 MANTLE کسب شد!","🎉 +$1 MANTLE получено!","🎉 +$1 MANTLE कमाए!","🎉 +$1 MANTLE verdient!"],
-[/^🎁 \+([\d.]+) MANTLE claimed!$/,"🎁 +$1 MANTLE دریافت شد!","🎁 +$1 MANTLE получено!","🎁 +$1 MANTLE क्लेम किए!","🎁 +$1 MANTLE abgeholt!"],
-[/^⏳ (\d+) days to go$/,"⏳ $1 روز مانده","⏳ Осталось дней: $1","⏳ $1 दिन बाकी","⏳ Noch $1 Tage"],
-[/^Day (\d+)$/,"روز $1","День $1","दिन $1","Tag $1"],
-[/^(\d+) \/ (\d+) days$/,"$1 / $2 روز","$1 / $2 дн.","$1 / $2 दिन","$1 / $2 Tage"],
-[/^Claim Day (\d+) Reward$/,"دریافت جایزه روز $1","Получить награду дня $1","दिन $1 का पुरस्कार लें","Belohnung für Tag $1 abholen"],
-[/^(\d+)\/8 referrals completed$/,"$1/8 دعوت انجام شد","$1/8 рефералов выполнено","$1/8 रेफरल पूरे","$1/8 Empfehlungen abgeschlossen"],
-[/^SUBMIT ETH OR MANTLE WALLET ADDRESS FROM YOUR (.+)$/,"آدرس کیف پول ETH یا MANTLE را از $1 خود وارد کنید","ВВЕДИТЕ АДРЕС ETH ИЛИ MANTLE ИЗ ВАШЕГО $1","अपने $1 से ETH या MANTLE वॉलेट पता दर्ज करें","ETH- ODER MANTLE-WALLET-ADRESSE AUS DEINEM $1 EINGEBEN"],
-[/^🎉 Congratulations (.+), you are now qualified for MANTLE token withdrawal\.$/,"🎉 تبریک $1، شما اکنون واجد شرایط برداشت توکن MANTLE هستید.","🎉 Поздравляем, $1! Теперь вы можете вывести токены MANTLE.","🎉 बधाई हो $1, अब आप MANTLE टोकन निकासी के योग्य हैं।","🎉 Glückwunsch $1, du bist jetzt für die MANTLE-Token-Auszahlung qualifiziert."],
-[/^Your ([\d.]+) MANTLE token will be sent to your wallet address on the 3rd of November 2026\.$/,"$1 توکن MANTLE شما در ۳ نوامبر ۲۰۲۶ به آدرس کیف پولتان ارسال می‌شود.","Ваши $1 MANTLE будут отправлены на ваш кошелёк 3 ноября 2026 г.","आपके $1 MANTLE टोकन 3 नवंबर 2026 को आपके वॉलेट पते पर भेजे जाएँगे।","Deine $1 MANTLE-Token werden am 3. November 2026 an deine Wallet-Adresse gesendet."]
+[/^🎉 \+([\d.]+) MANTLE earned!$/,"🎉 +$1 MANTLE کسب شد!","🎉 +$1 MANTLE получено!","🎉 +$1 MANTLE कमाए!","🎉 +$1 MANTLE উপার্জিত হয়েছে!","🎉 +$1 MANTLE verdient!"],
+[/^🎁 \+([\d.]+) MANTLE claimed!$/,"🎁 +$1 MANTLE دریافت شد!","🎁 +$1 MANTLE получено!","🎁 +$1 MANTLE क्लेम किए!","🎁 +$1 MANTLE নেওয়া হয়েছে!","🎁 +$1 MANTLE abgeholt!"],
+[/^⏳ (\d+) days to go$/,"⏳ $1 روز مانده","⏳ Осталось дней: $1","⏳ $1 दिन बाकी","⏳ আরও $1 দিন","⏳ Noch $1 Tage"],
+[/^Day (\d+)$/,"روز $1","День $1","दिन $1","দিন $1","Tag $1"],
+[/^(\d+) \/ (\d+) days$/,"$1 / $2 روز","$1 / $2 дн.","$1 / $2 दिन","$1 / $2 দিন","$1 / $2 Tage"],
+[/^Claim Day (\d+) Reward$/,"دریافت جایزه روز $1","Получить награду дня $1","दिन $1 का पुरस्कार लें","দিন $1-এর পুরস্কার নিন","Belohnung für Tag $1 abholen"],
+[/^(\d+)\/8 referrals completed$/,"$1/8 دعوت انجام شد","$1/8 рефералов выполнено","$1/8 रेफरल पूरे","$1/8 রেফারেল সম্পন্ন","$1/8 Empfehlungen abgeschlossen"],
+[/^SUBMIT ETH OR MANTLE WALLET ADDRESS FROM YOUR (.+)$/,"آدرس کیف پول ETH یا MANTLE را از $1 خود وارد کنید","ВВЕДИТЕ АДРЕС ETH ИЛИ MANTLE ИЗ ВАШЕГО $1","अपने $1 से ETH या MANTLE वॉलेट पता दर्ज करें","আপনার $1 থেকে ETH বা MANTLE ওয়ালেট ঠিকানা দিন","ETH- ODER MANTLE-WALLET-ADRESSE AUS DEINEM $1 EINGEBEN"],
+[/^🎉 Congratulations (.+), you are now qualified for MANTLE token withdrawal\.$/,"🎉 تبریک $1، شما اکنون واجد شرایط برداشت توکن MANTLE هستید.","🎉 Поздравляем, $1! Теперь вы можете вывести токены MANTLE.","🎉 बधाई हो $1, अब आप MANTLE टोकन निकासी के योग्य हैं।","🎉 অভিনন্দন $1, আপনি এখন MANTLE টোকেন উত্তোলনের যোগ্য।","🎉 Glückwunsch $1, du bist jetzt für die MANTLE-Token-Auszahlung qualifiziert."],
+[/^Your ([\d.]+) MANTLE token will be sent to your wallet address on the 3rd of November 2026\.$/,"$1 توکن MANTLE شما در ۳ نوامبر ۲۰۲۶ به آدرس کیف پولتان ارسال می‌شود.","Ваши $1 MANTLE будут отправлены на ваш кошелёк 3 ноября 2026 г.","आपके $1 MANTLE टोकन 3 नवंबर 2026 को आपके वॉलेट पते पर भेजे जाएँगे।","আপনার $1 MANTLE টোকেন ৩ নভেম্বর ২০২৬-এ আপনার ওয়ালেট ঠিকানায় পাঠানো হবে।","Deine $1 MANTLE-Token werden am 3. November 2026 an deine Wallet-Adresse gesendet."]
   ];
   var D={};
   R.forEach(function(r){D[r[0]]=r;});
