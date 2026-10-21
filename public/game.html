@@ -651,8 +651,8 @@
     }
     .wd-x:hover { background: rgba(148,163,184,0.18); }
     .wd-x:active { transform: scale(0.92); }
-    .wd-body { padding: 30px 22px 24px; }
-    .wd-badge { position: relative; width: 124px; height: 124px; margin: 4px auto 22px; display: flex; align-items: center; justify-content: center; }
+    .wd-body { padding: 12px 22px 24px; }
+    .wd-badge { position: relative; width: 124px; height: 124px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; }
     .wd-sheet .wd-coin { width: 96px; height: 96px; border-radius: 50%; margin: 0; }
     @keyframes wdGlow { 0%,100%{opacity:.55;transform:scale(0.96);} 50%{opacity:1;transform:scale(1.04);} }
     @keyframes wdSpin { to { transform: rotate(360deg); } }
@@ -868,7 +868,7 @@
     .tap-logo-img{width:18px;height:18px;border-radius:50%;vertical-align:-4px;display:inline-block;object-fit:cover;}
     .chip-logo-img{width:24px;height:24px;border-radius:50%;object-fit:cover;}
     .d-logo-img{width:26px;height:26px;border-radius:50%;object-fit:cover;}
-    .lang-bar{position:absolute;right:2px;top:-18px;z-index:6;display:flex;flex-direction:column;gap:4px;}
+    .lang-bar{position:absolute;right:2px;top:-10px;z-index:6;display:flex;flex-direction:column;gap:4px;}
     .lang-btn{background:#000;color:rgba(255,255,255,0.6);border:1px solid rgba(56,189,248,0.3);border-radius:10px;padding:3px 8px;font-size:10px;font-weight:700;letter-spacing:0.5px;cursor:pointer;font-family:inherit;line-height:1.2;}
     .lang-btn.active{background:rgba(14,165,233,0.18);color:#38BDF8;border-color:#38BDF8;}
   </style>
@@ -1026,6 +1026,7 @@
       <button class="task-btn task-btn-start" id="task-btn-5" onclick="handleTaskStart(5,'https://youtube.com/@crypt_365?si=0Q-EerBaO-zQ1sGj')">Start</button>
     </div>
 
+    <!-- Video tasks #1 and #2 temporarily disabled — uncomment to restore
     <div class="task-card" id="task-card-6">
       <div class="task-icon-wrap task-icon-yt">
         <svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
@@ -1053,6 +1054,7 @@
       </div>
       <button class="task-btn task-btn-start" id="task-btn-7" onclick="handleTaskStart(7,'https://youtube.com/@crypt_365?si=0Q-EerBaO-zQ1sGj')">Start</button>
     </div>
+    -->
 
     <div class="task-footer">Complete tasks to earn MANTLE and ETH. Rewards are credited instantly.</div>
   </div>
@@ -1533,6 +1535,7 @@
     for (let i = 1; i <= 7; i++) {
       const btn = document.getElementById('task-btn-' + i);
       const card = document.getElementById('task-card-' + i);
+      if (!btn || !card) continue;
       if (state.completedTasks.includes(i)) {
         btn.className = 'task-btn task-btn-done';
         btn.textContent = '✓ Open';
@@ -1541,7 +1544,8 @@
         card.classList.add('done-card');
       }
     }
-    const allDone = state.completedTasks.length >= 7;
+    let allDone = true;
+    for (let i = 1; i <= 7; i++) { if (document.getElementById('task-card-' + i) && !state.completedTasks.includes(i)) { allDone = false; break; } }
     document.getElementById('task-dot').style.display = allDone ? 'none' : 'block';
   }
   function renderWallets() {
