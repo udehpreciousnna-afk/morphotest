@@ -2220,7 +2220,8 @@
   ];
   var D={};
   R.forEach(function(r){D[r[0]]=r;});
-  var L=localStorage.getItem('mantle_lang')||'en';
+  var _tgLang=(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user&&window.Telegram.WebApp.initDataUnsafe.user.language_code)||'en';_tgLang=String(_tgLang).toLowerCase().split('-')[0].split('_')[0];
+  var L=localStorage.getItem('mantle_lang')||(_tgLang==='en'||IDX[_tgLang]?_tgLang:'en');
   if(L!=='en'&&!IDX[L])L='en';
 
   function tr(s){
