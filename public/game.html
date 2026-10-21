@@ -375,26 +375,24 @@
 
     /* Floating text */
     .float-text {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 29px;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 25px;
       color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.6);
       z-index: 999; animation: floatUp 0.7s ease forwards; white-space: nowrap;
-      transform: translateX(-50%);
     }
     .float-text-ghost {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 27px;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 23px;
       color: rgba(56,189,248,0.25); z-index: 998;
       animation: floatUpGhost 0.7s ease forwards; white-space: nowrap;
-      transform: translateX(-50%);
     }
     @keyframes floatUp {
       0%{opacity:0;transform:translateY(0) scale(0.6);}
-      25%{opacity:1;transform:translateY(-12px) scale(1.25);}
-      45%{opacity:1;transform:translateY(-24px) scale(1.0);}
-      100%{opacity:0;transform:translateY(-75px) scale(0.9);}
+      25%{opacity:1;transform:translateY(-14px) scale(1.25);}
+      45%{opacity:1;transform:translateY(-28px) scale(1.0);}
+      100%{opacity:0;transform:translateY(-90px) scale(0.9);}
     }
     @keyframes floatUpGhost {
       0%{opacity:0.3;transform:translateY(0) scale(1.1);}
-      100%{opacity:0;transform:translateY(-55px) scale(1.0);}
+      100%{opacity:0;transform:translateY(-70px) scale(1.0);}
     }
 
     .tap-label {
@@ -1677,20 +1675,12 @@
     }
   } 
 
-  
-let _floatStep = 0, _floatStepTimer = null;
 function spawnFloat(coin, gain) {
   const r = coin.getBoundingClientRect();
 
-  // Stagger rapid taps upward so they don't spawn on top of each other
-  clearTimeout(_floatStepTimer);
-  _floatStep = (_floatStep + 1) % 7;
-  _floatStepTimer = setTimeout(() => { _floatStep = 0; }, 900);
-  const staggerY = _floatStep * 20; // each rapid tap starts 20px higher
-
   // Positioned to the left of the coin circle, vertically centered, rising upward
   const fx = r.left + r.width * 0.5 - 30;
-  const fy = r.top + r.height * 0.30 - staggerY;
+  const fy = r.top + r.height * 0.30;
   const label = '+' + (gain != null ? gain : randTap()).toFixed(3);
 
   // Rising ghost trail (faded copies stacked slightly above), then the bright number
@@ -1701,7 +1691,7 @@ function spawnFloat(coin, gain) {
     g.style.top = (fy - i * 22) + 'px';
     g.style.opacity = String(0.28 - i * 0.07);
     document.body.appendChild(g);
-    g.style.left = fx + 'px';
+    g.style.left = (fx - g.offsetWidth) + 'px';
     setTimeout(() => g.remove(), 720);
   }
 
@@ -1710,7 +1700,7 @@ function spawnFloat(coin, gain) {
   el.textContent = label;
   el.style.top = fy + 'px';
   document.body.appendChild(el);
-  el.style.left = fx + 'px';
+  el.style.left = (fx - el.offsetWidth) + 'px';
   setTimeout(() => { el.remove(); }, 720);
 }
 
