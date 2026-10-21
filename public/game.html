@@ -375,13 +375,13 @@
 
     /* Floating text */
     .float-text {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 33px;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 29px;
       color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.6);
       z-index: 999; animation: floatUp 0.7s ease forwards; white-space: nowrap;
-      transform: translateX(-50%); will-change: transform, opacity;
+      transform: translateX(-50%);
     }
     .float-text-ghost {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 31px;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 27px;
       color: rgba(56,189,248,0.25); z-index: 998;
       animation: floatUpGhost 0.7s ease forwards; white-space: nowrap;
       transform: translateX(-50%);
@@ -1615,17 +1615,11 @@
 
     const coin = document.getElementById('coin');
     // Spring bounce — restart cleanly so rapid taps never block
-    coin.animate(
-      [{transform:'scale(1)'},{transform:'scale(0.955)'},{transform:'scale(1.03)'},{transform:'scale(1)'}],
-      {duration:280,easing:'cubic-bezier(0.34,1.56,0.64,1)'}
-    );
+    coin.classList.remove('tap-anim'); void coin.offsetWidth; coin.classList.add('tap-anim');
 
     // Bounce only the tight ring around the coin, not the ambient glow
     const ring = document.getElementById('coin-ring');
-    if (ring) { ring.animate(
-      [{transform:'scale(1)',opacity:'0.7'},{transform:'scale(0.94)',opacity:'1'},{transform:'scale(1.10)',opacity:'0.95'},{transform:'scale(1)',opacity:'0.7'}],
-      {duration:380,easing:'cubic-bezier(0.34,1.56,0.64,1)'}
-    ); }
+    if (ring) { ring.classList.remove('ring-burst'); void ring.offsetWidth; ring.classList.add('ring-burst'); }
 
     let x, y;
     if (event.touches && event.touches[0]) { x = event.touches[0].clientX; y = event.touches[0].clientY; }
@@ -1663,8 +1657,7 @@
 
   // Subtle scattered blue light particles emitted from the coin on each tap
   function spawnSparks(coin) {
-    if (!_coinRect) _coinRect = coin.getBoundingClientRect();
-    const r = _coinRect;
+    const r = coin.getBoundingClientRect();
     const cx = r.left + r.width / 2;
     const cy = r.top + r.height / 2;
     const n = 4 + Math.floor(Math.random() * 2);
@@ -1685,13 +1678,9 @@
   } 
 
   
-  let _floatStep = 0, _floatStepTimer = null;
-let _coinRect = null;
-function _updateCoinRect(coin) { _coinRect = coin.getBoundingClientRect(); }
-window.addEventListener('resize', function(){ _coinRect = null; });
+let _floatStep = 0, _floatStepTimer = null;
 function spawnFloat(coin, gain) {
-  if (!_coinRect) _coinRect = coin.getBoundingClientRect();
-  const r = _coinRect;
+  const r = coin.getBoundingClientRect();
 
   // Stagger rapid taps upward so they don't spawn on top of each other
   clearTimeout(_floatStepTimer);
@@ -1703,6 +1692,18 @@ function spawnFloat(coin, gain) {
   const fx = r.left + r.width * 0.5 - 30;
   const fy = r.top + r.height * 0.30 - staggerY;
   const label = '+' + (gain != null ? gain : randTap()).toFixed(3);
+
+  // Rising ghost trail (faded copies stacked slightly above), then the bright number
+  for (let i = 2; i >= 1; i--) {
+    const g = document.createElement('div');
+    g.className = 'float-text-ghost';
+    g.textContent = label;
+    g.style.top = (fy - i * 22) + 'px';
+    g.style.opacity = String(0.28 - i * 0.07);
+    document.body.appendChild(g);
+    g.style.left = fx + 'px';
+    setTimeout(() => g.remove(), 720);
+  }
 
   const el = document.createElement('div');
   el.className = 'float-text';
