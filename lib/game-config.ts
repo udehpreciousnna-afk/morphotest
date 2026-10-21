@@ -9,7 +9,7 @@ export const DAILY_REWARDS = [2, 5, 8, 10, 12, 15, 20];
 export const WITHDRAW_MIN_REFS = 8;
 
 export const TASKS: Record<number, { reward: number; eth: number; chat?: string }> = {
-  1: { reward: 20, eth: 0.001, chat: '@MantleMining' },
+  1: { reward: 20, eth: 0.001, chat: '@Mantle_Mining' },
   2: { reward: 10, eth: 0.0005, chat: '@Crypto365team' },
   3: { reward: 5, eth: 0.0005 },
   4: { reward: 5, eth: 0 },
