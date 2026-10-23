@@ -284,7 +284,7 @@
     /* Scattered light particles emitted on tap */
     .spark {
       position: fixed; width: 12px; height: 12px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(56,189,248,0.95) 0%, rgba(56,189,248,0.6) 45%, transparent 72%);
+      background: radial-gradient(circle, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 45%, transparent 72%);
       pointer-events: none; z-index: 3; opacity: 0.9; will-change: transform, opacity;
       animation: sparkFly 0.55s ease-out forwards;
     }
@@ -350,8 +350,8 @@
     .tap-ripple {
       position: fixed; border-radius: 50%; pointer-events: none; z-index: 3;
       width: 34px; height: 34px; margin: -17px 0 0 -17px;
-      border: 2px solid rgba(56,189,248,0.55);
-      box-shadow: 0 0 14px rgba(56,189,248,0.5), inset 0 0 10px rgba(56,189,248,0.35);
+      border: 2px solid rgba(0,0,0,0.75);
+      box-shadow: 0 0 14px rgba(0,0,0,0.6), inset 0 0 10px rgba(0,0,0,0.45);
       animation: tapRipple 0.5s ease-out forwards; will-change: transform, opacity;
     }
     @keyframes tapRipple {
@@ -361,7 +361,7 @@
     /* Tiny glowing motes that float upward and fade */
     .mote {
       position: fixed; width: 6px; height: 6px; border-radius: 50%; z-index: 3;
-      background: radial-gradient(circle, rgba(255,230,150,0.95) 0%, rgba(56,189,248,0.55) 55%, transparent 74%);
+      background: radial-gradient(circle, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.55) 55%, transparent 74%);
       pointer-events: none; opacity: 0.9;
       animation: moteRise 0.72s ease-out forwards; will-change: transform, opacity;
     }
@@ -376,9 +376,16 @@
     }
     .coin-logo { width: 118%; height: 118%; object-fit: contain; border-radius: 50%; pointer-events: none; transform: scale(1); }
 
+
+    .float-stack-item {
+      position: fixed; pointer-events: none; z-index: 999; white-space: nowrap;
+      font-weight: 800; font-size: 32px; color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+      will-change: transform, opacity; transition: transform 140ms ease-out, opacity 180ms linear;
+    }
+    .float-stack-num { display: inline-block; transform-origin: right center; }
     /* Floating text */
     .float-text {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 25px; will-change: transform, opacity;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 32px; will-change: transform, opacity;
       color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.6);
       z-index: 999; animation: floatUp 0.7s ease forwards; white-space: nowrap;
     }
@@ -1710,33 +1717,49 @@
     }
   } 
 
+let floatStack = [];
+const FLOAT_MAX = 4, FLOAT_STEP = 38, FLOAT_OPACITY = [1, 0.7, 0.45, 0.25];
+function layoutFloatStack() {
+  for (let i = 0; i < floatStack.length; i++) {
+    const it = floatStack[floatStack.length - 1 - i]; // i = 0 is the newest
+    it.el.style.transform = 'translateY(' + (-i * FLOAT_STEP) + 'px)';
+    it.el.style.opacity = String(FLOAT_OPACITY[i]);
+  }
+}
+function removeFloat(it) {
+  const k = floatStack.indexOf(it);
+  if (k !== -1) floatStack.splice(k, 1);
+  clearTimeout(it.timer);
+  it.el.style.opacity = '0';
+  setTimeout(() => it.el.remove(), 180);
+}
 function spawnFloat(coin, gain) {
   const r = coin.getBoundingClientRect();
-
-  // Positioned to the left of the coin circle, vertically centered, rising upward
+  // One fixed spawn point: all numbers sit in a straight vertical line.
   const fx = r.left + r.width * 0.5 - 30;
   const fy = r.top + r.height * 0.30;
   const label = '+' + (gain != null ? gain : randTap()).toFixed(3);
 
-  // Rising ghost trail (faded copies stacked slightly above), then the bright number
-  for (let i = 2; i >= 1; i--) {
-    const g = document.createElement('div');
-    g.className = 'float-text-ghost';
-    g.textContent = label;
-    g.style.top = (fy - i * 22) + 'px';
-    g.style.opacity = String(0.28 - i * 0.07);
-    document.body.appendChild(g);
-    g.style.right = (document.documentElement.clientWidth - fx) + 'px';
-    setTimeout(() => g.remove(), 720);
-  }
-
   const el = document.createElement('div');
-  el.className = 'float-text';
-  el.textContent = label;
+  el.className = 'float-stack-item';
   el.style.top = fy + 'px';
-  document.body.appendChild(el);
   el.style.right = (document.documentElement.clientWidth - fx) + 'px';
-  setTimeout(() => { el.remove(); }, 720);
+  const span = document.createElement('span');
+  span.className = 'float-stack-num';
+  span.textContent = label;
+  el.appendChild(span);
+  document.body.appendChild(el);
+
+  const it = { el, timer: 0 };
+  floatStack.push(it);
+  // Older numbers get pushed up by one step; the oldest beyond 4 is dropped.
+  while (floatStack.length > FLOAT_MAX) removeFloat(floatStack[0]);
+  layoutFloatStack();
+  span.animate(
+    [{ transform: 'scale(0.6)' }, { transform: 'scale(1.2)', offset: 0.5 }, { transform: 'scale(1)' }],
+    { duration: 220, easing: 'ease-out' }
+  );
+  it.timer = setTimeout(() => removeFloat(it), 900);
 }
 
   let isFlushing = false;
@@ -1890,7 +1913,7 @@ function spawnFloat(coin, gain) {
   }
 
   // ─── Withdrawal eligibility gate ───
-  const WITHDRAW_MIN_REFS = 8;
+  const WITHDRAW_MIN_REFS = 5;
   function getFullName() {
     try {
       if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -2239,7 +2262,7 @@ function spawnFloat(coin, gain) {
 ["⚠️ Could not reach server. Retrying…","⚠️ اتصال به سرور ممکن نشد. تلاش مجدد…","⚠️ Сервер недоступен. Повтор…","⚠️ सर्वर तक नहीं पहुँच सके। फिर से प्रयास…","⚠️ Could not reach server. Retrying…","⚠️ Server nicht erreichbar. Neuer Versuch…"],
 ["✓ Open","✓ باز کنید","✓ Открыть","✓ खोलें","✓ খুলুন","✓ Öffnen"],
 ["✔ Copied","✔ کپی شد","✔ Скопировано","✔ कॉपी हो गया","✔ কপি হয়েছে","✔ Kopiert"],
-["You must refer 8 friends to become eligible for MANTLE withdrawal!","برای واجد شرایط شدن برداشت MANTLE باید ۸ دوست دعوت کنید!","Чтобы получить право на вывод MANTLE, пригласите 8 друзей!","MANTLE निकासी के योग्य बनने के लिए आपको 8 दोस्तों को रेफर करना होगा!","Du musst 8 Freunde empfehlen, um für die MANTLE-Auszahlung berechtigt zu sein!"]
+["You must refer 5 friends to become eligible for MANTLE withdrawal!","برای واجد شرایط شدن برداشت MANTLE باید ۵ دوست دعوت کنید!","Чтобы получить право на вывод MANTLE, пригласите 5 друзей!","MANTLE निकासी के योग्य बनने के लिए आपको 5 दोस्तों को रेफर करना होगा!","Du musst 5 Freunde empfehlen, um für die MANTLE-Auszahlung berechtigt zu sein!"]
   ];
   var P=[
 [/^🎉 \+([\d.]+) MANTLE earned!$/,"🎉 +$1 MANTLE کسب شد!","🎉 +$1 MANTLE получено!","🎉 +$1 MANTLE कमाए!","🎉 +$1 MANTLE উপার্জিত হয়েছে!","🎉 +$1 MANTLE verdient!"],
@@ -2248,7 +2271,7 @@ function spawnFloat(coin, gain) {
 [/^Day (\d+)$/,"روز $1","День $1","दिन $1","দিন $1","Tag $1"],
 [/^(\d+) \/ (\d+) days$/,"$1 / $2 روز","$1 / $2 дн.","$1 / $2 दिन","$1 / $2 দিন","$1 / $2 Tage"],
 [/^Claim Day (\d+) Reward$/,"دریافت جایزه روز $1","Получить награду дня $1","दिन $1 का पुरस्कार लें","দিন $1-এর পুরস্কার নিন","Belohnung für Tag $1 abholen"],
-[/^(\d+)\/8 referrals completed$/,"$1/8 دعوت انجام شد","$1/8 рефералов выполнено","$1/8 रेफरल पूरे","$1/8 রেফারেল সম্পন্ন","$1/8 Empfehlungen abgeschlossen"],
+[/^(\d+)\/5 referrals completed$/,"$1/5 دعوت انجام شد","$1/5 рефералов выполнено","$1/5 रेफरल पूरे","$1/5 রেফারেল সম্পন্ন","$1/5 Empfehlungen abgeschlossen"],
 [/^SUBMIT ETH OR MANTLE WALLET ADDRESS FROM YOUR (.+)$/,"آدرس کیف پول ETH یا MANTLE را از $1 خود وارد کنید","ВВЕДИТЕ АДРЕС ETH ИЛИ MANTLE ИЗ ВАШЕГО $1","अपने $1 से ETH या MANTLE वॉलेट पता दर्ज करें","আপনার $1 থেকে ETH বা MANTLE ওয়ালেট ঠিকানা দিন","ETH- ODER MANTLE-WALLET-ADRESSE AUS DEINEM $1 EINGEBEN"],
 [/^🎉 Congratulations (.+), you are now qualified for MANTLE token withdrawal\.$/,"🎉 تبریک $1، شما اکنون واجد شرایط برداشت توکن MANTLE هستید.","🎉 Поздравляем, $1! Теперь вы можете вывести токены MANTLE.","🎉 बधाई हो $1, अब आप MANTLE टोकन निकासी के योग्य हैं।","🎉 অভিনন্দন $1, আপনি এখন MANTLE টোকেন উত্তোলনের যোগ্য।","🎉 Glückwunsch $1, du bist jetzt für die MANTLE-Token-Auszahlung qualifiziert."],
 [/^Your ([\d.]+) MANTLE token will be sent to your wallet address on the 3rd of November 2026\.$/,"$1 توکن MANTLE شما در ۳ نوامبر ۲۰۲۶ به آدرس کیف پولتان ارسال می‌شود.","Ваши $1 MANTLE будут отправлены на ваш кошелёк 3 ноября 2026 г.","आपके $1 MANTLE टोकन 3 नवंबर 2026 को आपके वॉलेट पते पर भेजे जाएँगे।","আপনার $1 MANTLE টোকেন ৩ নভেম্বর ২০২৬-এ আপনার ওয়ালেট ঠিকানায় পাঠানো হবে।","Deine $1 MANTLE-Token werden am 3. November 2026 an deine Wallet-Adresse gesendet."]
