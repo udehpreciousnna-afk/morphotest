@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 
-let priceCache = { usd: 1.18, ts: 0 };
+let priceCache = { usd: 0.543, ts: 0 };
 
 export async function GET() {
   if (Date.now() - priceCache.ts < 60_000 && priceCache.ts !== 0) {
@@ -10,6 +10,7 @@ export async function GET() {
   try {
     const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=mantle&vs_currencies=usd', {
       headers: { accept: 'application/json' },
+      signal: AbortSignal.timeout(2500),
     });
     const j = await res.json();
     const usd = j?.mantle?.usd ?? priceCache.usd;
