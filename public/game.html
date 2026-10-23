@@ -385,12 +385,12 @@
     .float-stack-num { display: inline-block; transform-origin: right center; }
     /* Floating text */
     .float-text {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 32px; will-change: transform, opacity;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 28px; will-change: transform, opacity;
       color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.6);
       z-index: 999; animation: floatUp 0.7s ease forwards; white-space: nowrap;
     }
     .float-text-ghost {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 29px;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 26px;
       color: rgba(56,189,248,0.25); z-index: 998;
       animation: floatUpGhost 0.7s ease forwards; white-space: nowrap;
     }
@@ -1732,7 +1732,7 @@ function spawnFloat(coin, gain) {
     const g = document.createElement('div');
     g.className = 'float-text-ghost';
     g.textContent = label;
-    g.style.top = (fy - i * 42) + 'px';
+    g.style.top = (fy - i * 32) + 'px';
     g.style.opacity = String(0.28 - i * 0.07);
     g.style.right = rightPx;
     document.body.appendChild(g);
