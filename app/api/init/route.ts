@@ -9,19 +9,29 @@ const BOT_USERNAME = process.env.BOT_USERNAME ?? 'MantleMiningBot';
 const APP_SHORT_NAME = process.env.APP_SHORT_NAME ?? 'myapp';
 
 // Price cache
-let priceCache = { usd: 1.18, ts: 0 };
-async function getPrice() {
-  if (Date.now() - priceCache.ts < 60_000 && priceCache.ts !== 0) return priceCache.usd;
+let priceCache = { usd: 0.543, ts: 0 };
+let priceRefreshing = false;
+async function refreshPrice() {
+  if (priceRefreshing) return;
+  priceRefreshing = true;
   try {
     const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=mantle&vs_currencies=usd', {
       headers: { accept: 'application/json' },
+      signal: AbortSignal.timeout(2500),
     });
     const j = await res.json();
     const usd = j?.mantle?.usd ?? priceCache.usd;
     priceCache = { usd, ts: Date.now() };
   } catch {
     priceCache.ts = Date.now();
+  } finally {
+    priceRefreshing = false;
   }
+}
+// Never block /api/init on the third-party price API: return the cached value
+// immediately and refresh it in the background when stale.
+function getPrice() {
+  if (priceCache.ts === 0 || Date.now() - priceCache.ts >= 60_000) void refreshPrice();
   return priceCache.usd;
 }
 
@@ -72,7 +82,9 @@ export async function POST(req: Request) {
       }
     } else {
       const st = computeState(row);
-      await prisma.gameUser.update({
+      // Fire-and-forget: the response is built from the in-memory values below,
+      // so the client doesn't need to wait for this write.
+      prisma.gameUser.update({
         where: { telegramId: idn.id },
         data: {
           username: idn.user?.username ?? row.username,
@@ -81,11 +93,11 @@ export async function POST(req: Request) {
           timerStart: st.timerStart != null ? BigInt(st.timerStart) : null,
           lastActive: new Date(),
         },
-      });
+      }).catch((err) => console.error('[api/init] update', err));
       row = { ...row, energy: st.energy, timerStart: st.timerStart != null ? BigInt(st.timerStart) : null };
     }
 
-    const price = await getPrice();
+    const price = getPrice();
     const refLink = `https://t.me/${BOT_USERNAME}/${APP_SHORT_NAME}?startapp=REF_${idn.id}`;
     return NextResponse.json({ user: publicUser(row, { verified: idn.verified }), price, refLink });
   } catch (e: any) {
