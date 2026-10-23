@@ -390,7 +390,7 @@
       z-index: 999; animation: floatUp 0.7s ease forwards; white-space: nowrap;
     }
     .float-text-ghost {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 23px;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 29px;
       color: rgba(56,189,248,0.25); z-index: 998;
       animation: floatUpGhost 0.7s ease forwards; white-space: nowrap;
     }
@@ -1717,51 +1717,35 @@
     }
   } 
 
-let floatStack = [];
-const FLOAT_MAX = 4, FLOAT_STEP = 17, FLOAT_SHIFT = 6, FLOAT_OPACITY = [1, 0.6, 0.35, 0.18];
-function layoutFloatStack() {
-  for (let i = 0; i < floatStack.length; i++) {
-    const it = floatStack[floatStack.length - 1 - i]; // i = 0 is the newest
-    it.el.style.transform = 'translate(' + (-i * FLOAT_SHIFT) + 'px,' + (-i * FLOAT_STEP) + 'px)';
-    it.el.style.opacity = String(FLOAT_OPACITY[i]);
-  }
-}
-function removeFloat(it) {
-  const k = floatStack.indexOf(it);
-  if (k !== -1) floatStack.splice(k, 1);
-  clearTimeout(it.timer);
-  // Drift up one more slot while fading out, instead of vanishing abruptly
-  it.el.style.transform = 'translate(' + (-FLOAT_MAX * FLOAT_SHIFT) + 'px,' + (-FLOAT_MAX * FLOAT_STEP) + 'px)';
-  it.el.style.opacity = '0';
-  setTimeout(() => it.el.remove(), 380);
-}
 function spawnFloat(coin, gain) {
   const r = coin.getBoundingClientRect();
-  // One fixed spawn point: all numbers sit in a straight vertical line.
+
+  // Same behaviour as the original: fixed spawn point left of the coin centre,
+  // rising upward, with a faded ghost trail stacked above the bright number.
   const fx = r.left + r.width * 0.5 - 30;
   const fy = r.top + r.height * 0.30;
   const label = '+' + (gain != null ? gain : randTap()).toFixed(3);
+  const rightPx = (document.documentElement.clientWidth - fx) + 'px';
+
+  // Ghost trail: spacing widened (22px -> 30px) so they overlap a little less
+  for (let i = 2; i >= 1; i--) {
+    const g = document.createElement('div');
+    g.className = 'float-text-ghost';
+    g.textContent = label;
+    g.style.top = (fy - i * 30) + 'px';
+    g.style.opacity = String(0.28 - i * 0.07);
+    g.style.right = rightPx;
+    document.body.appendChild(g);
+    setTimeout(() => g.remove(), 720);
+  }
 
   const el = document.createElement('div');
-  el.className = 'float-stack-item';
+  el.className = 'float-text';
+  el.textContent = label;
   el.style.top = fy + 'px';
-  el.style.right = (document.documentElement.clientWidth - fx) + 'px';
-  const span = document.createElement('span');
-  span.className = 'float-stack-num';
-  span.textContent = label;
-  el.appendChild(span);
+  el.style.right = rightPx;
   document.body.appendChild(el);
-
-  const it = { el, timer: 0 };
-  floatStack.push(it);
-  // Older numbers get pushed up by one step; the oldest beyond 4 is dropped.
-  while (floatStack.length > FLOAT_MAX) removeFloat(floatStack[0]);
-  layoutFloatStack();
-  span.animate(
-    [{ transform: 'scale(0.6)' }, { transform: 'scale(1.2)', offset: 0.5 }, { transform: 'scale(1)' }],
-    { duration: 220, easing: 'ease-out' }
-  );
-  it.timer = setTimeout(() => removeFloat(it), 1100);
+  setTimeout(() => { el.remove(); }, 720);
 }
 
   let isFlushing = false;
