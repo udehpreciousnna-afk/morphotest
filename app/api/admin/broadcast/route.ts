@@ -8,7 +8,7 @@ const ADMIN_KEY = process.env.ADMIN_KEY || '';
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 
 // Channels the admin may post to. Configure via BROADCAST_CHANNELS (comma separated).
-const BROADCAST_CHANNELS = (process.env.BROADCAST_CHANNELS || '@MantleMining')
+const BROADCAST_CHANNELS = (process.env.BROADCAST_CHANNELS || '@Mantle_Mining')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
