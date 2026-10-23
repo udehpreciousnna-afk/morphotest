@@ -1727,12 +1727,12 @@ function spawnFloat(coin, gain) {
   const label = '+' + (gain != null ? gain : randTap()).toFixed(3);
   const rightPx = (document.documentElement.clientWidth - fx) + 'px';
 
-  // Ghost trail: spacing widened (22px -> 30px) so they overlap a little less
+  // Ghost trail: spacing scaled up with the bigger font so overlap stays small
   for (let i = 2; i >= 1; i--) {
     const g = document.createElement('div');
     g.className = 'float-text-ghost';
     g.textContent = label;
-    g.style.top = (fy - i * 30) + 'px';
+    g.style.top = (fy - i * 42) + 'px';
     g.style.opacity = String(0.28 - i * 0.07);
     g.style.right = rightPx;
     document.body.appendChild(g);
