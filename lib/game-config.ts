@@ -6,7 +6,7 @@ export const TAP_MAX = 0.099;              // max MANTLE per tap
 export const WELCOME_BONUS = 20;             // new user starts with 20 MANTLE
 export const REFERRAL_REWARD = 20;            // referrer earns 20 MANTLE per referral
 export const DAILY_REWARDS = [2, 5, 8, 10, 12, 15, 20];
-export const WITHDRAW_MIN_REFS = 8;
+export const WITHDRAW_MIN_REFS = 5;
 
 export const TASKS: Record<number, { reward: number; eth: number; chat?: string }> = {
   1: { reward: 20, eth: 0.001, chat: '@Mantle_Mining' },
