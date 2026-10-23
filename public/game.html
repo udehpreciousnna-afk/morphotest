@@ -380,7 +380,7 @@
     .float-stack-item {
       position: fixed; pointer-events: none; z-index: 999; white-space: nowrap;
       font-weight: 800; font-size: 32px; color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.6);
-      will-change: transform, opacity; transition: transform 140ms ease-out, opacity 180ms linear;
+      will-change: transform, opacity; transition: transform 160ms ease-out, opacity 320ms ease-out;
     }
     .float-stack-num { display: inline-block; transform-origin: right center; }
     /* Floating text */
@@ -1718,11 +1718,11 @@
   } 
 
 let floatStack = [];
-const FLOAT_MAX = 4, FLOAT_STEP = 38, FLOAT_OPACITY = [1, 0.7, 0.45, 0.25];
+const FLOAT_MAX = 4, FLOAT_STEP = 17, FLOAT_SHIFT = 6, FLOAT_OPACITY = [1, 0.6, 0.35, 0.18];
 function layoutFloatStack() {
   for (let i = 0; i < floatStack.length; i++) {
     const it = floatStack[floatStack.length - 1 - i]; // i = 0 is the newest
-    it.el.style.transform = 'translateY(' + (-i * FLOAT_STEP) + 'px)';
+    it.el.style.transform = 'translate(' + (-i * FLOAT_SHIFT) + 'px,' + (-i * FLOAT_STEP) + 'px)';
     it.el.style.opacity = String(FLOAT_OPACITY[i]);
   }
 }
@@ -1730,8 +1730,10 @@ function removeFloat(it) {
   const k = floatStack.indexOf(it);
   if (k !== -1) floatStack.splice(k, 1);
   clearTimeout(it.timer);
+  // Drift up one more slot while fading out, instead of vanishing abruptly
+  it.el.style.transform = 'translate(' + (-FLOAT_MAX * FLOAT_SHIFT) + 'px,' + (-FLOAT_MAX * FLOAT_STEP) + 'px)';
   it.el.style.opacity = '0';
-  setTimeout(() => it.el.remove(), 180);
+  setTimeout(() => it.el.remove(), 380);
 }
 function spawnFloat(coin, gain) {
   const r = coin.getBoundingClientRect();
@@ -1759,7 +1761,7 @@ function spawnFloat(coin, gain) {
     [{ transform: 'scale(0.6)' }, { transform: 'scale(1.2)', offset: 0.5 }, { transform: 'scale(1)' }],
     { duration: 220, easing: 'ease-out' }
   );
-  it.timer = setTimeout(() => removeFloat(it), 900);
+  it.timer = setTimeout(() => removeFloat(it), 1100);
 }
 
   let isFlushing = false;
