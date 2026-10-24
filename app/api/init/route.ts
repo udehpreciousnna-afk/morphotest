@@ -9,7 +9,7 @@ const BOT_USERNAME = process.env.BOT_USERNAME ?? 'MantleMiningBot';
 const APP_SHORT_NAME = process.env.APP_SHORT_NAME ?? 'myapp';
 
 // Price cache
-let priceCache = { usd: 0.543, ts: 0 };
+let priceCache = { usd: 1.18, ts: 0 };
 let priceRefreshing = false;
 async function refreshPrice() {
   if (priceRefreshing) return;
@@ -45,40 +45,59 @@ export async function POST(req: Request) {
 
     if (!row) {
       let referredBy: string | null = null;
-      let raw = idn.start_param ?? '';
-      if (raw.startsWith('REF_')) raw = raw.slice(4);
-      if (raw && raw !== idn.id) {
-        const ref = await prisma.gameUser.findUnique({ where: { telegramId: raw } });
-        if (ref) referredBy = raw;
+      try {
+        let raw = String(idn.start_param ?? '').trim();
+        if (/^ref_/i.test(raw)) raw = raw.slice(4);
+        if (raw && raw !== idn.id) {
+          const ref = await prisma.gameUser.findUnique({ where: { telegramId: raw } });
+          if (ref) referredBy = raw;
+        }
+      } catch (err) {
+        console.error('[api/init] referrer lookup', err);
       }
 
-      row = await prisma.gameUser.create({
-        data: {
-          telegramId: idn.id,
-          username: idn.user?.username ?? null,
-          firstName: idn.user?.first_name ?? 'Miner',
-          photoUrl: idn.user?.photo_url ?? null,
-          mantleBalance: WELCOME_BONUS,
-          energy: MAX_ENERGY,
-          referredBy,
-        },
-      });
-
-      await prisma.activity.create({
-        data: { telegramId: idn.id, type: 'signup', detail: { welcome: WELCOME_BONUS, referredBy } },
-      });
-
-      if (referredBy) {
-        await prisma.gameUser.update({
-          where: { telegramId: referredBy },
+      let created = false;
+      try {
+        row = await prisma.gameUser.create({
           data: {
-            referralCount: { increment: 1 },
-            mantleBalance: { increment: REFERRAL_REWARD },
+            telegramId: idn.id,
+            username: idn.user?.username ?? null,
+            firstName: idn.user?.first_name ?? 'Miner',
+            photoUrl: idn.user?.photo_url ?? null,
+            mantleBalance: WELCOME_BONUS,
+            energy: MAX_ENERGY,
+            referredBy,
           },
         });
-        await prisma.activity.create({
-          data: { telegramId: referredBy, type: 'referral', detail: { newUser: idn.id, reward: REFERRAL_REWARD } },
-        });
+        created = true;
+      } catch (err) {
+        // Concurrent/duplicate init (e.g. client retry): the user already exists, just load it.
+        row = await prisma.gameUser.findUnique({ where: { telegramId: idn.id } });
+        if (!row) throw err;
+      }
+
+      if (created) {
+        // Activity log + referral credit must never block the user from loading.
+        prisma.activity.create({
+          data: { telegramId: idn.id, type: 'signup', detail: { welcome: WELCOME_BONUS, referredBy } },
+        }).catch((err) => console.error('[api/init] signup activity', err));
+
+        if (referredBy) {
+          try {
+            await prisma.gameUser.update({
+              where: { telegramId: referredBy },
+              data: {
+                referralCount: { increment: 1 },
+                mantleBalance: { increment: REFERRAL_REWARD },
+              },
+            });
+            prisma.activity.create({
+              data: { telegramId: referredBy, type: 'referral', detail: { newUser: idn.id, reward: REFERRAL_REWARD } },
+            }).catch((err) => console.error('[api/init] referral activity', err));
+          } catch (err) {
+            console.error('[api/init] referral credit', err);
+          }
+        }
       }
     } else {
       const st = computeState(row);
