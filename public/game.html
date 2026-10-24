@@ -385,12 +385,12 @@
     .float-stack-num { display: inline-block; transform-origin: right center; }
     /* Floating text */
     .float-text {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 28px; will-change: transform, opacity;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 25px; will-change: transform, opacity;
       color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.6);
       z-index: 999; animation: floatUp 0.7s ease forwards; white-space: nowrap;
     }
     .float-text-ghost {
-      position: fixed; pointer-events: none; font-weight: 800; font-size: 26px;
+      position: fixed; pointer-events: none; font-weight: 800; font-size: 23px;
       color: rgba(56,189,248,0.25); z-index: 998;
       animation: floatUpGhost 0.7s ease forwards; white-space: nowrap;
     }
@@ -2136,10 +2136,13 @@ function spawnFloat(coin, gain) {
 
     // Coin tap handler (single pointerdown fires once per tap on all devices)
     const coin = document.getElementById('coin');
-    coin.addEventListener('pointerdown', (e) => { e.preventDefault(); handleCoinTap(e); });
+    if (!coin.__tapBound) { coin.__tapBound = true; coin.addEventListener('pointerdown', (e) => { e.preventDefault(); handleCoinTap(e); }); }
 
     try {
-      const r = await api('/api/init', { startParam: getStartParam() });
+      // After 2 failed attempts, retry without the referral param so the app always loads.
+      window.__initTries = (window.__initTries || 0) + 1;
+      const sp = window.__initTries > 2 ? null : getStartParam();
+      const r = await api('/api/init', { startParam: sp });
       applyUser(r.user, { price: r.price, refLink: r.refLink });
     } catch (e) {
       showToast('⚠️ Could not reach server. Retrying…');
